@@ -11,9 +11,9 @@ int main() {
 	std::string sourceLine, streamLine, sourceCol, classType, text;
 	while(1) {
 		// get the token type and run the lexer
-		TokenType type = (TokenType)yylex();
-
 		std::stringstream str_line, src_col, src_line;
+
+		TokenType type = (TokenType)yylex();
 
 		str_line << lineCount;
 		streamLine = str_line.str();
@@ -63,10 +63,9 @@ int main() {
 			return 1;
 		}
 
-		updateSpaceCount(text);
-		if(type == StringLiteral)
-			spaceCount += 2;
 		printf("%s,\n", toJson(classType, text, streamLine, sourceCol, sourceLine, fileName).c_str());
+
+		spaceCount += yyleng;
 	}
 
 	printf("{}\n]\n");

@@ -5,8 +5,3 @@ std::string toJson(const std::string& classType, const std::string& text, const 
 
 	return tmp;
 }
-
-void updateSpaceCount(std::string inStr) {
-	for(unsigned i = 0; i < inStr.size(); ++i)
-		spaceCount++;
-}

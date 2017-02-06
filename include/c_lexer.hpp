@@ -19,6 +19,8 @@ extern std::string *yylval;
 // flex function to run on input
 extern int yylex();
 
+extern int yyleng;
+
 extern int lineCount;
 extern int spaceCount;
 extern int sourceLineCount;
@@ -27,7 +29,5 @@ extern std::string fileName;
 
 // get the correct output
 std::string toJson(const std::string& classType, const std::string& text, const std::string& strLine, const std::string& srcCol, const std::string& srcLine, const std::string& fName);
-
-void updateSpaceCount(std::string inStr);
 
 #endif
