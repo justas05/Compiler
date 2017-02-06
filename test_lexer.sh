@@ -16,5 +16,5 @@ echo "========================================="
 echo " Testing lexer"
 
 cpp test/test_lex.c test/pre_processed_test_lex.c
-#cat test/pre_processed_test_lex.c | ./bin/c_lexer | tee test/output.json
-cat test/test_lex.c | ./bin/c_lexer | tee test/output.json
+cat test/pre_processed_test_lex.c | ./bin/c_lexer | tee test/output.json
+#cat test/test_lex.c | ./bin/c_lexer | tee test/output.json
