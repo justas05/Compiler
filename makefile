@@ -4,28 +4,31 @@ CC := g++ # this is the main compiler
 CFLAGS := -g -Wall -Wextra -Wpedantic -std=c++14
 
 LEXINC := -Ic_lexer/include
-LEXSRCDIR := c_lexer/src
 LEXBUILDDIR := c_lexer/build
-LEXTARGETDIR := bin
-LEXTARGET := c_lexer
+LEXSRCDIR := c_lexer/src
 
-LEXSRC := $(shell find $(LEXSRCDIR) -type f -name "*.cpp")
-LEXOBJ := $(patsubst $(LEXSRCDIR)/%,$(LEXBUILDDIR)/%,$(LEXSRC:.cpp=.o))
-
-$(LEXTARGETDIR)/$(LEXTARGET) : $(LEXOBJ)
-	@echo " Linking..."
-	@mkdir -p $(LEXTARGETDIR)
-	@echo " $(CC) $^ -o $(LEXTARGETDIR)/$(LEXTARGET)"; $(CC) $^ -o $(LEXTARGETDIR)/$(LEXTARGET)
-
-$(LEXSRCDIR)/$(LEXTARGET).yy.cpp : $(LEXSRCDIR)/$(LEXTARGET).flex
-		@echo " flex -o $@  $<"; flex -o $@  $<
+# Make the c_lexer
+bin/c_lexer : $(LEXBUILDDIR)/main.o $(LEXBUILDDIR)/c_lexer.o $(LEXBUILDDIR)/c_lexer.yy.o
+	@echo "Linking..."
+	@echo " mkdir -p bin"; mkdir -p bin
+	@echo " $(CC) $^ -o bin/c_lexer"; $(CC) $^ -o bin/c_lexer
 
 $(LEXBUILDDIR)/%.o : $(LEXSRCDIR)/%.cpp
-	@mkdir -p $(LEXBUILDDIR)
+	@echo "Building sources..."
+	@echo " mkdir -p $(LEXBUILDDIR)"; mkdir -p $(LEXBUILDDIR)
 	@echo " $(CC) $(CFLAGS) $(LEXINC) -c -o $@ $<"; $(CC) $(CFLAGS) $(LEXINC) -c -o $@ $<
 
+$(LEXBUILDDIR)/%.yy.o : $(LEXSRCDIR)/%.yy.cpp
+	@echo "Building lex..."
+	@echo " mkdir -p $(LEXBUILDDIR)"; mkdir -p $(LEXBUILDDIR)
+	@echo " $(CC) $(CFLAGS) $(LEXINC) -c -o $@ $<"; $(CC) $(CFLAGS) $(LEXINC) -c -o $@ $<
+
+$(LEXSRCDIR)/%.yy.cpp : $(LEXSRCDIR)/%.flex
+	@echo "Creating flex"
+	@echo " flex -o $@  $<"; flex -o $@  $<
+
 clean:
-	@echo " Cleaning..."
-	@echo " $(RM) -r $(LEXBUILDDIR) $(LEXTARGETDIR) $(LEXSRCDIR)/$(LEXTARGET).yy.cpp"; $(RM) -r $(LEXBUILDDIR) $(LEXTARGETDIR) $(LEXSRCDIR)/$(LEXTARGET).yy.cpp
+	@echo "Cleaning..."
+	@echo " rm -r $(LEXBUILDDIR) $(LEXTARGETDIR) $(LEXSRCDIR)/$(LEXTARGET).yy.cpp"; rm -r $(LEXBUILDDIR) bin $(LEXSRCDIR)/c_lexer.yy.cpp
 
 .PHONY: clean
