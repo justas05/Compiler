@@ -11,6 +11,8 @@ int lineCount = 1;
 int spaceCount = 1;
 int sourceLineCount = 1;
 
+int charLength = 0;
+
 std::string fileName;
 
 %}
@@ -49,53 +51,63 @@ ALL .
 
 {KEYWORD} {
     yylval = new std::string(yytext);
+    charLength = (int)yyleng;
     return Keyword;
 }
 
 {IDENTIFIER} {
     yylval = new std::string(yytext);
+    charLength = (int)yyleng;
     return Identifier;
 }
 
 {OPERATOR} {
     yylval = new std::string(yytext);
+    charLength = (int)yyleng;
     return Operator;
 }
 
 {FRACTIONALCONSTANT}{EXPONENTPART}?{FLOATINGSUFFIX}? {
     yylval = new std::string(yytext);
+    charLength = (int)yyleng;
     return Constant;
 }
 
 ([0-9]+){EXPONENTPART}{FLOATINGSUFFIX}? {
     yylval = new std::string(yytext);
+    charLength = (int)yyleng;
     return Constant;
 }
 
 {HEXCONSTANT}{INTEGERSUFFIX}? {
     yylval = new std::string(yytext);
+    charLength = (int)yyleng;
     return Constant;
 }
 
 {DECIMALCONSTANT}{INTEGERSUFFIX}? {
     yylval = new std::string(yytext);
+    charLength = (int)yyleng;
     return Constant;
 }
 
 {OCTALCONSTANT}{INTEGERSUFFIX}? {
     yylval = new std::string(yytext);
+    charLength = (int)yyleng;
     return Constant;
 }
 
 {CHARCONSTANT} {
     std::string tmp(yytext);
     yylval = new std::string(tmp.substr(1, tmp.length()-2));
+    charLength = (int)yyleng;
     return Constant;
 }
 
 {STRINGLITERAL} {
     std::string tmp(yytext);
     yylval = new std::string(tmp.substr(1, tmp.length()-2));
+    charLength = (int)yyleng;
     return StringLiteral;
 }
 
@@ -125,6 +137,7 @@ ALL .
 
 {ALL} {
     yylval = new std::string(yytext);
+    charLength = (int)yyleng;
     return Invalid;
 }
 

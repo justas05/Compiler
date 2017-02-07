@@ -65,7 +65,7 @@ int main() {
 
 		printf("%s,\n", toJson(classType, text, streamLine, sourceCol, sourceLine, fileName).c_str());
 
-		spaceCount += yyleng;
+		spaceCount += charLength;
 	}
 
 	printf("{}\n]\n");

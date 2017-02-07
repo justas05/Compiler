@@ -19,11 +19,11 @@ extern std::string *yylval;
 // flex function to run on input
 extern int yylex();
 
-extern size_t yyleng;
-
 extern int lineCount;
 extern int spaceCount;
 extern int sourceLineCount;
+
+extern int charLength;
 
 extern std::string fileName;
 
