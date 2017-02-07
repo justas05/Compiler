@@ -29,7 +29,7 @@ $(LEXSRCDIR)/%.yy.cpp : $(LEXSRCDIR)/%.flex
 
 clean:
 	@echo "Cleaning..."
-	@echo " rm -r $(LEXBUILDDIR) bin $(LEXSRCDIR)/c_lexer.yy.cpp2"; rm -r $(LEXBUILDDIR) bin $(LEXSRCDIR)/c_lexer.yy.cpp
+	@echo " rm -r $(LEXBUILDDIR) bin $(LEXSRCDIR)/c_lexer.yy.cpp"; rm -r $(LEXBUILDDIR) bin $(LEXSRCDIR)/c_lexer.yy.cpp
 
 .PHONY: clean
 
