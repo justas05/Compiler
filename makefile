@@ -1,31 +1,31 @@
 CC := g++ # this is the main compiler
-# CC := clange --analyze # and comment out the linker last line
+# CC := clang --analyze # and comment out the linker last line
 
 CFLAGS := -g -Wall -Wextra -Wpedantic -std=c++14
-INC := -Iinclude
 
-bin/c_lexer: build/main.o build/c_lexer.o build/c_lexer.yy.o
+LEXINC := -Ic_lexer/include
+LEXSRCDIR := c_lexer/src
+LEXBUILDDIR := c_lexer/build
+LEXTARGETDIR := bin
+LEXTARGET := c_lexer
+
+LEXSRC := $(shell find $(LEXSRCDIR) -type f -name "*.cpp")
+LEXOBJ := $(patsubst $(LEXSRCDIR)/%,$(LEXBUILDDIR)/%,$(LEXSRC:.cpp=.o))
+
+$(LEXTARGETDIR)/$(LEXTARGET) : $(LEXOBJ)
 	@echo " Linking..."
-	@mkdir -p bin
-	@echo " $(CC) $^ -o bin/c_lexer"; $(CC) $^ -o bin/c_lexer
+	@mkdir -p $(LEXTARGETDIR)
+	@echo " $(CC) $^ -o $(LEXTARGETDIR)/$(LEXTARGET)"; $(CC) $^ -o $(LEXTARGETDIR)/$(LEXTARGET)
 
-build/c_lexer.yy.o: src/c_lexer.yy.cpp
-	@mkdir -p build
-	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
+$(LEXSRCDIR)/$(LEXTARGET).yy.cpp : $(LEXSRCDIR)/$(LEXTARGET).flex
+		@echo " flex -o $@  $<"; flex -o $@  $<
 
-build/main.o: src/main.cpp
-	@mkdir -p build
-	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
-
-build/c_lexer.o: src/c_lexer.cpp
-	@mkdir -p build
-	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
-
-src/c_lexer.yy.cpp: src/c_lexer.flex
-	@echo " flex -o $@  $<"; flex -o $@  $<
+$(LEXBUILDDIR)/%.o : $(LEXSRCDIR)/%.cpp
+	@mkdir -p $(LEXBUILDDIR)
+	@echo " $(CC) $(CFLAGS) $(LEXINC) -c -o $@ $<"; $(CC) $(CFLAGS) $(LEXINC) -c -o $@ $<
 
 clean:
 	@echo " Cleaning..."
-	@echo " $(RM) -r build bin src/c_lexer.yy.cpp"; $(RM) -r build bin src/c_lexer.yy.cpp
+	@echo " $(RM) -r $(LEXBUILDDIR) $(LEXTARGETDIR) $(LEXSRCDIR)/$(LEXTARGET).yy.cpp"; $(RM) -r $(LEXBUILDDIR) $(LEXTARGETDIR) $(LEXSRCDIR)/$(LEXTARGET).yy.cpp
 
 .PHONY: clean
