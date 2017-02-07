@@ -1,0 +1,310 @@
+Grammar
+
+    0 $accept: ROOT $end
+
+    1 ROOT: EXPR
+
+    2 EXPR: TERM
+    3     | EXPR T_PLUS TERM
+    4     | EXPR T_MINUS TERM
+
+    5 TERM: FACTOR
+    6     | TERM T_TIMES FACTOR
+    7     | TERM T_DIVIDE FACTOR
+
+    8 FACTOR: T_NUMBER
+    9       | T_VARIABLE
+   10       | T_LBRACKET EXPR T_RBRACKET
+   11       | FUNCTION_NAME FACTOR
+
+   12 FUNCTION_NAME: T_LOG
+   13              | T_EXP
+   14              | T_SQRT
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256)
+T_TIMES (258) 6
+T_PLUS (259) 3
+T_DIVIDE (260) 7
+T_MINUS (261) 4
+T_LBRACKET (262) 10
+T_RBRACKET (263) 10
+T_LOG (264) 12
+T_EXP (265) 13
+T_SQRT (266) 14
+T_NUMBER (267) 8
+T_VARIABLE (268) 9
+
+
+Nonterminals, with rules where they appear
+
+$accept (14)
+    on left: 0
+ROOT (15)
+    on left: 1, on right: 0
+EXPR (16)
+    on left: 2 3 4, on right: 1 3 4 10
+TERM (17)
+    on left: 5 6 7, on right: 2 3 4 6 7
+FACTOR (18)
+    on left: 8 9 10 11, on right: 5 6 7 11
+FUNCTION_NAME (19)
+    on left: 12 13 14, on right: 11
+
+
+State 0
+
+    0 $accept: . ROOT $end
+
+    T_LBRACKET  shift, and go to state 1
+    T_LOG       shift, and go to state 2
+    T_EXP       shift, and go to state 3
+    T_SQRT      shift, and go to state 4
+    T_NUMBER    shift, and go to state 5
+    T_VARIABLE  shift, and go to state 6
+
+    ROOT           go to state 7
+    EXPR           go to state 8
+    TERM           go to state 9
+    FACTOR         go to state 10
+    FUNCTION_NAME  go to state 11
+
+
+State 1
+
+   10 FACTOR: T_LBRACKET . EXPR T_RBRACKET
+
+    T_LBRACKET  shift, and go to state 1
+    T_LOG       shift, and go to state 2
+    T_EXP       shift, and go to state 3
+    T_SQRT      shift, and go to state 4
+    T_NUMBER    shift, and go to state 5
+    T_VARIABLE  shift, and go to state 6
+
+    EXPR           go to state 12
+    TERM           go to state 9
+    FACTOR         go to state 10
+    FUNCTION_NAME  go to state 11
+
+
+State 2
+
+   12 FUNCTION_NAME: T_LOG .
+
+    $default  reduce using rule 12 (FUNCTION_NAME)
+
+
+State 3
+
+   13 FUNCTION_NAME: T_EXP .
+
+    $default  reduce using rule 13 (FUNCTION_NAME)
+
+
+State 4
+
+   14 FUNCTION_NAME: T_SQRT .
+
+    $default  reduce using rule 14 (FUNCTION_NAME)
+
+
+State 5
+
+    8 FACTOR: T_NUMBER .
+
+    $default  reduce using rule 8 (FACTOR)
+
+
+State 6
+
+    9 FACTOR: T_VARIABLE .
+
+    $default  reduce using rule 9 (FACTOR)
+
+
+State 7
+
+    0 $accept: ROOT . $end
+
+    $end  shift, and go to state 13
+
+
+State 8
+
+    1 ROOT: EXPR .
+    3 EXPR: EXPR . T_PLUS TERM
+    4     | EXPR . T_MINUS TERM
+
+    T_PLUS   shift, and go to state 14
+    T_MINUS  shift, and go to state 15
+
+    $default  reduce using rule 1 (ROOT)
+
+
+State 9
+
+    2 EXPR: TERM .
+    6 TERM: TERM . T_TIMES FACTOR
+    7     | TERM . T_DIVIDE FACTOR
+
+    T_TIMES   shift, and go to state 16
+    T_DIVIDE  shift, and go to state 17
+
+    $default  reduce using rule 2 (EXPR)
+
+
+State 10
+
+    5 TERM: FACTOR .
+
+    $default  reduce using rule 5 (TERM)
+
+
+State 11
+
+   11 FACTOR: FUNCTION_NAME . FACTOR
+
+    T_LBRACKET  shift, and go to state 1
+    T_LOG       shift, and go to state 2
+    T_EXP       shift, and go to state 3
+    T_SQRT      shift, and go to state 4
+    T_NUMBER    shift, and go to state 5
+    T_VARIABLE  shift, and go to state 6
+
+    FACTOR         go to state 18
+    FUNCTION_NAME  go to state 11
+
+
+State 12
+
+    3 EXPR: EXPR . T_PLUS TERM
+    4     | EXPR . T_MINUS TERM
+   10 FACTOR: T_LBRACKET EXPR . T_RBRACKET
+
+    T_PLUS      shift, and go to state 14
+    T_MINUS     shift, and go to state 15
+    T_RBRACKET  shift, and go to state 19
+
+
+State 13
+
+    0 $accept: ROOT $end .
+
+    $default  accept
+
+
+State 14
+
+    3 EXPR: EXPR T_PLUS . TERM
+
+    T_LBRACKET  shift, and go to state 1
+    T_LOG       shift, and go to state 2
+    T_EXP       shift, and go to state 3
+    T_SQRT      shift, and go to state 4
+    T_NUMBER    shift, and go to state 5
+    T_VARIABLE  shift, and go to state 6
+
+    TERM           go to state 20
+    FACTOR         go to state 10
+    FUNCTION_NAME  go to state 11
+
+
+State 15
+
+    4 EXPR: EXPR T_MINUS . TERM
+
+    T_LBRACKET  shift, and go to state 1
+    T_LOG       shift, and go to state 2
+    T_EXP       shift, and go to state 3
+    T_SQRT      shift, and go to state 4
+    T_NUMBER    shift, and go to state 5
+    T_VARIABLE  shift, and go to state 6
+
+    TERM           go to state 21
+    FACTOR         go to state 10
+    FUNCTION_NAME  go to state 11
+
+
+State 16
+
+    6 TERM: TERM T_TIMES . FACTOR
+
+    T_LBRACKET  shift, and go to state 1
+    T_LOG       shift, and go to state 2
+    T_EXP       shift, and go to state 3
+    T_SQRT      shift, and go to state 4
+    T_NUMBER    shift, and go to state 5
+    T_VARIABLE  shift, and go to state 6
+
+    FACTOR         go to state 22
+    FUNCTION_NAME  go to state 11
+
+
+State 17
+
+    7 TERM: TERM T_DIVIDE . FACTOR
+
+    T_LBRACKET  shift, and go to state 1
+    T_LOG       shift, and go to state 2
+    T_EXP       shift, and go to state 3
+    T_SQRT      shift, and go to state 4
+    T_NUMBER    shift, and go to state 5
+    T_VARIABLE  shift, and go to state 6
+
+    FACTOR         go to state 23
+    FUNCTION_NAME  go to state 11
+
+
+State 18
+
+   11 FACTOR: FUNCTION_NAME FACTOR .
+
+    $default  reduce using rule 11 (FACTOR)
+
+
+State 19
+
+   10 FACTOR: T_LBRACKET EXPR T_RBRACKET .
+
+    $default  reduce using rule 10 (FACTOR)
+
+
+State 20
+
+    3 EXPR: EXPR T_PLUS TERM .
+    6 TERM: TERM . T_TIMES FACTOR
+    7     | TERM . T_DIVIDE FACTOR
+
+    T_TIMES   shift, and go to state 16
+    T_DIVIDE  shift, and go to state 17
+
+    $default  reduce using rule 3 (EXPR)
+
+
+State 21
+
+    4 EXPR: EXPR T_MINUS TERM .
+    6 TERM: TERM . T_TIMES FACTOR
+    7     | TERM . T_DIVIDE FACTOR
+
+    T_TIMES   shift, and go to state 16
+    T_DIVIDE  shift, and go to state 17
+
+    $default  reduce using rule 4 (EXPR)
+
+
+State 22
+
+    6 TERM: TERM T_TIMES FACTOR .
+
+    $default  reduce using rule 6 (TERM)
+
+
+State 23
+
+    7 TERM: TERM T_DIVIDE FACTOR .
+
+    $default  reduce using rule 7 (TERM)
