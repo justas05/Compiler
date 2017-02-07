@@ -32,3 +32,5 @@ clean:
 	@echo " rm -r $(LEXBUILDDIR) $(LEXTARGETDIR) $(LEXSRCDIR)/$(LEXTARGET).yy.cpp"; rm -r $(LEXBUILDDIR) bin $(LEXSRCDIR)/c_lexer.yy.cpp
 
 .PHONY: clean
+
+.PRECIOUS: $(LEXSRCDIR)/%.yy.cpp
