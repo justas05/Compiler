@@ -14,7 +14,6 @@ int main() {
 		std::stringstream str_line, src_col, src_line;
 
 		TokenType type = (TokenType)yylex();
-
 		str_line << lineCount;
 		streamLine = str_line.str();
 
