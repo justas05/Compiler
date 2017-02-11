@@ -61,7 +61,7 @@ FUNCTION_NAME : T_LOG   { $$ = new std::string("log"); }
 const Expression *g_root; // Definition of variable (to match declaration earlier)
 
 const Expression *parseAST() {
-    g_root=0;
+    g_root = 0;
     yyparse();
     return g_root;
 }
