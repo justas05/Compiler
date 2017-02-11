@@ -8,29 +8,49 @@ extern "C" int fileno(FILE *stream);
 
 %}
 
+KEYWORD auto|double|int|struct|break|else|long|switch|case|enum|register|typedef|char|extern|return|union|const|float|short|unsigned|continue|for|signed|void|default|goto|sizeof|volatile|do|if|static|while
+
+IDENTIFIER [_a-zA-Z][_a-zA-Z0-9]*
+
+OPERATOR [.][.][.]|[<>][<>][=]|[-][-]|[+][+]|[|][|]|[#][#]|[&][&]|[+\-*\/<>=!%^|&][=]|[<][<]|[->][>]|[<>&=+\/\-*(){}\[\]\.,%~!?:|^;]
+
+FRACTIONALCONSTANT (([0-9]*\.[0-9]+)|([0-9]+\.))
+EXPONENTPART ([eE][+-]?[0-9]+)
+
+FLOATINGSUFFIX ([flFL])
+INTEGERSUFFIX ([uU][lL]|[lL][uU]|[uUlL])
+
+DECIMALCONSTANT ([1-9][0-9]*)
+OCTALCONSTANT ([0][0-7]*)
+HEXCONSTANT ([0][xX][0-9A-Fa-f]+)
+
+CHARCONSTANT ('(([\\]['])|([^']))+')
+
+STRINGLITERAL ["](([\\]["])|([^"]))*["]
+
+WHITESPACE [ \t\r\n]+
+
+PREPROC [#][ ][0-9]+[ ]{STRINGLITERAL}[ 0-9]*
+
+ALL .
+
 %%
-[*]             { return T_TIMES; }
-[+]             { return T_PLUS; }
-[/]             { return T_DIVIDE; }
-[-]             { return T_MINUS; }
 
-[(]             { return T_LBRACKET; }
-[)]             { return T_RBRACKET; }
+{KEYWORD}   { yylval.string = new std::string(yytext); return T_KEYWORD; }
 
-log             { return T_LOG;   }
-exp             { return T_EXP; }
-sqrt            { return T_SQRT; }
+{IDENTIFIER}    { yylval.string = new std::string(yytext); return T_IDENTIFIER; }
 
-[-]?[0-9]+([.][0-9]*)? { yylval.number=strtod(yytext, 0); return T_NUMBER; }
-[a-z]+          { yylval.string=new std::string(yytext); return T_VARIABLE; }
+{OPERATOR}  { yylval.string = new std::string(yytext); return T_OPERATOR; }
 
-[ \t\r\n]+		{;}
+({HEXCONSTANT}|{OCTALCONSTANT}|{DECIMALCONSTANT})|{INTEGERSUFFIX}?	{ yylval.number=strtod(yytext, 0); return T_CONSTANT; }
 
-.               { fprintf(stderr, "Invalid token\n"); exit(1); }
+{WHITESPACE}		{ ; }
+
+.                   { fprintf(stderr, "Invalid token\n"); exit(1); }
+
 %%
 
-void yyerror (char const *s)
-{
-  fprintf (stderr, "Parse error : %s\n", s);
-  exit(1);
+void yyerror(char const *s) {
+     fprintf (stderr, "Parse error : %s\n", s);
+     exit(1);
 }
