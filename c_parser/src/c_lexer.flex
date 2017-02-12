@@ -42,10 +42,6 @@ ALL .
 
 ;		{ return T_SC; }
 
-{OPERATOR}  { yylval.string = new std::string(yytext); return T_OPERATOR; }
-
-({HEXCONSTANT}|{OCTALCONSTANT}|{DECIMALCONSTANT})|{INTEGERSUFFIX}?	{ yylval.number=strtod(yytext, 0); return T_CONSTANT; }
-
 {WHITESPACE}		{ ; }
 
 .                   { fprintf(stderr, "Invalid token\n"); exit(1); }
