@@ -15,32 +15,28 @@ void yyerror(const char *);
 // AST node.
 %union{
     const Expression *expr;
-    double number;
+    //   double number;
     std::string *string;
 }
-
-%token T_KEYWORD T_IDENTIFIER T_CONSTANT T_OPERATOR T_LCBRACKET T_RCBRACKET
-
-%type <expr> STMNT_LIST STMNT COMP_STMNT EXPR_STMNT SLCT_STMNT ITR_STMNT JMP_STMNT
-%type <number> T_CONSTANT
-%type <string> T_KEYWORD T_IDENTIFIER T_OPERATOR
-
+			
+%token	T_KEYWORD T_IDENTIFIER T_SC //T_CONSTANT T_OPERATOR T_LCBRACKET T_RCBRACKET
+			
+%type <expr> STMNT_LIST STMNT DCLRTN // COMP_STMNT EXPR_STMNT SLCT_STMNT ITR_STMNT JMP_STMNT
+//			%type <number> //	T_CONSTANT
+%type <string> T_KEYWORD T_IDENTIFIER //T_OPERATOR
+			
 %start ROOT
-
+			
 %%
 
 ROOT : STMNT_LIST { g_root = $1; }
 
-STMNT_LIST : STMNT
-           | STMNT_LIST STMNT
+STMNT_LIST : STMNT { $$ = $1; }
+	| 	STMNT_LIST STMNT { $$ = $2; }
 
-STMNT : COMP_STMNT
-      | EXPR_STMNT
-      | SLCT_STMNT
-      | ITR_STMNT
-      | JMP_STMNT
+STMNT : DCLRTN { $$ = $1; }
 
-COMP_STMNT : STMNT_LIST
+DCLRTN : T_KEYWORD T_IDENTIFIER T_SC { $$ = new Declaration(*$2); }
 
 %%
 

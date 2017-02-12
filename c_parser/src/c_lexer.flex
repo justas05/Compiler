@@ -36,9 +36,11 @@ ALL .
 
 %%
 
-{KEYWORD}   { yylval.string = new std::string(yytext); return T_KEYWORD; }
+{KEYWORD}	{ yylval.string = new std::string(yytext); return T_KEYWORD; }
 
-{IDENTIFIER}    { yylval.string = new std::string(yytext); return T_IDENTIFIER; }
+{IDENTIFIER}	{ yylval.string = new std::string(yytext); return T_IDENTIFIER; }
+
+;		{ return T_SC; }
 
 {OPERATOR}  { yylval.string = new std::string(yytext); return T_OPERATOR; }
 

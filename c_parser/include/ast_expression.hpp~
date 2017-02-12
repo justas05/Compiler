@@ -1,0 +1,11 @@
+#ifndef AST_EXPRESSION_HPP
+#define AST_EXPRESSION_HPP
+
+class Expression {
+public:
+    virtual ~Expression() {}
+
+    virtual void print() const = 0;
+};
+
+#endif

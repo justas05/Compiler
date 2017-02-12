@@ -1,5 +1,11 @@
 #include "ast.hpp"
 
+#include <iostream>
+
 int main(int argc, char *argv[]) {
-	return 0;
+    
+    const Expression *ast = parseAST();
+    ast->print();
+    
+    return 0;
 }
