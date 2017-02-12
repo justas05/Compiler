@@ -6,3 +6,5 @@ c_parser/build/
 *.tab.hpp
 *.o
 *.output
+#*
+.#*
