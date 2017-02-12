@@ -20,9 +20,9 @@ void yyerror(const char *);
     std::string *string;
 }
 
-%token T_KEYWORD T_IDENTIFIER T_CONSTANT T_OPERATOR
+%token T_KEYWORD T_IDENTIFIER T_CONSTANT T_OPERATOR T_LCBRACKET T_RCBRACKET
 
-%type <expr> EXPR TERM FACTOR
+%type <expr> STMNT_LIST STMNT COMP_STMNT EXPR_STMNT SLCT_STMNT ITR_STMNT JMP_STMNT
 %type <number> T_CONSTANT
 %type <string> T_KEYWORD T_IDENTIFIER T_OPERATOR
 
@@ -30,31 +30,18 @@ void yyerror(const char *);
 
 %%
 
-ROOT : EXPR { g_root = $1; }
+ROOT : STMNT_LIST { g_root = $1; }
 
-EXPR : TERM                 { $$ = $1; }
-     | EXPR T_PLUS TERM     { $$ = new AddOperator($1, $3); }
-     | EXPR T_MINUS TERM    { $$ = new SubOperator($1, $3); }
+STMNT_LIST : STMNT
+           | STMNT_LIST STMNT
 
-TERM : FACTOR               { $$ = $1; }
-     | TERM T_TIMES FACTOR  { $$ = new MulOperator($1, $3); }
-     | TERM T_DIVIDE FACTOR { $$ = new DivOperator($1, $3); }
+STMNT : COMP_STMNT
+      | EXPR_STMNT
+      | SLCT_STMNT
+      | ITR_STMNT
+      | JMP_STMNT
 
-FACTOR : T_NUMBER           { $$ = new Number( $1 ); }
-       | T_VARIABLE         { $$ = new Variable( *$1 ); }
-       | T_LBRACKET EXPR T_RBRACKET { $$ = $2; }
-       | FUNCTION_NAME FACTOR {
-          if(*$1 == "log") {
-              $$ = new LogFunction($2);
-          } else if(*$1 == "exp") {
-              $$ = new ExpFunction($2);
-          } else {
-              $$ = new SqrtFunction($2);
-       }}
-
-FUNCTION_NAME : T_LOG   { $$ = new std::string("log"); }
-              | T_EXP   { $$ = new std::string("exp"); }
-              | T_SQRT  { $$ = new std::string("sqrt"); }
+COMP_STMNT : STMNT_LIST
 
 %%
 

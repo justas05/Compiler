@@ -17,7 +17,7 @@ OPERATOR [.][.][.]|[<>][<>][=]|[-][-]|[+][+]|[|][|]|[#][#]|[&][&]|[+\-*\/<>=!%^|
 FRACTIONALCONSTANT (([0-9]*\.[0-9]+)|([0-9]+\.))
 EXPONENTPART ([eE][+-]?[0-9]+)
 
-FLOATINGSUFFIX ([flFL])
+FLOATINGSUFFI X ([flFL])
 INTEGERSUFFIX ([uU][lL]|[lL][uU]|[uUlL])
 
 DECIMALCONSTANT ([1-9][0-9]*)

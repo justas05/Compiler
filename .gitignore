@@ -5,3 +5,4 @@ c_parser/build/
 *.tab.cpp
 *.tab.hpp
 *.o
+*.output
