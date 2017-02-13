@@ -1,9 +1,12 @@
 #ifndef AST_EXPRESSION_HPP
 #define AST_EXPRESSION_HPP
 
-class Expression {
+#include <string>
+#include <iostream>
+
+class ast_base {
 public:
-    virtual ~Expression() {}
+    virtual ~ast_base() {}
 
     virtual void print() const = 0;
 };

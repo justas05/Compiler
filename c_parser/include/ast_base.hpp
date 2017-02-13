@@ -4,9 +4,9 @@
 #include <string>
 #include <iostream>
 
-class Expression {
+class ast_Base {
 public:
-    virtual ~Expression() {}
+    virtual ~ast_Base() {}
 
     virtual void print() const = 0;
 };

@@ -1,7 +1,7 @@
 %code requires{
 
 #include "ast.hpp"
-extern const Expression *g_root; // A way of getting the AST out
+extern const ast_Base *g_root; // A way of getting the AST out
 
 //! This is to fix problems when generating C++
 // We are declaring the functions provided by Flex, so
@@ -14,7 +14,7 @@ void yyerror(const char *);
 // Represents the value associated with any kind of
 // AST node.
 %union{
-    const Expression *expr;
+    const ast_Base *expr;
     //   double number;
     std::string *string;
 }
@@ -36,13 +36,13 @@ STMNT_LIST : STMNT { $$ = $1; }
 
 STMNT : DCLRTN { $$ = $1; }
 
-DCLRTN : T_KEYWORD T_IDENTIFIER T_SC { $$ = new Declaration(*$2); }
+DCLRTN : T_KEYWORD T_IDENTIFIER T_SC { $$ = new ast_Declaration(*$2); }
 
 %%
 
-const Expression *g_root; // Definition of variable (to match declaration earlier)
+const ast_Base *g_root; // Definition of variable (to match declaration earlier)
 
-const Expression *parseAST() {
+const ast_Base *parseAST() {
     g_root = 0;
     yyparse();
     return g_root;

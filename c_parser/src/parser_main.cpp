@@ -4,7 +4,7 @@
 
 int main(int argc, char *argv[]) {
     
-    const Expression *ast = parseAST();
+    const ast_Base *ast = parseAST();
     ast->print();
 
     std::cout << std::endl;
