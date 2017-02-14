@@ -3,7 +3,8 @@
 
 #include "ast_base.hpp"
 #include "ast_declaration.hpp"
+#include "ast_top.hpp"
 
-extern const ast_Base *parseAST();
+ast_Top *parseAST();
 
 #endif
