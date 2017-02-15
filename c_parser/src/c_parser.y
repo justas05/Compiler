@@ -19,11 +19,11 @@ void yyerror(const char *);
     std::string *string;
 }
 			
-%token T_KEYWORD T_IDENTIFIER T_SC //T_CONSTANT T_OPERATOR T_LCBRACKET T_RCBRACKET
+%token T_TYPE_SPEC T_TYPE_QUAL T_STRG_SPEC T_IDENTIFIER T_SC T_CMA T_EQ T_INT_CONST
 			
-%type <stmnt> STMNT DCLRTN STMNT_LIST  // COMP_STMNT STMNT_LIST_STMNT SLCT_STMNT ITR_STMNT JMP_STMNT
+%type <stmnt> STMNT DCLRTN DCLRTN_SPEC DCLRTN_SPEC_T INIT_DCLRTR INIT_DCLRTR_LIST DCLRTR INITIALIZER STMNT_LIST  // COMP_STMNT STMNT_LIST_STMNT SLCT_STMNT ITR_STMNT JMP_STMNT
 //			%type <number> //	T_CONSTANT
-%type <string> T_KEYWORD T_IDENTIFIER //T_OPERATOR
+%type <string> T_IDENTIFIER //T_OPERATOR
 			
 %start ROOT
 			
@@ -31,12 +31,24 @@ void yyerror(const char *);
 
 ROOT : STMNT_LIST { ; }
 
-STMNT_LIST : STMNT { g_root->push_back($1); }
-	   | STMNT_LIST STMNT { g_root->push_back($2); }
+STMNT_LIST :    STMNT { ; }
+	| 	STMNT_LIST STMNT { ; }
+	|	DCLRTN { ; }
 
-STMNT : DCLRTN { $$ = $1; }
+STMNT :         DCLRTN { ; }
 
-DCLRTN : T_KEYWORD T_IDENTIFIER T_SC { $$ = new ast_Declaration(*$2); }
+DCLRTN :        DCLRTN_SPEC INIT_DCLRTR_LIST T_SC { $$ = $2; }
+DCLRTN_SPEC :   DCLRTN_SPEC_T { ; }
+	|	DCLRTN_SPEC_T DCLRTN_SPEC { ; }
+DCLRTN_SPEC_T : T_TYPE_SPEC { ; }
+	|	T_TYPE_QUAL { ; }
+	|	T_STRG_SPEC { ; }
+INIT_DCLRTR_LIST : INIT_DCLRTR { g_root->push($1); }
+	|       INIT_DCLRTR_LIST T_CMA INIT_DCLRTR { g_root->push($3); }
+INIT_DCLRTR :   DCLRTR { ; }
+	|	DCLRTR T_EQ INITIALIZER { ; }
+DCLRTR :        T_IDENTIFIER {$$ = new ast_Declaration(*$1); }
+INITIALIZER :   T_INT_CONST { ; }
 
 %%
 

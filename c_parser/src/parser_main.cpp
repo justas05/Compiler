@@ -5,7 +5,7 @@
 int main(int argc, char *argv[]) {
     ast_Top *ast = parseAST();
 
-    ast->print_vec();
+    ast->print();
 
     std::cout << std::endl;
     

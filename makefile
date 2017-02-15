@@ -64,8 +64,8 @@ $(PARSRCDIR)/c_parser.tab.cpp $(PARSRCDIR)/c_parser.tab.hpp : $(PARSRCDIR)/c_par
 
 clean :
 	@echo "Cleaning..."
-	@echo " rm -r $(LEXBUILDDIR) bin $(LEXSRCDIR)/c_lexer.yy.cpp"; rm -r bin $(LEXBUILDDIR) $(LEXSRCDIR)/c_lexer.yy.cpp $(PARBUILDDIR) $(PARSRCDIR)/c_lexer.yy.cpp $(PARSRCDIR)/c_parser.tab.cpp $(PARSRCDIR)/c_parser.tab.hpp
+	@echo " rm -r $(LEXBUILDDIR) bin $(LEXSRCDIR)/c_lexer.yy.cpp"; rm -r bin $(LEXBUILDDIR) $(LEXSRCDIR)/c_lexer.yy.cpp $(PARBUILDDIR) $(PARSRCDIR)/c_lexer.yy.cpp $(PARSRCDIR)/c_parser.tab.cpp $(PARSRCDIR)/c_parser.tab.hpp $(PARSRCDIR)/c_parser.output
 
 .PHONY : clean
 
-.PRECIOUS : $(LEXSRCDIR)/%.yy.cpp
+.PRECIOUS : $(LEXSRCDIR)/%.yy.cpp $(PARSRCDIR)/%.yy.cpp $(PARSRCDIR)/%.tab.cpp $(PARSRCDIR)/%.tab.hpp
