@@ -1,0 +1,9 @@
+<Variable id="a" />
+<Variable id="b" />
+<Variable id="c" />
+<Variable id="yann" />
+<Variable id="is" />
+<Variable id="the" />
+<Variable id="best" />
+<Variable id="hello" />
+

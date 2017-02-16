@@ -5,15 +5,21 @@
 
 class ast_Declaration : public ast_Base {
 private:
-    const std::string id;
-    
-protected:
     
 public:
-    ast_Declaration(const std::string _id) : id(_id) {}
-    virtual void print() const override {
-	std::cout << id;
-    }
+    virtual void print() const override = 0;
+};
+
+class ast_VariableDeclaration : public ast_Declartaion {
+private:
+    const std::string id;
+    const std::string type;
+    
+public:
+    ast_VariableDeclaration(const std::string& _id, const std::string& _type) :
+	id(_id), type(_type) {}
+
+    virtual void print() const override {}
 };
 
 #endif

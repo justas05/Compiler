@@ -42,9 +42,9 @@ const|volatile						      { return T_TYPE_QUAL; }
 
 {IDENTIFIER}	{ yylval.string = new std::string(yytext); return T_IDENTIFIER; }
 
-;		{ return T_SC; }
-=		{ return T_EQ; }
-,		{ return T_CMA; }
+[;]		{ return T_SC; }
+[=]		{ return T_EQ; }
+[,]		{ return T_CMA; }
 [(]		{ return T_LRB; }
 [)]		{ return T_RRB; }
 [{]               { return T_LCB; }
