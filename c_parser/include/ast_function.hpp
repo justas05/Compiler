@@ -10,12 +10,15 @@ class ast_Function : public ast_Base {
 private:
     std::string id;
     const ast_Base* param;
+    const ast_Base* comp_statement;
 public:
-    ast_Function(const std::string& _id, const ast_Base* _param) : id(_id), param(_param) {}
+    ast_Function(const std::string& _id, const ast_Base* _param, const ast_Base* _comp_statement) :
+	id(_id), param(_param), comp_statement(_comp_statement) {}
 
     virtual void print() const {
 	std::cout << "<Function id=\"" << id << "\">" << std::endl;
         param->print();
+	comp_statement->print();
 	std::cout << "</Function>" << std::endl;
     }
 

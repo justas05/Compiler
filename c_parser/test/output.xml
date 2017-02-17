@@ -10,10 +10,28 @@
 <Variable id="d" />
 <Variable id="hello" />
 <Variable id="asd" />
+<Variable id="a" />
 <Function id="f">
 <Parameter id="i" />
 <Parameter id="b" />
 <Parameter id="c" />
 <Parameter id="d" />
+<Scope>
+<Variable id="a" />
+</Scope>
+</Function>
+<Variable id="a" />
+<Variable id="b" />
+<Variable id="c" />
+<Variable id="c" />
+<Variable id="d" />
+<Function id="func">
+<Parameter id="asd" />
+<Parameter id="b" />
+<Scope>
+<Variable id="a" />
+<Variable id="b" />
+<Variable id="c" />
+</Scope>
 </Function>
 </Program>
