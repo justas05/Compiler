@@ -26,7 +26,7 @@ void yyerror(const char *);
 %type <stmnt> EXT_DEF EXT_DECLARATION
 %type <stmnt> FUNC_DEF PARAMETER_LIST PARAMETER PARAM_DECLARATOR
 %type <stmnt> DECLARATION_LIST DECLARATION DECLARATION_SPEC DECLARATION_SPEC_T INIT_DECLARATOR INIT_DECLARATOR_LIST DECLARATOR INITIALIZER
-%type <stmnt> COMPOUND_STATEMENT COMPOUND_STATEMENT_2
+%type <stmnt> STATEMENT_LIST STATEMENT COMPOUND_STATEMENT COMPOUND_STATEMENT_2
 //                      %type <number> //       T_CONSTANT
 %type <string> T_IDENTIFIER //T_OPERATOR
                         
@@ -96,12 +96,23 @@ INITIALIZER : T_INT_CONST { ; }
 
 // STATEMENT
 
+STATEMENT_LIST : STATEMENT { $$ = new ast_StatementList($1); }
+	|	STATEMENT_LIST STATEMENT { $$->push($2); }
+;
+
+STATEMENT : COMPOUND_STATEMENT { $$ = $1; }
+;
+
 COMPOUND_STATEMENT : T_LCB COMPOUND_STATEMENT_2 { $$ = $2; }
 ;
 
-COMPOUND_STATEMENT_2 : T_RCB { $$ = new ast_CompoundStatement(); }
+COMPOUND_STATEMENT_2 : T_RCB { $$ = new ast_CompoundStatement; }
 	|	DECLARATION_LIST T_RCB { $$ = new ast_CompoundStatement($1); }
+|	DECLARATION_LIST STATEMENT_LIST T_RCB { $$ = new ast_CompoundStatement($1, $2); }
+	|	STATEMENT_LIST T_RCB { $$ = new ast_CompoundStatement($1); }
 ;
+
+// Expressions
 
 %%
 
