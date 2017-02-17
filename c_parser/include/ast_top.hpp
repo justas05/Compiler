@@ -12,10 +12,11 @@ public:
 	    ast_vec[i]->print();
 	}
     }
-
+ 
     void push(const ast_Base *stmnt) {
 	ast_vec.push_back(stmnt);
     }
+   
 private:
     std::vector<const ast_Base *> ast_vec;
 };

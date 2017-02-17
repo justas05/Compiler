@@ -15,4 +15,4 @@ fi
 echo "========================================="
 echo " Testing lexer"
 
-cat c_parser/test/test_parser.c | ./bin/c_parser | tee c_lexer/test/output.txt
+cat c_parser/test/test_parser.c | ./bin/c_parser | tee c_parser/test/output.xml

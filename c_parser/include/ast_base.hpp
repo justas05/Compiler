@@ -10,6 +10,7 @@ public:
     virtual ~ast_Base() {}
 
     virtual void print() const = 0;
+    virtual void push(const ast_Base* var) const = 0;
 };
 
 #endif

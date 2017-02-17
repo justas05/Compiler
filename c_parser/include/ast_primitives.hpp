@@ -11,9 +11,11 @@ private:
 public:
     ast_Variable(const std::string& _id) : id(_id) {}
 
-    virtual void print() const override {
+    virtual void print() const {
         std::cout << "<Variable id=\"" << id << "\" />" << std::endl;
     }
+
+    virtual void push(const ast_Base* var) const {}
 };
 
 #endif

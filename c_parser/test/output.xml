@@ -1,3 +1,5 @@
+<?xml version="1.0"?>
+<Program>
 <Variable id="a" />
 <Variable id="b" />
 <Variable id="c" />
@@ -5,5 +7,7 @@
 <Variable id="is" />
 <Variable id="the" />
 <Variable id="best" />
+<Variable id="d" />
 <Variable id="hello" />
-
+<Variable id="asd" />
+</Program>
