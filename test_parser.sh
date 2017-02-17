@@ -25,9 +25,9 @@ for i in c_parser/test/in/*.c; do
     	echo ""
     	echo "Input file : ${i}"
 	BASENAME=$(basename $i .c);
-    	cat $i | ./bin/c_parser > c_parser/test/out/$BASENAME.stdout.txt  2> c_parser/test/out/$BASENAME.stderr.txt
+    	cat $i | ./bin/c_parser > c_parser/test/out/$BASENAME.stdout.xml  2> c_parser/test/out/$BASENAME.stderr.txt
 
-    	diff <(cat c_parser/test/ref/$BASENAME.stdout.txt) <(cat c_parser/test/out/$BASENAME.stdout.txt) > c_parser/test/out/$BASENAME.diff.txt
+    	diff <(cat c_parser/test/ref/$BASENAME.stdout.xml) <(cat c_parser/test/out/$BASENAME.stdout.xml) > c_parser/test/out/$BASENAME.diff.txt
     	if [[ "$?" -ne "0" ]]; then
         	echo -e "\nERROR"
     	else
