@@ -24,8 +24,9 @@ void yyerror(const char *);
 %token T_INT_CONST
                         
 %type <stmnt> EXT_DEF EXT_DECLARATION EXT_DECLARATION_2
-%type <stmnt> FUNC_DEF
+%type <stmnt> FUNC_DEF PARAMETER_LIST PARAMETER PARAM_DECLARATOR
 %type <stmnt> DECLARATION DECLARATION_SPEC DECLARATION_SPEC_T INIT_DECLARATOR INIT_DECLARATOR_LIST DECLARATOR INITIALIZER
+%type <stmnt> COMPOUND_STATEMENT
 //                      %type <number> //       T_CONSTANT
 %type <string> T_IDENTIFIER //T_OPERATOR
                         
@@ -34,43 +35,67 @@ void yyerror(const char *);
 %%
 
 ROOT : EXT_DEF { ; }
+;
 
 // EXTERNAL DEFINITION
 
 EXT_DEF : EXT_DECLARATION { g_root->push($1); }
-	|       EXT_DEF EXT_DECLARATION { g_root->push($2); }
+        |       EXT_DEF EXT_DECLARATION { g_root->push($2); }
+;
 
 EXT_DECLARATION : DECLARATION_SPEC EXT_DECLARATION_2 { $$ = $2; }
+;
 
 EXT_DECLARATION_2 : DECLARATION { $$ = $1; }
-	|	FUNC_DEF { ; }
+        |       FUNC_DEF { ; }
+;
 
 // FUNCTION DEFINITION
 
-FUNC_DEF : T_IDENTIFIER T_LRB T_RRB T_LCB T_RCB { ; }
+FUNC_DEF : T_IDENTIFIER T_LRB PARAMETER_LIST T_RRB COMPOUND_STATEMENT { printf("Function Def\n"); }
+;
+
+PARAMETER_LIST: PARAMETER { $$ = new ast_Function($1); }
+	|	PARAMETER_LIST T_CMA PARAMETER { $$->push($3); }
+;
+
+PARAMETER: DECLARATION_SPEC PARAM_DECLARATOR { $$ = $2; }
+;
+
+PARAM_DECLARATOR: T_IDENTIFIER { $$ = new ast_Parameter(*$1);}
 
 // DECLARATION
 
 DECLARATION : INIT_DECLARATOR_LIST T_SC { $$ = $1; }
+;
 
 DECLARATION_SPEC : DECLARATION_SPEC_T { ; }
 	|	DECLARATION_SPEC_T DECLARATION_SPEC { ; }
+;
 
 DECLARATION_SPEC_T : T_TYPE_SPEC { ; }
 	|	T_TYPE_QUAL { ; }
 	|	T_STRG_SPEC { ; }
+;
 
 INIT_DECLARATOR_LIST : INIT_DECLARATOR { $$ = new ast_VariableDeclaration($1); }
 	|       INIT_DECLARATOR_LIST T_CMA INIT_DECLARATOR { $$->push($3); }
+;
 
 INIT_DECLARATOR : DECLARATOR { ; }
 	|	DECLARATOR T_EQ INITIALIZER { ; }
+;
 
 DECLARATOR : T_IDENTIFIER {$$ = new ast_Variable(*$1); }
+;
 
 INITIALIZER : T_INT_CONST { ; }
+;
 
-// STATEMENTS
+// STATEMENT
+
+COMPOUND_STATEMENT: T_SC { ; }
+;
 
 %%
 

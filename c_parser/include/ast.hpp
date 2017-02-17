@@ -2,6 +2,7 @@
 #define AST_HPP
 
 #include "ast_base.hpp"
+#include "ast_function.hpp"
 #include "ast_declaration.hpp"
 #include "ast_primitives.hpp"
 #include "ast_top.hpp"

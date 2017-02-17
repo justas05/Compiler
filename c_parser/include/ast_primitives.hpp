@@ -18,4 +18,17 @@ public:
     virtual void push(const ast_Base* var) const {}
 };
 
+class ast_Parameter : public ast_Base {
+private:
+    std::string id;
+public:
+    ast_Parameter(const std::string& _id) : id(_id) {}
+
+    virtual void print() const {
+        std::cout << "<Parameter id=\"" << id << "\" />" << std::endl;
+    }
+
+    virtual void push(const ast_Base* var) const {}
+};
+
 #endif

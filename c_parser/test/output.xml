@@ -1,3 +1,4 @@
+Function Def
 <?xml version="1.0"?>
 <Program>
 <Variable id="a" />
@@ -10,4 +11,3 @@
 <Variable id="d" />
 <Variable id="hello" />
 <Variable id="asd" />
-</Program>
