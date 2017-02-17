@@ -33,6 +33,8 @@ private:
     mutable std::vector<const ast_Base*> param_list;
 
 public:
+    ast_ParamList() {}
+    
     ast_ParamList(const ast_Base* param) {
 	param_list.push_back(param);
     }

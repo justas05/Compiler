@@ -52,7 +52,8 @@ EXT_DECLARATION : DECLARATION { $$ = $1; }
 FUNC_DEF : DECLARATION_SPEC T_IDENTIFIER T_LRB PARAMETER_LIST T_RRB COMPOUND_STATEMENT { $$ = new ast_Function(*$2, $4, $6); }
 ;
 
-PARAMETER_LIST : PARAMETER { $$ = new ast_ParamList($1); }
+PARAMETER_LIST : { $$ = new ast_ParamList(); }
+	| 	PARAMETER { $$ = new ast_ParamList($1); }
 	|	PARAMETER_LIST T_CMA PARAMETER { $$->push($3); }
 ;
 
