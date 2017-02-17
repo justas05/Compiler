@@ -7,15 +7,16 @@
 
 class ast_Top {
 public:
-    void print_vec() {
+    void print() {
 	for(size_t i = 0; i < ast_vec.size(); ++i) {
 	    ast_vec[i]->print();
 	}
     }
-
-    void push_back(const ast_Base *stmnt) {
+ 
+    void push(const ast_Base *stmnt) {
 	ast_vec.push_back(stmnt);
     }
+   
 private:
     std::vector<const ast_Base *> ast_vec;
 };

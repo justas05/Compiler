@@ -5,9 +5,11 @@
 int main(int argc, char *argv[]) {
     ast_Top *ast = parseAST();
 
-    ast->print_vec();
+    std::cout << "<?xml version=\"1.0\"?>" << std::endl << "<Program>" << std::endl;
 
-    std::cout << std::endl;
+    ast->print();
+
+    std::cout << "</Program>" << std::endl;
     
     return 0;
 }
