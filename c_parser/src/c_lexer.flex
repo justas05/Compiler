@@ -44,11 +44,15 @@ const|volatile						      { return T_TYPE_QUAL; }
 
 [;]		{ return T_SC; }
 [=]		{ return T_EQ; }
+[=][=]		{ return T_EQUALITY; }
 [,]		{ return T_CMA; }
 [(]		{ return T_LRB; }
 [)]		{ return T_RRB; }
-[{]               { return T_LCB; }
-[}]               { return T_RCB; }
+[{]             { return T_LCB; }
+[}]             { return T_RCB; }
+
+if		{ return T_IF; }
+else		{ return T_ELSE; }
 
 ({HEXCONSTANT}|{OCTALCONSTANT}|{DECIMALCONSTANT}){INTEGERSUFFIX}?	{ return T_INT_CONST; }
 

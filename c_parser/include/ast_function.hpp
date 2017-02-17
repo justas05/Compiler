@@ -22,7 +22,10 @@ public:
 	std::cout << "</Function>" << std::endl;
     }
 
-    virtual void push(const ast_Base* var) const {}
+    virtual void push(const ast_Base* var) const {
+        std::cerr << "Error: Can't call this function on this class" << std::endl;
+	(void)var;
+    }
 };
 
 class ast_ParamList : public ast_Base {
@@ -30,6 +33,8 @@ private:
     mutable std::vector<const ast_Base*> param_list;
 
 public:
+    ast_ParamList() {}
+    
     ast_ParamList(const ast_Base* param) {
 	param_list.push_back(param);
     }

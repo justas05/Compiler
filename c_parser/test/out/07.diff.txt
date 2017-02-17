@@ -1,0 +1,7 @@
+1,6d0
+< <?xml version="1.0"?>
+< <Program>
+< <Scope>
+< <Variable id="z" />
+< </Scope>
+< </Program>

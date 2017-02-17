@@ -15,7 +15,10 @@ public:
         std::cout << "<Variable id=\"" << id << "\" />" << std::endl;
     }
 
-    virtual void push(const ast_Base* var) const {}
+    virtual void push(const ast_Base* var) const {
+	std::cerr << "Error: Can't call this function on this class" << std::endl;
+	(void)var;
+    }
 };
 
 class ast_Parameter : public ast_Base {
@@ -28,7 +31,10 @@ public:
         std::cout << "<Parameter id=\"" << id << "\" />" << std::endl;
     }
 
-    virtual void push(const ast_Base* var) const {}
+    virtual void push(const ast_Base* var) const {
+        std::cerr << "Error: Can't call this function on this class" << std::endl;
+	(void)var;
+    }
 };
 
 #endif
