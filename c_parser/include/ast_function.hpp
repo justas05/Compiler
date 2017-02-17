@@ -8,23 +8,37 @@
 
 class ast_Function : public ast_Base {
 private:
-    std::string name;
-    mutable std::vector<const ast_Base*> param_list;
+    std::string id;
+    const ast_Base* param;
 public:
-    ast_Function(const std::string& _name) : name(_name) {}
-    ast_Function(const ast_Base* param) {
+    ast_Function(const std::string& _id, const ast_Base* _param) : id(_id), param(_param) {}
+
+    virtual void print() const {
+	std::cout << "<Function id=\"" << id << "\">" << std::endl;
+        param->print();
+	std::cout << "</Function>" << std::endl;
+    }
+
+    virtual void push(const ast_Base* var) const {}
+};
+
+class ast_ParamList : public ast_Base {
+private:
+    mutable std::vector<const ast_Base*> param_list;
+
+public:
+    ast_ParamList(const ast_Base* param) {
 	param_list.push_back(param);
     }
 
     virtual void print() const {
-	std::cout << "<Function id=\"" << name << "\">" << std::endl;
 	for(size_t i = 0; i < param_list.size(); ++i) {
 	    param_list[i]->print();
 	}
     }
 
-    virtual void push(const ast_Base* var) const {
-	param_list.push_back(var);
+    virtual void push(const ast_Base* _var) const {
+	param_list.push_back(_var);
     }
 };
 

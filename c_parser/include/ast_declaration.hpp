@@ -29,8 +29,8 @@ public:
 	}
     }
 
-    virtual void push(const ast_Base* var) const {
-	var_list.push_back(var);
+    virtual void push(const ast_Base* _var) const {
+	var_list.push_back(_var);
     }
 };
 

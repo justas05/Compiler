@@ -1,4 +1,3 @@
-Function Def
 <?xml version="1.0"?>
 <Program>
 <Variable id="a" />
@@ -11,3 +10,10 @@ Function Def
 <Variable id="d" />
 <Variable id="hello" />
 <Variable id="asd" />
+<Function id="f">
+<Parameter id="i" />
+<Parameter id="b" />
+<Parameter id="c" />
+<Parameter id="d" />
+</Function>
+</Program>

@@ -47,15 +47,15 @@ EXT_DECLARATION : DECLARATION_SPEC EXT_DECLARATION_2 { $$ = $2; }
 ;
 
 EXT_DECLARATION_2 : DECLARATION { $$ = $1; }
-        |       FUNC_DEF { ; }
+        |       FUNC_DEF { $$ = $1; }
 ;
 
 // FUNCTION DEFINITION
 
-FUNC_DEF : T_IDENTIFIER T_LRB PARAMETER_LIST T_RRB COMPOUND_STATEMENT { printf("Function Def\n"); }
+FUNC_DEF : T_IDENTIFIER T_LRB PARAMETER_LIST T_RRB COMPOUND_STATEMENT { $$ = new ast_Function(*$1, $3); }
 ;
 
-PARAMETER_LIST: PARAMETER { $$ = new ast_Function($1); }
+PARAMETER_LIST: PARAMETER { $$ = new ast_ParamList($1); }
 	|	PARAMETER_LIST T_CMA PARAMETER { $$->push($3); }
 ;
 
