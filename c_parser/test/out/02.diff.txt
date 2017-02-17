@@ -1,0 +1,8 @@
+1,7d0
+< <?xml version="1.0"?>
+< <Program>
+< <Function id="f">
+< <Scope>
+< </Scope>
+< </Function>
+< </Program>

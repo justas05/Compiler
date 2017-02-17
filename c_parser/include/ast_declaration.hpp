@@ -7,14 +7,27 @@
 
 // Declaration that holds a list of declarations
 
-class ast_Declaration : public ast_Base {
+class ast_DeclarationList : public ast_Base {
 private:
+    mutable std::vector<const ast_Base*> dec_list;
     
 public:
-    virtual void print() const = 0;
+    ast_DeclarationList(const ast_Base* _dec) {
+	dec_list.push_back(_dec);
+    }
+
+    virtual void print() const {
+	for(size_t i = 0; i < dec_list.size(); ++i) {
+	    dec_list[i]->print();
+	}
+    }
+
+    virtual void push(const ast_Base* _dec) const {
+	dec_list.push_back(_dec);
+    }
 };
 
-class ast_VariableDeclaration : public ast_Declaration {
+class ast_VariableDeclaration : public ast_Base {
 private:
     mutable std::vector<const ast_Base*> var_list;
     
@@ -24,7 +37,7 @@ public:
     }
 
     virtual void print() const {
-        for(int i = 0; i < var_list.size(); ++i) {
+        for(size_t i = 0; i < var_list.size(); ++i) {
 	    var_list[i]->print();
 	}
     }
