@@ -6,10 +6,10 @@
     <Scope>
       <Variable id="c" />
       <Scope>
-	<Variable id="d" />
+        <Variable id="d" />
       </Scope>
       <Scope>
-	<Variable id="e" />
+        <Variable id="e" />
       </Scope>
     </Scope>
   </Function>

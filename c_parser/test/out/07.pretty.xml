@@ -4,7 +4,7 @@
     <Parameter id="a" />
     <Scope>
       <Scope>
-	<Variable id="z" />
+        <Variable id="z" />
       </Scope>
     </Scope>
   </Function>

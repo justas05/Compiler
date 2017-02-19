@@ -2,7 +2,6 @@
 <Program>
   <Function id="foo">
     <Parameter id="bar" />
-    <Scope>
-    </Scope>
+    <Scope></Scope>
   </Function>
 </Program>
