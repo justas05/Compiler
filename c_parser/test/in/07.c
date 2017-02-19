@@ -1,3 +1,5 @@
-if(x == y) {
-	int z;
+int foo(int a) {	
+	if(x == y) {
+		int z;
+	}
 }

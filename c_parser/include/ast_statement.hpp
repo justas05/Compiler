@@ -63,4 +63,18 @@ public:
     }
 };
 
+class ast_SelectionStatement : public ast_Statement {
+public:
+    ast_SelectionStatement() : ast_Statement() {}
+    ast_SelectionStatement(const ast_Base* _el) : ast_Statement(_el) {}
+    ast_SelectionStatement(const ast_Base* _if, const ast_Base* _else) :
+	ast_Statement(_if, _else) {}
+
+    virtual void print() const override {
+	for(size_t i = 0; i < ast_list.size(); ++i) {
+	    ast_list[i]->print();
+	}
+    }
+};
+
 #endif

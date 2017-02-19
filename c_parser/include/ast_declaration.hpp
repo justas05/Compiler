@@ -15,7 +15,7 @@ public:
     ast_DeclarationList(const ast_Base* _dec) {
 	dec_list.push_back(_dec);
     }
-
+    
     virtual void print() const {
 	for(size_t i = 0; i < dec_list.size(); ++i) {
 	    dec_list[i]->print();

@@ -40,8 +40,6 @@ typedef|extern|static|auto|register	{ return T_STRG_SPEC; }
 void|char|short|int|long|float|double|signed|unsigned	      { return T_TYPE_SPEC; }
 const|volatile						      { return T_TYPE_QUAL; }
 
-{IDENTIFIER}	{ yylval.string = new std::string(yytext); return T_IDENTIFIER; }
-
 [;]		{ return T_SC; }
 [=]		{ return T_EQ; }
 [=][=]		{ return T_EQUALITY; }
@@ -53,6 +51,9 @@ const|volatile						      { return T_TYPE_QUAL; }
 
 if		{ return T_IF; }
 else		{ return T_ELSE; }
+return		{ return T_RETURN; }
+
+{IDENTIFIER}	{ yylval.string = new std::string(yytext); return T_IDENTIFIER; }
 
 ({HEXCONSTANT}|{OCTALCONSTANT}|{DECIMALCONSTANT}){INTEGERSUFFIX}?	{ return T_INT_CONST; }
 
