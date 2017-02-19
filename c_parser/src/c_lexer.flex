@@ -14,6 +14,8 @@ IDENTIFIER [_a-zA-Z][_a-zA-Z0-9]*
 
 OPERATOR [.][.][.]|[<>][<>][=]|[-][-]|[+][+]|[|][|]|[#][#]|[&][&]|[+\-*\/<>=!%^|&][=]|[<][<]|[->][>]|[<>&=+\/\-*(){}\[\]\.,%~!?:|^;]
 
+ASSIGNMENT_OPERATOR (([<>][<>]|[*\/%+\-&^|])[=]|[=])
+
 FRACTIONALCONSTANT (([0-9]*\.[0-9]+)|([0-9]+\.))
 EXPONENTPART ([eE][+-]?[0-9]+)
 
@@ -41,21 +43,48 @@ void|char|short|int|long|float|double|signed|unsigned	      { return T_TYPE_SPEC
 const|volatile						      { return T_TYPE_QUAL; }
 
 [;]		{ return T_SC; }
-[=]		{ return T_EQ; }
-[=][=]		{ return T_EQUALITY; }
 [,]		{ return T_CMA; }
 [(]		{ return T_LRB; }
 [)]		{ return T_RRB; }
 [{]             { return T_LCB; }
 [}]             { return T_RCB; }
+[[]		{ return T_LSB; }
+[]]		{ return T_RSB; }
+[?]		{ return T_QU; }
+[:]		{ return T_COL; }
+[|][|]		{ return T_LOG_OR; }
+[&][&]		{ return T_LOG_AND; }
+[|]		{ return T_OR; }
+[\^]		{ return T_XOR; }
+[&]		{ return T_AND; }
+[=][=]		{ return T_EQUALITY_OP; }
+[!][=]		{ return T_EQUALITY_OP; }
+([<>][=])|[<>]	{ return T_REL_OP; }
+[<>][<>]	{ return T_SHIFT_OP; }
+[*] 		{ return T_MULT; }
+[\/]		{ return T_DIV; }
+[%]		{ return T_REM; }
+[~]		{ return T_TILDE; }
+[!]		{ return T_NOT; }
+[.]		{ return T_DOT; }
+[-][>]		{ return T_ARROW; }
+[+-][+-]	{ return T_INCDEC; }
+[+-]		{ return T_ADDSUB_OP; }
+[=]		{ return T_EQ; }
+
+{ASSIGNMENT_OPERATOR} { return T_ASSIGN_OPER; }
 
 if		{ return T_IF; }
 else		{ return T_ELSE; }
 return		{ return T_RETURN; }
+while		{ return T_WHILE; }
+do		{ return T_DO; }
+for		{ return T_FOR; }
+sizeof		{ return T_SIZEOF; }
 
 {IDENTIFIER}	{ yylval.string = new std::string(yytext); return T_IDENTIFIER; }
 
-({HEXCONSTANT}|{OCTALCONSTANT}|{DECIMALCONSTANT}){INTEGERSUFFIX}?	{ return T_INT_CONST; }
+({HEXCONSTANT}|{OCTALCONSTANT}|{DECIMALCONSTANT}){INTEGERSUFFIX}?	{ yylval.number = strtol(yytext, NULL, 0); return T_INT_CONST; }
 
 {WHITESPACE}		{ ; }
 

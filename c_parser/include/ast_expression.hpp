@@ -8,9 +8,8 @@
 
 class ast_Expression : public ast_Base {
 private:
-    std::string id;
 public:
-    ast_Expression(const std::string& _id) : id(_id) {}
+    ast_Expression() {}
 
     virtual void print() const {
 	
@@ -20,11 +19,6 @@ public:
 	std::cerr << "Can't call this function for this type" << std::endl;
 	(void)_base;
     }
-};
-
-class ast_ReturnExpression : public ast_Expression {
-public:
-    ast_ReturnExpression(const std::string& _id) : ast_Expression(_id) {}
 };
 
 #endif

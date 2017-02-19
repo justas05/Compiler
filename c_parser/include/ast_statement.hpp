@@ -77,4 +77,46 @@ public:
     }
 };
 
+class ast_ExpressionStatement : public ast_Statement {
+public:
+    ast_ExpressionStatement() : ast_Statement() {}
+    ast_ExpressionStatement(const ast_Base* _el) : ast_Statement(_el) {}
+    ast_ExpressionStatement(const ast_Base* _if, const ast_Base* _else) :
+	ast_Statement(_if, _else) {}
+
+    virtual void print() const override {
+	for(size_t i = 0; i < ast_list.size(); ++i) {
+	    ast_list[i]->print();
+	}
+    }
+};
+
+class ast_JumpStatement : public ast_Statement {
+public:
+    ast_JumpStatement() : ast_Statement() {}
+    ast_JumpStatement(const ast_Base* _el) : ast_Statement(_el) {}
+    ast_JumpStatement(const ast_Base* _if, const ast_Base* _else) :
+	ast_Statement(_if, _else) {}
+
+    virtual void print() const override {
+	for(size_t i = 0; i < ast_list.size(); ++i) {
+	    ast_list[i]->print();
+	}
+    }
+};
+
+class ast_IterationStatement : public ast_Statement {
+public:
+    ast_IterationStatement() : ast_Statement() {}
+    ast_IterationStatement(const ast_Base* _el) : ast_Statement(_el) {}
+    ast_IterationStatement(const ast_Base* _if, const ast_Base* _else) :
+	ast_Statement(_if, _else) {}
+
+    virtual void print() const override {
+	for(size_t i = 0; i < ast_list.size(); ++i) {
+	    ast_list[i]->print();
+	}
+    }
+};
+
 #endif
