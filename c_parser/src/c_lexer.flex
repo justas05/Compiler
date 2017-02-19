@@ -70,9 +70,9 @@ const|volatile						      { return T_TYPE_QUAL; }
 [-][>]		{ return T_ARROW; }
 [+-][+-]	{ return T_INCDEC; }
 [+-]		{ return T_ADDSUB_OP; }
-[=]		{ return T_EQ; }
+[=]		{ yylval.string = new std::string(yytext); return T_EQ; }
 
-{ASSIGNMENT_OPERATOR} { return T_ASSIGN_OPER; }
+{ASSIGNMENT_OPERATOR} { yylval.string = new std::string(yytext); return T_ASSIGN_OPER; }
 
 if		{ return T_IF; }
 else		{ return T_ELSE; }
