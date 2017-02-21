@@ -1,0 +1,32 @@
+#+TITLE: Notes
+#+DATE: <2017-02-20 Mon>
+#+AUTHOR: Yann Herklotz
+#+EMAIL: ymherklotz@gmail.com
+#+DESCRIPTION: These are notes about the Compiler project.
+
+* Lexer
+
+** DONE Lab (calculate statistics over text)
+   DEADLINE: <2017-01-31 Tue>
+
+** DONE Coursework (c lexer)
+   DEADLINE: <2017-02-07 Tue>
+
+
+* Parser
+
+** DONE Lab (parse maths)
+   DEADLINE: <2017-02-14 Tue>
+
+** TODO Coursework (c parser)
+   DEADLINE: <2017-03-07 Tue>
+
+
+* Compiler
+
+** TODO Lab (codegen)
+   DEADLINE: <2017-02-28 Tue>
+
+** TODO Coursework (c compiler)
+   DEADLINE: <2017-03-28 Tue>
+
