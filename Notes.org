@@ -21,10 +21,21 @@
 ** TODO Coursework (c parser)
    DEADLINE: <2017-03-07 Tue>
 
+*** AST (Abstract Syntax Tree)
+    
+    Finsihed the AST for now, using polymorphism to achieve this. Right now it achieves the goal of this coursework
+    as it does print out the AST in xml format and supports all the features that the parser should support. The 
+    expressions branch of the AST is completely bare because they are not needed for this parser. I will continue working
+    on this AST in the compiler section so that it supports all the other constructs that I need for the compiler.
+
+*** Grammar
+
+    The grammar is not completely done yet as I dont support all of the declartions that are possible.
+
 
 * Compiler
 
-** TODO Lab (codegen)
+** DONE Lab (codegen)
    DEADLINE: <2017-02-28 Tue>
 
 ** TODO Coursework (c compiler)
