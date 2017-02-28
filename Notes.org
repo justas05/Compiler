@@ -9,14 +9,31 @@
 ** DONE Lab (calculate statistics over text)
    DEADLINE: <2017-01-31 Tue>
 
+*** Task
+
+    We had to calculate statistics over text. This was to learn about flex and how to use it.
+
+
 ** DONE Coursework (c lexer)
    DEADLINE: <2017-02-07 Tue>
+
+*** Task
+
+    Design a C lexer that could lex C and output the important information about the C code. This made us read the 
+    C spec for the first time.
 
 
 * Parser
 
 ** DONE Lab (parse maths)
    DEADLINE: <2017-02-14 Tue>
+
+*** Task
+
+    We had to design a maths parser and then analyse the tree that was created by parsing it. The additional parts where
+    to differentiate equations using the different rules for differentiating. We also had to evaluate the expressions and
+    do other operations on the tree. This taught us how to use bison.
+
 
 ** TODO Coursework (c parser)
    DEADLINE: <2017-03-07 Tue>
@@ -30,7 +47,9 @@
 
 *** Grammar
 
-    The grammar is not completely done yet as I dont support all of the declartions that are possible.
+    The grammar is not completely done yet as I dont support all of the declartions that are possible, and as I add more 
+    constructs in the AST I will also have to add declarations in the bison file. This I will only continue in the Compiler 
+    section.
 
 
 * Compiler
