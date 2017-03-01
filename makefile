@@ -11,6 +11,10 @@ PARINC := -Ic_parser/include
 PARBUILDDIR := c_parser/build
 PARSRCDIR := c_parser/src
 
+COMPINC := -Ic_compiler/include
+COMPBUILDDIR := c_compiler/build
+COMPSRCDIR := c_compiler/src
+
 all : bin/c_lexer bin/c_parser
 
 # Make the c_lexer
@@ -61,6 +65,35 @@ $(PARSRCDIR)/c_lexer.yy.cpp : $(PARSRCDIR)/c_lexer.flex
 $(PARSRCDIR)/c_parser.tab.cpp $(PARSRCDIR)/c_parser.tab.hpp : $(PARSRCDIR)/c_parser.y
 	@echo "Creating yacc..."
 	@echo " bison -v -d $< -o $(PARSRCDIR)/c_parser.tab.cpp"; bison -v -d $< -o $(PARSRCDIR)/c_parser.tab.cpp
+
+# Make the c_parser
+bin/c_compiler : $(COMPBUILDDIR)/parser_main.o $(COMPBUILDDIR)/c_parser.tab.o $(COMPBUILDDIR)/c_lexer.yy.o
+	@echo "Linking..."
+	@echo " mkdir -p bin"; mkdir -p bin
+	@echo " $(CC) $^ -o bin/c_parser"; $(CC) $^ -o bin/c_parser
+
+$(COMPBUILDDIR)/%.o : $(COMPSRCDIR)/%.cpp
+	@echo "Building sources..."
+	@echo " mkdir -p $(COMPBUILDDIR)"; mkdir -p $(COMPBUILDDIR)
+	@echo " $(CC) $(CFLAGS) $(COMPINC) -c -o $@ $<"; $(CC) $(CFLAGS) $(COMPINC) -c -o $@ $<
+
+$(COMPBUILDDIR)/%.yy.o : $(COMPSRCDIR)/%.yy.cpp
+	@echo "Building lex..."
+	@echo " mkdir -p $(COMPBUILDDIR)"; mkdir -p $(COMPBUILDDIR)
+	@echo " $(CC) $(CFLAGS) $(COMPINC) -c -o $@ $<"; $(CC) $(CFLAGS) $(COMPINC) -c -o $@ $<
+
+$(COMPBUILDDIR)/c_parser.tab.o : $(COMPSRCDIR)/c_parser.tab.cpp
+	@echo "Building yacc..."
+	@echo " mkdir -p $(COMPBUILDDIR)"; mkdir -p $(COMPBUILDDIR)
+	@echo " $(CC) $(CFLAGS) $(COMPINC) -c -o $@ $<"; $(CC) $(CFLAGS) $(COMPINC) -c -o $@ $<
+
+$(COMPSRCDIR)/c_lexer.yy.cpp : $(COMPSRCDIR)/c_lexer.flex
+	@echo "Creating lex..."
+	@echo " flex -o $@  $<"; flex -o $@  $<
+
+$(COMPSRCDIR)/c_parser.tab.cpp $(COMPSRCDIR)/c_parser.tab.hpp : $(COMPSRCDIR)/c_parser.y
+	@echo "Creating yacc..."
+	@echo " bison -v -d $< -o $(COMPSRCDIR)/c_parser.tab.cpp"; bison -v -d $< -o $(COMPSRCDIR)/c_parser.tab.cpp
 
 clean :
 	@echo "Cleaning..."
