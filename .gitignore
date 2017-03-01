@@ -1,6 +1,7 @@
 bin/
 c_lexer/build/
 c_parser/build/
+c_compiler/build/
 *.yy.cpp
 *.tab.cpp
 *.tab.hpp
