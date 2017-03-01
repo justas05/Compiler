@@ -11,7 +11,8 @@
 
 *** Task
 
-    We had to calculate statistics over text. This was to learn about flex and how to use it.
+    We had to calculate statistics over text. This was to learn about 
+    flex and how to use it.
 
 
 ** DONE Coursework (c lexer)
@@ -19,8 +20,8 @@
 
 *** Task
 
-    Design a C lexer that could lex C and output the important information about the C code. This made us read the 
-    C spec for the first time.
+    Design a C lexer that could lex C and output the important information 
+    about the C code. This made us read the C spec for the first time.
 
 
 * Parser
@@ -30,32 +31,45 @@
 
 *** Task
 
-    We had to design a maths parser and then analyse the tree that was created by parsing it. The additional parts where
-    to differentiate equations using the different rules for differentiating. We also had to evaluate the expressions and
-    do other operations on the tree. This taught us how to use bison.
+    We had to design a maths parser and then analyse the tree that was 
+    created by parsing it. The additional parts where to differentiate 
+    equations using the different rules for differentiating. We also had to 
+    evaluate the expressions and do other operations on the tree. This taught 
+    us how to use bison.
 
 
 ** TODO Coursework (c parser)
    DEADLINE: <2017-03-07 Tue>
 
+*** Task
+
 *** AST (Abstract Syntax Tree)
     
-    Finsihed the AST for now, using polymorphism to achieve this. Right now it achieves the goal of this coursework
-    as it does print out the AST in xml format and supports all the features that the parser should support. The 
-    expressions branch of the AST is completely bare because they are not needed for this parser. I will continue working
-    on this AST in the compiler section so that it supports all the other constructs that I need for the compiler.
+    Finsihed the AST for now, using polymorphism to achieve this. Right now i
+    t achieves the goal of this coursework as it does print out the AST in xml 
+    format and supports all the features that the parser should support. The 
+    expressions branch of the AST is completely bare because they are not needed 
+    for this parser. I will continue working on this AST in the compiler section 
+    so that it supports all the other constructs that I need for the compiler.
 
 *** Grammar
 
-    The grammar is not completely done yet as I dont support all of the declartions that are possible, and as I add more 
-    constructs in the AST I will also have to add declarations in the bison file. This I will only continue in the Compiler 
-    section.
+    The grammar is not completely done yet as I dont support all of the declartions 
+    that are possible, and as I add more constructs in the AST I will also have to add 
+    declarations in the bison file. This I will only continue in the Compiler section.
 
 
 * Compiler
 
 ** DONE Lab (codegen)
    DEADLINE: <2017-02-28 Tue>
+
+*** Task
+
+    In this lab we used the setup provided to us to make a compiler for the language
+    specified in the lab. The AST was already built for us and the language was already
+    parsed using C++ instead of bison.
+
 
 ** TODO Coursework (c compiler)
    DEADLINE: <2017-03-28 Tue>
