@@ -3,7 +3,7 @@
 #include <iostream>
 
 int main(int argc, char *argv[]) {
-    ast_Top *ast = parseAST();
+    const Base *ast = parseAST();
 
     ast->print();
     

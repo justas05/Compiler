@@ -3,38 +3,25 @@
 
 #include "ast.hpp"
 
-#include <string>
 
-class Variable : public Base {
-private:
-    std::string id;
+class Declarator : public BasePrimitive {
 public:
-    Variable(const std::string& _id) : id(_id) {}
+    Declarator(const std::string& _id) : BasePrimitive(_id) {}
 
-    virtual void print() const {
-        std::cout << "<Variable id=\"" << id << "\" />" << std::endl;
-    }
-
-    virtual void push(const Base* var) const {
-	std::cerr << "Error: Can't call this function on this class" << std::endl;
-	(void)var;
+    virtual void printxml() const {
+	std::cout << "<Variable id=\"" << id << "\" />" << std::endl;
     }
 };
 
-class Parameter : public Base {
-private:
-    std::string id;
-public:
-    Parameter(const std::string& _id) : id(_id) {}
 
-    virtual void print() const {
+class Parameter : public BasePrimitive {
+public:
+    Parameter(const std::string& _id) : BasePrimitive(_id) {}
+
+    virtual void printxml() const {
         std::cout << "<Parameter id=\"" << id << "\" />" << std::endl;
     }
-
-    virtual void push(const Base* var) const {
-        std::cerr << "Error: Can't call this function on this class" << std::endl;
-	(void)var;
-    }
 };
+
 
 #endif

@@ -74,3 +74,15 @@
 ** TODO Coursework (c compiler)
    DEADLINE: <2017-03-28 Tue>
 
+*** Task
+
+*** Mips Assembly
+
+    - addiu :: Add Immediate Unsigned
+    - jr :: Jump Register
+    - li :: Pseudo instruction interpreted as (	lui $rd, LabelAddr[31:16]
+                                                ori $rd,$rd, LabelAddr[15:0] )
+    - lw :: Load Word
+    - move :: Pseudo instruction interpreted as (add $rt, $rs, $zero)
+    - nop :: No Operation
+    - sw :: Store Word

@@ -3,22 +3,14 @@
 
 #include "ast.hpp"
 
-#include <string>
-#include <iostream>
-
-class Expression : public Base {
+class Expression : public BaseNode {
 private:
 public:
-    Expression() {}
+    Expression() : BaseNode() {}
 
-    virtual void print() const {
-	
-    }
-
-    virtual void push(const Base* _base) const {
-	std::cerr << "Can't call this function for this type" << std::endl;
-	(void)_base;
-    }
+    virtual void print() const override {}
+    virtual void printxml() const override {}
+    virtual void printasm() const override {}
 };
 
 #endif

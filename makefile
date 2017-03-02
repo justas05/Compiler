@@ -21,7 +21,7 @@ all : bin/c_lexer bin/c_parser
 bin/c_lexer : $(LEXBUILDDIR)/main.o $(LEXBUILDDIR)/c_lexer.o $(LEXBUILDDIR)/c_lexer.yy.o
 	@echo "Linking..."
 	@echo " mkdir -p bin"; mkdir -p bin
-	@echo " $(CC) $^ -o bin/c_lexer"; $(CC) $^ -o bin/c_lexer
+	@echo " $(CC) $^ -o $@"; $(CC) $^ -o $@
 
 $(LEXBUILDDIR)/%.o : $(LEXSRCDIR)/%.cpp
 	@echo "Building sources..."
@@ -41,7 +41,7 @@ $(LEXSRCDIR)/c_lexer.yy.cpp : $(LEXSRCDIR)/c_lexer.flex
 bin/c_parser : $(PARBUILDDIR)/parser_main.o $(PARBUILDDIR)/c_parser.tab.o $(PARBUILDDIR)/c_lexer.yy.o
 	@echo "Linking..."
 	@echo " mkdir -p bin"; mkdir -p bin
-	@echo " $(CC) $^ -o bin/c_parser"; $(CC) $^ -o bin/c_parser
+	@echo " $(CC) $^ -o $@"; $(CC) $^ -o $@
 
 $(PARBUILDDIR)/%.o : $(PARSRCDIR)/%.cpp
 	@echo "Building sources..."
@@ -70,7 +70,7 @@ $(PARSRCDIR)/c_parser.tab.cpp $(PARSRCDIR)/c_parser.tab.hpp : $(PARSRCDIR)/c_par
 bin/c_compiler : $(COMPBUILDDIR)/parser_main.o $(COMPBUILDDIR)/c_parser.tab.o $(COMPBUILDDIR)/c_lexer.yy.o
 	@echo "Linking..."
 	@echo " mkdir -p bin"; mkdir -p bin
-	@echo " $(CC) $^ -o bin/c_parser"; $(CC) $^ -o bin/c_parser
+	@echo " $(CC) $^ -o $@"; $(CC) $^ -o $@
 
 $(COMPBUILDDIR)/%.o : $(COMPSRCDIR)/%.cpp
 	@echo "Building sources..."
