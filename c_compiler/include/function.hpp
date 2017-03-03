@@ -16,7 +16,8 @@ public:
 
     virtual void print() const {
 	std::cout << id << std::endl;
-	parameter_list->print();
+	if(parameter_list != nullptr)
+	    parameter_list->print();
     }
     
     virtual void printxml() const {}

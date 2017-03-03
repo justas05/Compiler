@@ -16,9 +16,9 @@ public:
     Declaration(const std::string& _id = "") : id(_id) {}
 
     virtual void print() const {
-	std::cout << id << std::endl;
 	if(decl != nullptr)
 	    decl->print();
+	std::cout << id << std::endl;
     }
     virtual void printxml() const {}
     virtual void printasm() const {}
