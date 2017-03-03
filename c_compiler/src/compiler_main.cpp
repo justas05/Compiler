@@ -3,9 +3,9 @@
 #include <iostream>
 
 int main(int argc, char *argv[]) {
-    const Base *ast = parseAST();
+    const BaseList* ast = parseAST();
 
-    ast->print();
+    ast->printasm();
     
     return 0;
 }

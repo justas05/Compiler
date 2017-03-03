@@ -6,11 +6,9 @@
 class Expression : public BaseNode {
 private:
 public:
-    Expression() : BaseNode() {}
+    Expression(const Base* expr = new EmptyNode);
 
-    virtual void print() const override {}
-    virtual void printxml() const override {}
-    virtual void printasm() const override {}
+    virtual void printasm() const override;
 };
 
 #endif

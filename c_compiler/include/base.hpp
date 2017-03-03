@@ -109,10 +109,7 @@ protected:
     const Base* type;
 
 public:
-    BasePrimitive(const std::string& _id)
-	: id(_id), type(new EmptyNode) {}
-
-    BasePrimitive(const std::string& _id, const Base* _type)
+    BasePrimitive(const std::string& _id = "", const Base* _type = new EmptyNode)
 	: id(_id), type(_type) {}
 
     virtual ~BasePrimitive() {

@@ -37,17 +37,17 @@ void yyerror(const char *);
 			StatementList ArgumentExpressionList
 
 %type	<base_node>	ExtDeclaration FuncDef Declaration DeclarationSpec DeclarationSpec_T
-			InitDeclarator Statement CompoundStatement CompoundStatement_2
+			Statement CompoundStatement CompoundStatement_2 PrimaryExpression
 			SelectionStatement ExpressionStatement JumpStatement IterationStatement
 			Expression AssignmentExpression ConditionalExpression LogicalOrExpression
 			LogicalAndExpression InclusiveOrExpression ExclusiveOrExpression
 			AndExpression EqualityExpression RelationalExpression ShiftExpression
 			AdditiveExpression MultiplicativeExpression CastExpression UnaryExpression
-			PostfixExpression PostfixExpression2 PrimaryExpression
+			PostfixExpression PostfixExpression2
 			
-%type	<base_prim>	Parameter ParamDeclarator Declarator DirectDeclarator  
+%type	<base_prim>	Parameter ParamDeclarator Declarator DirectDeclarator InitDeclarator Constant
 			
-%type	<number>        T_INT_CONST Constant
+%type	<number>        T_INT_CONST
 
 			
 %type	<string>	T_IDENTIFIER ASSIGN_OPER T_ASSIGN_OPER T_EQ T_AND T_ADDSUB_OP T_TILDE T_NOT
@@ -65,7 +65,7 @@ ROOT:
 
 ExtDef:
 		ExtDeclaration { $$ = new ExternalDefinition($1); }
-        |       ExtDef ExtDeclaration { $$->push($2); }
+|       ExtDef ExtDeclaration { $$->push($2); }
 		;
 
 ExtDeclaration:
@@ -76,7 +76,7 @@ ExtDeclaration:
 // FUNCTION DEFINITION
 
 FuncDef:
-		DeclarationSpec T_IDENTIFIER T_LRB ParameterList T_RRB CompoundStatement { $$ = new Function(*$2, $4, $6); }
+	    DeclarationSpec T_IDENTIFIER T_LRB ParameterList T_RRB CompoundStatement { $$ = new Function(*$2, $4, $6); }
 		;
 
 ParameterList:
@@ -140,8 +140,8 @@ DirectDeclarator:
 		;
 
 IdentifierList:
-		T_IDENTIFIER { $$ = new Declarator(*$1); }
-	|	IdentifierList T_CMA T_IDENTIFIER { $$ = new Declarator(*$3); }
+		T_IDENTIFIER { $$ = new BaseList(); }
+	|	IdentifierList T_CMA T_IDENTIFIER { $$ = new BaseList(); }
 		;
 
 // Statement
@@ -181,7 +181,7 @@ ExpressionStatement:
 		;
 
 JumpStatement:
-		T_RETURN ExpressionStatement { $$ = $2; }
+		  T_RETURN ExpressionStatement { $$ = new JumpStatement($2); }
 		;
 
 IterationStatement:
@@ -299,22 +299,22 @@ PostfixExpression:
 
 PostfixExpression2:
 		T_RRB { $$ = new Expression(); }
-	|	ArgumentExpressionList T_RRB { $$ = $1; }
+	|	ArgumentExpressionList T_RRB { $$ = new BaseNode; }
 		;
 
 ArgumentExpressionList:
-		AssignmentExpression { $$ = $1; }
-	|	ArgumentExpressionList T_CMA AssignmentExpression { $$ = $3; }
+		AssignmentExpression { $$ = new BaseList; }
+	|	ArgumentExpressionList T_CMA AssignmentExpression { $$ = new BaseList; }
 		;
 
 PrimaryExpression:
 		T_IDENTIFIER { $$ = new Expression(); }
-	|       Constant { $$ = new Expression(); }
+	|       Constant { $$ = new Expression($1); }
 	|	T_LRB Expression T_RRB { $$ = $2; }
 		;
 
 Constant:
-		T_INT_CONST { $$ = $1; }
+		T_INT_CONST { $$ = new Immediate($1); }
 		;
 
 %%
@@ -322,7 +322,7 @@ Constant:
 const BaseList* g_root; // Definition of variable (to match declaration earlier)
 
 const BaseList* parseAST() {
-    g_root = NULL;
+    g_root = 0;
     yyparse();
     return g_root;
 }

@@ -6,61 +6,41 @@
 
 class Statement : public BaseNode {
 public:
-    Statement() : BaseNode() {}
-    
-    Statement(const Base* _el) : BaseNode(_el) {}
+    Statement(const Base* _left = new EmptyNode, const Base* _right = new EmptyNode);
 };
 
 class StatementList : public BaseList { 
 public:
-    StatementList(const Base* _statement) : BaseList(_statement) {}
+    StatementList(const Base* _statement);
 };
 
 class CompoundStatement : public Statement {
 public:
-    CompoundStatement() : Statement() {}
-    CompoundStatement(const Base* _el) : Statement(_el) {}
-    
-    CompoundStatement(const Base* _dec, const Base* _statement) {
-        leftNode = _dec;
-        rightNode = _statement;
-    }
+    CompoundStatement(const Base* _dec = new EmptyNode, const Base* _statement = new EmptyNode);
 
-    virtual void printxml() const override {
-	std::cout << "<Scope>" << std::endl;
-        leftNode->printxml();
-	rightNode->printxml();
-	std::cout << "</Scope>" << std::endl;
-    }
+    virtual void printxml() const override;
 };
 
 class SelectionStatement : public Statement {
 public:
-    SelectionStatement() : Statement() {}
-    SelectionStatement(const Base* _el) : Statement(_el) {}
-    
-    SelectionStatement(const Base* _if, const Base* _else) {
-	leftNode = _if;
-	rightNode = _else;
-    }
+    SelectionStatement(const Base* _if, const Base* _else = new EmptyNode);
 };
 
 class ExpressionStatement : public Statement {
 public:
-    ExpressionStatement() : Statement() {}
-    ExpressionStatement(const Base* expr) : Statement(expr) {}
+    ExpressionStatement(const Base* expr = new EmptyNode);
 };
 
 class JumpStatement : public Statement {
 public:
-    JumpStatement() : Statement() {}
-    JumpStatement(const Base* _el) : Statement(_el) {}
+    JumpStatement(const Base* _el);
+ 
+    virtual void printasm() const override;
 };
 
 class IterationStatement : public Statement {
 public:
-    IterationStatement() : Statement() {}
-    IterationStatement(const Base* _el) : Statement(_el) {}
+    IterationStatement(const Base* _el);
 };
 
 #endif
