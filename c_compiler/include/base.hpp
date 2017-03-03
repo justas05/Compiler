@@ -29,7 +29,6 @@ protected:
     mutable std::vector<const Base*> list;
 
 public:
-    BaseList() {}
     BaseList(const Base* _var) {
 	push(_var);
     }
