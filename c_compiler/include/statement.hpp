@@ -6,8 +6,15 @@
 
 class Statement : public Node {
 public:
-    Statement(const Node* _left = new EmptyNode, const Node* _right = new EmptyNode);
+    //Statement(const Node* _left = new EmptyNode, const Node* _right = new EmptyNode);
+    Statement() {}
+
+    virtual void print() const {}
+    virtual void printxml() const {}
+    virtual void printasm() const {}
 };
+
+/*
 
 class CompoundStatement : public Statement {
 public:
@@ -37,5 +44,7 @@ class IterationStatement : public Statement {
 public:
     IterationStatement(const Node* _el);
 };
+
+*/
 
 #endif

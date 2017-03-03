@@ -6,20 +6,21 @@
 
 class Function : public Node {
 protected:
-    const Type* type;
+    Type* type;
     std::string id;
-    const DeclarationList* parameter_list;
-    const Statement* statement;
+    Declaration* parameter_list;
+    Statement* statement;
     
 public:
-    Function(const std::string& _id, const Statement* _comp_statement);
+    Function(const std::string& _id, Declaration* _parameter_list) : id(_id), parameter_list(_parameter_list) {}
 
-    virtual ~Function();
-
-    virtual void printxml() const override;
-    virtual void printasm() const override;
-
-    void push_parameter(const Declaration* declaration) const;
+    virtual void print() const {
+	std::cout << id << std::endl;
+	parameter_list->print();
+    }
+    
+    virtual void printxml() const {}
+    virtual void printasm() const {}
 };
 
 

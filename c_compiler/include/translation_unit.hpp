@@ -6,9 +6,23 @@
 
 class TranslationUnit : public Node {
 protected:
-    // TODO includes all the variable declarations and function definitions
+    std::vector<Node* > m_transUnit;
 public:
-    TranslationUnit() {}
+    TranslationUnit(Node* decl) {
+	m_transUnit.push_back(decl);
+    }
+
+    virtual void print() const {
+	for(auto& i : m_transUnit) {
+	    i->print();
+	}
+    }
+    virtual void printxml() const {}
+    virtual void printasm() const {}
+
+    void push(Node* decl) {
+	m_transUnit.push_back(decl);
+    }
 };
 
 

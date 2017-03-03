@@ -13,15 +13,19 @@ protected:
     Declaration* decl;
     
 public:
-    Declaration(const Type* _type = nullptr,
-		const std::string _id = "",
-		const Initializer* _init = nullptr);
+    Declaration(const std::string& _id = "") : id(_id) {}
 
-    virtual void print() const;
-    virtual void printxml() const;
-    virtual void printasm() const;
+    virtual void print() const {
+	std::cout << id << std::endl;
+	if(decl != nullptr)
+	    decl->print();
+    }
+    virtual void printxml() const {}
+    virtual void printasm() const {}
 
-    
+    void addDeclaration(Declaration* _decl) {
+	decl = _decl;
+    }
 };
 
 #endif

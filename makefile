@@ -67,9 +67,7 @@ $(PARSRCDIR)/c_parser.tab.cpp $(PARSRCDIR)/c_parser.tab.hpp : $(PARSRCDIR)/c_par
 	@echo " bison -v -d $< -o $(PARSRCDIR)/c_parser.tab.cpp"; bison -v -d $< -o $(PARSRCDIR)/c_parser.tab.cpp
 
 # Make the c_parser
-bin/c_compiler:	$(COMPBUILDDIR)/compiler_main.o $(COMPBUILDDIR)/function.o \
-		$(COMPBUILDDIR)/statement.o $(COMPBUILDDIR)/primitives.o \
-		$(COMPBUILDDIR)/expression.o \
+bin/c_compiler:	$(COMPBUILDDIR)/compiler_main.o \
 		$(COMPBUILDDIR)/c_parser.tab.o $(COMPBUILDDIR)/c_lexer.yy.o
 	@echo "Linking..."
 	@echo " mkdir -p bin"; mkdir -p bin
