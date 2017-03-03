@@ -2,7 +2,7 @@
 
 #include "ast.hpp"
     
-extern const BaseList* g_root; // A way of getting the AST out
+extern const TranslationUnit* g_root; // A way of getting the AST out
 
 //! This is to fix problems when generating C++
 // We are declaring the functions provided by Flex, so
@@ -15,12 +15,13 @@ void yyerror(const char *);
 // Represents the value associated with any kind of
 // AST node.
 %union{
-    const BaseNode* base_node;
-    const BaseList* base_list;
-    const BasePrimitive* base_prim;
-    const BaseType* base_type;
+    Node* node;
+    TranslationUnit* trans_unit;
+    Function* function;
+    Type* type;
+    Declaration* declaration;
     double number;
-    std::string *string;
+    std::string* string;
 }
                         
 %token			T_TYPE_SPEC T_TYPE_QUAL T_STRG_SPEC T_IDENTIFIER T_SC T_CMA T_LRB T_LCB T_RCB
@@ -33,10 +34,24 @@ void yyerror(const char *);
 %nonassoc		T_ELSE
 			
                         
-%type	<base_list>	ExtDef ParameterList DeclarationList InitDeclaratorList IdentifierList
+%type	<base_list>	ExtDef DeclarationList InitDeclaratorList IdentifierList
 			StatementList ArgumentExpressionList
 
-%type	<base_node>	ExtDeclaration FuncDef Declaration DeclarationSpec DeclarationSpec_T
+%type	<node>		ExternalDeclaration
+			
+%type	<trans_unit>	TranslationUnit
+			
+%type	<function>	FunctionDefinition
+
+%type	<declaration>	Parameter ParamDeclarator Declaration
+
+%type	<decl_list>	ParameterList
+
+%type	<type>		DeclarationSpec
+
+%type	<string>	Declarator DirectDeclarator
+
+%type	<base_node>	ExtDeclaration Declaration DeclarationSpec DeclarationSpec_T
 			Statement CompoundStatement CompoundStatement_2 PrimaryExpression
 			SelectionStatement ExpressionStatement JumpStatement IterationStatement
 			Expression AssignmentExpression ConditionalExpression LogicalOrExpression
@@ -45,7 +60,7 @@ void yyerror(const char *);
 			AdditiveExpression MultiplicativeExpression CastExpression UnaryExpression
 			PostfixExpression PostfixExpression2
 			
-%type	<base_prim>	Parameter ParamDeclarator Declarator DirectDeclarator InitDeclarator Constant
+%type	<base_prim>	Declarator DirectDeclarator InitDeclarator Constant
 			
 %type	<number>        T_INT_CONST
 
@@ -58,39 +73,35 @@ void yyerror(const char *);
 %%
 
 ROOT:
-	        ExtDef { g_root = $1; }
+	        TranslationUnit { g_root = $1; }
 		;
 
-// EXTERNAL DEFINITION
+// TRANSLATION UNIT
 
-ExtDef:
-		ExtDeclaration { $$ = new ExternalDefinition($1); }
-|       ExtDef ExtDeclaration { $$->push($2); }
+TranslationUnit:
+		ExternalDeclaration { $$ = new TranslationUnit($1); }
+	|       TranslationUnit ExternalDeclaration { $$->push($2); }
 		;
 
-ExtDeclaration:
+ExternalDeclaration:
 		Declaration { $$ = $1; }
-        |       FuncDef { $$ = $1; }
+        |       FunctionDefinition { $$ = $1; }
 		;
 
 // FUNCTION DEFINITION
 
-FuncDef:
-	    DeclarationSpec T_IDENTIFIER T_LRB ParameterList T_RRB CompoundStatement { $$ = new Function(*$2, $4, $6); }
+FunctionDefinition:
+		DeclarationSpec T_IDENTIFIER T_LRB ParameterList T_RRB CompoundStatement { $$ = new Function($1, $2, $4, $6); }
 		;
 
 ParameterList:
-		%empty { $$ = new ParamList(); }
-	| 	Parameter { $$ = new ParamList($1); }
+		%empty { $$ = new DeclarationList(); }
+	| 	Parameter { $$ = new DeclarationList($1); }
 	|       ParameterList T_CMA Parameter { $$->push($3); }
 		;
 
 Parameter:
-		DeclarationSpec ParamDeclarator { $$ = $2; }
-		;
-
-ParamDeclarator:
-		T_IDENTIFIER { $$ = new Parameter(*$1);}
+		DeclarationSpec T_IDENTIFIER { $$ = new Declaration($1, *$2); }
 		;
 
 // Declaration
@@ -116,14 +127,18 @@ DeclarationSpec_T:
 		;
 
 InitDeclaratorList:
-		InitDeclarator { $$ = new InitDeclaratorList($1); }
-	|       InitDeclaratorList T_CMA InitDeclarator { $$->push($3); }
+		InitDeclarator { $$ = $1; }
+	|       InitDeclarator T_CMA InitDeclaratorList { $1->addDeclaration($$); $$ = $1; }
 		;
 
 InitDeclarator:
-		Declarator { $$ = $1; }
-	|	Declarator T_EQ AssignmentExpression { $$ = $1; }
+		Declarator { $$ = new Declaration(*$1); }
+	|	Declarator T_EQ Initializer { $$ = new Declaration(*$1, $3); }
 		;
+
+Initializer:
+		T_INT_CONST { $$ = new Initializer(); }
+	;
 
 Declarator:
 		DirectDeclarator { $$ = $1; }
@@ -131,7 +146,7 @@ Declarator:
 		;
 
 DirectDeclarator:
-		T_IDENTIFIER { $$ = new Declarator(*$1); }
+		T_IDENTIFIER { $$ = $1; }
 	|	T_LRB Declarator T_RRB { $$ = $2; }
 	|	DirectDeclarator T_LSB ConditionalExpression T_RSB { $$ = $1; }
 	|	DirectDeclarator T_LSB T_RSB { $$ = $1; }
@@ -319,9 +334,9 @@ Constant:
 
 %%
 
-const BaseList* g_root; // Definition of variable (to match declaration earlier)
+const TranslationUnit* g_root; // Definition of variable (to match declaration earlier)
 
-const BaseList* parseAST() {
+const TranslationUnit* parseAST() {
     g_root = 0;
     yyparse();
     return g_root;

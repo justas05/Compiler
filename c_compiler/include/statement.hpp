@@ -4,43 +4,38 @@
 #include "ast.hpp"
 
 
-class Statement : public BaseNode {
+class Statement : public Node {
 public:
-    Statement(const Base* _left = new EmptyNode, const Base* _right = new EmptyNode);
-};
-
-class StatementList : public BaseList { 
-public:
-    StatementList(const Base* _statement);
+    Statement(const Node* _left = new EmptyNode, const Node* _right = new EmptyNode);
 };
 
 class CompoundStatement : public Statement {
 public:
-    CompoundStatement(const Base* _dec = new EmptyNode, const Base* _statement = new EmptyNode);
+    CompoundStatement(const Node* _dec = new EmptyNode, const Node* _statement = new EmptyNode);
 
     virtual void printxml() const override;
 };
 
 class SelectionStatement : public Statement {
 public:
-    SelectionStatement(const Base* _if, const Base* _else = new EmptyNode);
+    SelectionStatement(const Node* _if, const Node* _else = new EmptyNode);
 };
 
 class ExpressionStatement : public Statement {
 public:
-    ExpressionStatement(const Base* expr = new EmptyNode);
+    ExpressionStatement(const Node* expr = new EmptyNode);
 };
 
 class JumpStatement : public Statement {
 public:
-    JumpStatement(const Base* _el);
+    JumpStatement(const Node* _el);
  
     virtual void printasm() const override;
 };
 
 class IterationStatement : public Statement {
 public:
-    IterationStatement(const Base* _el);
+    IterationStatement(const Node* _el);
 };
 
 #endif

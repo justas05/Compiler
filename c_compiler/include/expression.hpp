@@ -3,10 +3,10 @@
 
 #include "ast.hpp"
 
-class Expression : public BaseNode {
+class Expression : public Node {
 private:
 public:
-    Expression(const Base* expr = new EmptyNode);
+    Expression(const Node* expr = new EmptyNode);
 
     virtual void printasm() const override;
 };

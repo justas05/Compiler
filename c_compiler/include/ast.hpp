@@ -5,13 +5,15 @@
 #include <string>
 #include <iostream>
 
-#include "base.hpp"
+#include "node.hpp"
 #include "statement.hpp"
 #include "function.hpp"
 #include "declaration.hpp"
 #include "expression.hpp"
 #include "primitives.hpp"
-#include "external.hpp"
+#include "type.hpp"
+#include "initializer.hpp"
+#include "translation_unit.hpp"
 #include "ast_top.hpp"
 
 const BaseList* parseAST();

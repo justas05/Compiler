@@ -4,9 +4,9 @@
 #include "ast.hpp"
 
 
-class Base {
+class Node {
 public:
-    virtual ~Base() {}
+    virtual ~Node() {}
 
     virtual void print() const = 0;
     virtual void printxml() const = 0;
@@ -14,7 +14,7 @@ public:
 };
 
 
-class EmptyNode : public Base {
+class EmptyNode : public Node {
 public:
     EmptyNode() {}
     
@@ -24,16 +24,16 @@ public:
 };
 
 
-class BaseList : public Base {
+class NodeList : public Node {
 protected:
-    mutable std::vector<const Base*> list;
+    mutable std::vector<const Node*> list;
 
 public:
-    BaseList(const Base* _var) {
+    NodeList(const Node* _var) {
 	push(_var);
     }
 
-    virtual ~BaseList() {
+    virtual ~NodeList() {
 	for(auto& var : list) {
 	    delete var;
 	}
@@ -57,22 +57,22 @@ public:
 	}
     }
 
-    virtual void push(const Base* _var) const {
+    virtual void push(const Node* _var) const {
 	list.push_back(_var);
     }
 };
 
 
-class BaseNode : public Base {
+class NodeNode : public Node {
 protected:
-    const Base* leftNode;
-    const Base* rightNode;
+    const Node* leftNode;
+    const Node* rightNode;
 
 public:
-    BaseNode(const Base* _left = new EmptyNode, const Base* _right = new EmptyNode)
+    NodeNode(const Node* _left = new EmptyNode, const Node* _right = new EmptyNode)
 	: leftNode(_left), rightNode(_right) {}
 
-    virtual ~BaseNode() {
+    virtual ~NodeNode() {
 	delete leftNode;
 	delete rightNode;
     }
@@ -92,26 +92,26 @@ public:
 	rightNode->printasm();
     }
 
-    virtual const Base* getLeft() const {
+    virtual const Node* getLeft() const {
 	return leftNode;
     }
 
-    virtual const Base* getRight() const {
+    virtual const Node* getRight() const {
 	return rightNode;
     }
 };
 
 
-class BasePrimitive : public Base {
+class NodePrimitive : public Node {
 protected:
     std::string id;
-    const Base* type;
+    const Node* type;
 
 public:
-    BasePrimitive(const std::string& _id = "", const Base* _type = new EmptyNode)
+    NodePrimitive(const std::string& _id = "", const Node* _type = new EmptyNode)
 	: id(_id), type(_type) {}
 
-    virtual ~BasePrimitive() {
+    virtual ~NodePrimitive() {
 	delete type;
     }
 
@@ -121,9 +121,9 @@ public:
 };
 
 
-class BaseType : public Base {
+class NodeType : public Node {
 public:
-    BaseType() {}
+    NodeType() {}
 
     virtual void print() const {}
     virtual void printxml() const {}
