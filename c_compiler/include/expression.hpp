@@ -4,11 +4,12 @@
 #include "ast.hpp"
 
 class Expression : public Node {
-private:
 public:
-    Expression(const Node* expr = new EmptyNode);
+    Expression(const Node* expr = nullptr);
 
-    virtual void printasm() const override;
+    virtual void print() const;
+    virtual void printxml() const;
+    virtual void printasm() const;
 };
 
 #endif

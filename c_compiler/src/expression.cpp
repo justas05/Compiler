@@ -3,9 +3,8 @@
 
 // Expression definition
 
-Expression::Expression(const Base* _expr)
-    : BaseNode(_expr) {}
+Expression::Expression(const Node* expr) {}
 
-void Expression::printasm() const {
-    leftNode->printasm();
-}
+void Expression::print() const {}
+void Expression::printxml() const {}
+void Expression::printasm() const {}

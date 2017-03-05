@@ -3,51 +3,141 @@
 
 // General base Statement definition
 
-Statement::Statement(const Base* _left, const Base* _right)
-    : BaseNode(_left, _right) {}
+Statement::Statement(Statement* statement)
+    : next_statement(statement) {}
 
+void Statement::print() const
+{
+    if(next_statement != nullptr) 
+	next_statement->print();
+}
 
-// Statement list definition
+void Statement::printxml() const
+{
+    if(next_statement != nullptr) 
+	next_statement->printxml();
+}
 
-StatementList::StatementList(const Base* _statement)
-    : BaseList(_statement) {}
+void Statement::printasm() const
+{
+    if(next_statement != nullptr) 
+	next_statement->printasm();
+}
 
 
 // Compound Statement definition
 
-CompoundStatement::CompoundStatement(const Base* _dec, const Base* _statement)
-    : Statement(_dec, _statement) {}
+CompoundStatement::CompoundStatement(Declaration* decl, Statement* statement)
+    : Statement(), m_decl(decl), m_statement(statement) {}
 
-void CompoundStatement::printxml() const {
+CompoundStatement::CompoundStatement(Statement* statement)
+    : m_statement(statement) {}
+
+void CompoundStatement::print() const
+{
+    if(m_decl != nullptr)
+	m_decl->print();
+    
+    if(m_statement != nullptr)
+	m_statement->print();
+}
+
+void CompoundStatement::printxml() const
+{
+    if(next_statement != nullptr)
+	next_statement->printxml();
+    
     std::cout << "<Scope>" << std::endl;
-    leftNode->printxml();
-    rightNode->printxml();
+    
+    if(m_decl != nullptr)
+	m_decl->printxml();
+    
+    if(m_statement != nullptr)
+	m_statement->printxml();
+    
     std::cout << "</Scope>" << std::endl;
 }
+
+void CompoundStatement::printasm() const
+{}
 
 
 // Selection Statement definition
 
-SelectionStatement::SelectionStatement(const Base* _if, const Base* _else)
-    : Statement(_if, _else) {}
+SelectionStatement::SelectionStatement(Statement* _if, Statement* _else)
+    : Statement(), m_if(_if), m_else(_else) {}
+
+void SelectionStatement::print() const
+{
+    m_if->print();
+    m_else->print();
+}
+
+void SelectionStatement::printxml() const
+{
+    if(next_statement != nullptr)
+	next_statement->printxml();
+    if(m_if != nullptr)
+	m_if->printxml();
+    if(m_else != nullptr)
+	m_else->printxml();
+}
+
+void SelectionStatement::printasm() const
+{}
 
 
 // Expression Statement definition
 
-ExpressionStatement::ExpressionStatement(const Base* _expr)
-    : Statement(_expr) {}
+ExpressionStatement::ExpressionStatement(Expression* expr)
+    : Statement(), m_expr(expr) {}
+
+void ExpressionStatement::print() const
+{}
+
+void ExpressionStatement::printxml() const
+{}
+
+void ExpressionStatement::printasm() const
+{} 
 
 
 // Jump Statement definition
 
-JumpStatement::JumpStatement(const Base* _el) : Statement(_el) {}
+JumpStatement::JumpStatement(Expression* expr)
+    : m_expr(expr) {}
 
-void JumpStatement::printasm() const {
-    leftNode->printasm();
+void JumpStatement::print() const
+{}
+
+void JumpStatement::printxml() const
+{
+    if(next_statement != nullptr)
+	next_statement->printxml();
+}
+
+void JumpStatement::printasm() const
+{
+    m_expr->printasm();
     std::cout << "\tlw\t$2,8($fp)" << std::endl;
 }
 
 
 // Iteration Statement definition
 
-IterationStatement::IterationStatement(const Base* _el) : Statement(_el) {}
+IterationStatement::IterationStatement(Statement* statement)
+    : m_statement(statement) {}
+
+void IterationStatement::print() const
+{}
+
+void IterationStatement::printxml() const
+{
+    if(next_statement != nullptr)
+	next_statement->printxml();
+    if(m_statement != nullptr)
+	m_statement->printxml();
+}
+
+void IterationStatement::printasm() const
+{}

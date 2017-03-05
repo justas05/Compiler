@@ -2,10 +2,11 @@
 
 #include <iostream>
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     TranslationUnit* ast = parseAST();
 
-    ast->print();
+    ast->printxml();
     
     return 0;
 }

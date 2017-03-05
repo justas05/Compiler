@@ -10,22 +10,21 @@ protected:
     Type* type;
     std::string id;
     Initializer* init;
-    Declaration* decl;
+    Declaration* next_decl;
+    Declaration* decl_list;
     
 public:
-    Declaration(const std::string& _id = "") : id(_id) {}
+    Declaration(const std::string& _id = "");
 
-    virtual void print() const {
-	if(decl != nullptr)
-	    decl->print();
-	std::cout << id << std::endl;
-    }
-    virtual void printxml() const {}
-    virtual void printasm() const {}
+    virtual void print() const;
+    virtual void printxml() const;
+    virtual void printasm() const;
 
-    void addDeclaration(Declaration* _decl) {
-	decl = _decl;
-    }
+    void addDeclaration(Declaration* _next_decl);
+    void addList(Declaration* _next_decl);
+
+    Declaration* getNext() const;
+    std::string getId() const;
 };
 
 #endif

@@ -6,23 +6,16 @@
 
 class TranslationUnit : public Node {
 protected:
-    std::vector<Node* > m_transUnit;
+    std::vector<Node* > translation_unit;
+    
 public:
-    TranslationUnit(Node* decl) {
-	m_transUnit.push_back(decl);
-    }
+    TranslationUnit(Node* decl);
 
-    virtual void print() const {
-	for(auto& i : m_transUnit) {
-	    i->print();
-	}
-    }
-    virtual void printxml() const {}
-    virtual void printasm() const {}
+    virtual void print() const;
+    virtual void printxml() const;
+    virtual void printasm() const;
 
-    void push(Node* decl) {
-	m_transUnit.push_back(decl);
-    }
+    void push(Node* decl);
 };
 
 

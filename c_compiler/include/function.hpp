@@ -1,4 +1,4 @@
-#ifndef AST_FUNCTION_HPP
+ #ifndef AST_FUNCTION_HPP
 #define AST_FUNCTION_HPP
 
 #include "ast.hpp"
@@ -12,16 +12,11 @@ protected:
     Statement* statement;
     
 public:
-    Function(const std::string& _id, Declaration* _parameter_list) : id(_id), parameter_list(_parameter_list) {}
+    Function(const std::string& _id, Declaration* _parameter_list, Statement* _statement);
 
-    virtual void print() const {
-	std::cout << id << std::endl;
-	if(parameter_list != nullptr)
-	    parameter_list->print();
-    }
-    
-    virtual void printxml() const {}
-    virtual void printasm() const {}
+    virtual void print() const;
+    virtual void printxml() const;
+    virtual void printasm() const;
 };
 
 

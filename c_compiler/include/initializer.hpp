@@ -6,23 +6,23 @@
 
 class Initializer : public Node {
 public:
-    Initializer() {}
+    Initializer();
 
-    virtual void print() const {}
-    virtual void printxml() const {}
-    virtual void printasm() const {}
+    virtual void print() const;
+    virtual void printxml() const;
+    virtual void printasm() const;
 };
 
 
 class Integer : public Initializer {
 public:
-    Integer() : Initializer() {}
+    Integer();
 };
 
 
 class StringLiteral : public Initializer {
 public:
-    StringLiteral() : Initializer() {}
+    StringLiteral();
 };
 
 

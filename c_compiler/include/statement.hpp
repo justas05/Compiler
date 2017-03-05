@@ -5,46 +5,82 @@
 
 
 class Statement : public Node {
+protected:
+    Statement* next_statement;
 public:
-    //Statement(const Node* _left = new EmptyNode, const Node* _right = new EmptyNode);
-    Statement() {}
+    Statement(Statement* statement = nullptr);
 
-    virtual void print() const {}
-    virtual void printxml() const {}
-    virtual void printasm() const {}
+    virtual void print() const = 0;
+    virtual void printxml() const = 0;
+    virtual void printasm() const = 0;
+
+    void addStatement(Statement* _next) {
+	next_statement = _next;
+    }
 };
 
-/*
 
 class CompoundStatement : public Statement {
+protected:
+    Declaration* m_decl;
+    Statement* m_statement;
 public:
-    CompoundStatement(const Node* _dec = new EmptyNode, const Node* _statement = new EmptyNode);
+    CompoundStatement(Declaration* decl = nullptr, Statement* statement = nullptr);
+    CompoundStatement(Statement* statement);
 
-    virtual void printxml() const override;
+    virtual void print() const;
+    virtual void printxml() const;
+    virtual void printasm() const;
 };
+
 
 class SelectionStatement : public Statement {
+protected:
+    Statement* m_if;
+    Statement* m_else;
 public:
-    SelectionStatement(const Node* _if, const Node* _else = new EmptyNode);
+    SelectionStatement(Statement* _if = nullptr, Statement* _else = nullptr);
+
+    virtual void print() const;
+    virtual void printxml() const;
+    virtual void printasm() const;
 };
+
 
 class ExpressionStatement : public Statement {
+protected:
+    Expression* m_expr;
 public:
-    ExpressionStatement(const Node* expr = new EmptyNode);
+    ExpressionStatement(Expression* expr = nullptr);
+
+    virtual void print() const;
+    virtual void printxml() const;
+    virtual void printasm() const;
 };
+
 
 class JumpStatement : public Statement {
+protected:
+    Expression* m_expr;
 public:
-    JumpStatement(const Node* _el);
- 
-    virtual void printasm() const override;
+    JumpStatement(Expression* expr = nullptr);
+
+    virtual void print() const;
+    virtual void printxml() const;
+    virtual void printasm() const;
 };
+
 
 class IterationStatement : public Statement {
+protected:
+    Statement* m_statement;
 public:
-    IterationStatement(const Node* _el);
+    IterationStatement(Statement* statement);
+
+    virtual void print() const;
+    virtual void printxml() const;
+    virtual void printasm() const;
 };
 
-*/
 
 #endif
