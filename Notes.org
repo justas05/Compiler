@@ -93,7 +93,6 @@
 
 *** TODOs
 
-    - Change parser to have two vectors with global variables and functions.
     - Analyse tree with map including "name", and struct with "type" and "stack 
       position", and a counter passed by reference.
     - This function will be called by printasm() in the base class and will only be

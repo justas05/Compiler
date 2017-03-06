@@ -11,7 +11,7 @@ protected:
     std::string id;
     Initializer* init;
     Declaration* next_decl;
-    Declaration* decl_list;
+    Declaration* list_next_decl;
     
 public:
     Declaration(const std::string& _id = "");
@@ -24,6 +24,7 @@ public:
     void addList(Declaration* _next_decl);
 
     Declaration* getNext() const;
+    Declaration* getNextListItem() const;
     std::string getId() const;
 };
 

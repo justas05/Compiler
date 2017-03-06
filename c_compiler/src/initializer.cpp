@@ -3,20 +3,26 @@
 
 // Initializer definition
 
-Initializer::Initializer() {}
+Initializer::Initializer()
+{}
 
-void Initializer::print() const {}
+void Initializer::print() const
+{}
 
-void Initializer::printxml() const {}
+void Initializer::printxml() const
+{}
 
-void Initializer::printasm() const {}
+void Initializer::printasm() const
+{}
 
 
 // Integer definition
 
-Integer::Integer() : Initializer() {}
+Integer::Integer() : Initializer()
+{}
 
 
 // String Literal definition
 
-StringLiteral::StringLiteral() : Initializer() {}
+StringLiteral::StringLiteral() : Initializer()
+{}

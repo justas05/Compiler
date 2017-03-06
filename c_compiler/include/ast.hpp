@@ -4,6 +4,12 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <map>
+#include <cstdint>
+
+struct VarLocation;
+
+typedef std::map<std::string, VarLocation> VariableStack;
 
 #include "node.hpp"
 #include "expression.hpp"

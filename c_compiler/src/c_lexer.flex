@@ -8,18 +8,10 @@ extern "C" int fileno(FILE *stream);
 
 %}
 
-KEYWORD auto|double|int|struct|break|else|long|switch|case|enum|register|typedef|char|extern|return|union|const|float|short|unsigned|continue|for|signed|void|default|goto|sizeof|volatile|do|if|static|while
-
 IDENTIFIER [_a-zA-Z][_a-zA-Z0-9]*
-
-OPERATOR [.][.][.]|[<>][<>][=]|[-][-]|[+][+]|[|][|]|[#][#]|[&][&]|[+\-*\/<>=!%^|&][=]|[<][<]|[->][>]|[<>&=+\/\-*(){}\[\]\.,%~!?:|^;]
 
 ASSIGNMENT_OPERATOR (([<>][<>]|[*\/%+\-&^|])[=]|[=])
 
-FRACTIONALCONSTANT (([0-9]*\.[0-9]+)|([0-9]+\.))
-EXPONENTPART ([eE][+-]?[0-9]+)
-
-FLOATINGSUFFI X ([flFL])
 INTEGERSUFFIX ([uU][lL]|[lL][uU]|[uUlL])
 
 DECIMALCONSTANT ([1-9][0-9]*)

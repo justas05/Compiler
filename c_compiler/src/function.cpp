@@ -44,4 +44,10 @@ void Function::printxml() const
 }
 
 void Function::printasm() const
-{}
+{
+    int32_t count = 0;
+    if(statement != nullptr)
+	statement->count_variables(count);
+
+    std::cout << id << ": " << count << " variables defined" << std::endl;
+}

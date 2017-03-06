@@ -4,6 +4,12 @@
 #include "ast.hpp"
 
 
+struct VarLocation {
+    Type* type;
+    int32_t stack_position;
+};
+
+
 class Function : public Node {
 protected:
     Type* type;

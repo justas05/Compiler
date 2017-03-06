@@ -4,34 +4,24 @@
 // General base Statement definition
 
 Statement::Statement(Statement* statement)
-    : next_statement(statement) {}
+    : next_statement(statement)
+{}
 
-void Statement::print() const
+void Statement::addStatement(Statement* _next)
 {
-    if(next_statement != nullptr) 
-	next_statement->print();
-}
-
-void Statement::printxml() const
-{
-    if(next_statement != nullptr) 
-	next_statement->printxml();
-}
-
-void Statement::printasm() const
-{
-    if(next_statement != nullptr) 
-	next_statement->printasm();
+    next_statement = _next;
 }
 
 
 // Compound Statement definition
 
 CompoundStatement::CompoundStatement(Declaration* decl, Statement* statement)
-    : Statement(), m_decl(decl), m_statement(statement) {}
+    : Statement(), m_decl(decl), m_statement(statement)
+{}
 
 CompoundStatement::CompoundStatement(Statement* statement)
-    : m_statement(statement) {}
+    : m_statement(statement)
+{}
 
 void CompoundStatement::print() const
 {
@@ -61,6 +51,31 @@ void CompoundStatement::printxml() const
 void CompoundStatement::printasm() const
 {}
 
+void CompoundStatement::count_variables(int32_t& var_count) const
+{
+    Declaration* declaration = m_decl;
+
+    if(next_statement != nullptr)
+	next_statement->count_variables(var_count);
+
+    if(m_statement != nullptr)
+	m_statement->count_variables(var_count);
+    
+    while(declaration != nullptr) {
+        Declaration* declaration_list = declaration->getNextListItem();
+
+	while(declaration_list != nullptr) {
+	    var_count++;
+
+	    declaration_list = declaration_list->getNextListItem();
+	}
+
+	var_count++;
+	
+	declaration = declaration->getNext();
+    }
+}
+
 
 // Selection Statement definition
 
@@ -86,11 +101,24 @@ void SelectionStatement::printxml() const
 void SelectionStatement::printasm() const
 {}
 
+void SelectionStatement::count_variables(int32_t& var_count) const
+{
+    if(next_statement != nullptr)
+	next_statement->count_variables(var_count);
+
+    if(m_if != nullptr)
+	m_if->count_variables(var_count);
+
+    if(m_else != nullptr)
+	m_else->count_variables(var_count);
+}
+
 
 // Expression Statement definition
 
 ExpressionStatement::ExpressionStatement(Expression* expr)
-    : Statement(), m_expr(expr) {}
+    : Statement(), m_expr(expr)
+{}
 
 void ExpressionStatement::print() const
 {}
@@ -99,13 +127,20 @@ void ExpressionStatement::printxml() const
 {}
 
 void ExpressionStatement::printasm() const
-{} 
+{}
+
+void ExpressionStatement::count_variables(int32_t& var_count) const
+{
+    if(next_statement != nullptr)
+	next_statement->count_variables(var_count);
+}
 
 
 // Jump Statement definition
 
 JumpStatement::JumpStatement(Expression* expr)
-    : m_expr(expr) {}
+    : m_expr(expr)
+{}
 
 void JumpStatement::print() const
 {}
@@ -122,11 +157,18 @@ void JumpStatement::printasm() const
     std::cout << "\tlw\t$2,8($fp)" << std::endl;
 }
 
+void JumpStatement::count_variables(int32_t& var_count) const
+{
+    if(next_statement != nullptr)
+	next_statement->count_variables(var_count);
+}
+
 
 // Iteration Statement definition
 
 IterationStatement::IterationStatement(Statement* statement)
-    : m_statement(statement) {}
+    : m_statement(statement)
+{}
 
 void IterationStatement::print() const
 {}
@@ -141,3 +183,12 @@ void IterationStatement::printxml() const
 
 void IterationStatement::printasm() const
 {}
+
+void IterationStatement::count_variables(int32_t& var_count) const
+{
+    if(next_statement != nullptr)
+	next_statement->count_variables(var_count);
+
+    if(m_statement != nullptr)
+	m_statement->count_variables(var_count);
+}

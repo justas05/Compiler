@@ -4,9 +4,11 @@
 
 int main(int argc, char *argv[])
 {
-    TranslationUnit* ast = parseAST();
+    Node* ast = parseAST();
 
     ast->printxml();
+
+    ast->printasm();
     
     return 0;
 }

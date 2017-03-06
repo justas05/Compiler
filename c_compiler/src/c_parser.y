@@ -73,14 +73,14 @@ void yyerror(const char *);
 %%
 
 ROOT:
-	        TranslationUnit { g_root = $1; }
+		TranslationUnit { g_root = $1; }
 		;
 
 // EXTERNAL DEFINITION
 
 TranslationUnit:
 		ExternalDeclaration { $$ = new TranslationUnit($1); }
-|       TranslationUnit ExternalDeclaration { $$->push($2); }
+	|       TranslationUnit ExternalDeclaration { $$->push($2); }
 		;
 
 ExternalDeclaration:

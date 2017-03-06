@@ -3,8 +3,14 @@
 
 // Expression definition
 
-Expression::Expression(const Node* expr) {}
+Expression::Expression(const Node* expr)
+{}
 
-void Expression::print() const {}
-void Expression::printxml() const {}
-void Expression::printasm() const {}
+void Expression::print() const
+{}
+
+void Expression::printxml() const
+{}
+
+void Expression::printasm() const
+{}

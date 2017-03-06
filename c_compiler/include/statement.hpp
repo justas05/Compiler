@@ -7,6 +7,7 @@
 class Statement : public Node {
 protected:
     Statement* next_statement;
+    
 public:
     Statement(Statement* statement = nullptr);
 
@@ -14,9 +15,9 @@ public:
     virtual void printxml() const = 0;
     virtual void printasm() const = 0;
 
-    void addStatement(Statement* _next) {
-	next_statement = _next;
-    }
+    virtual void count_variables(int32_t& var_count) const = 0;
+
+    void addStatement(Statement* _next);
 };
 
 
@@ -24,6 +25,7 @@ class CompoundStatement : public Statement {
 protected:
     Declaration* m_decl;
     Statement* m_statement;
+    
 public:
     CompoundStatement(Declaration* decl = nullptr, Statement* statement = nullptr);
     CompoundStatement(Statement* statement);
@@ -31,6 +33,8 @@ public:
     virtual void print() const;
     virtual void printxml() const;
     virtual void printasm() const;
+
+    virtual void count_variables(int32_t& var_count) const;
 };
 
 
@@ -44,6 +48,8 @@ public:
     virtual void print() const;
     virtual void printxml() const;
     virtual void printasm() const;
+
+    virtual void count_variables(int32_t& var_count) const;
 };
 
 
@@ -56,6 +62,8 @@ public:
     virtual void print() const;
     virtual void printxml() const;
     virtual void printasm() const;
+
+    virtual void count_variables(int32_t& var_count) const;
 };
 
 
@@ -68,6 +76,8 @@ public:
     virtual void print() const;
     virtual void printxml() const;
     virtual void printasm() const;
+
+    virtual void count_variables(int32_t& var_count) const;
 };
 
 
@@ -80,6 +90,8 @@ public:
     virtual void print() const;
     virtual void printxml() const;
     virtual void printasm() const;
+
+    virtual void count_variables(int32_t& var_count) const;
 };
 
 
