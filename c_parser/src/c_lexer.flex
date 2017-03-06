@@ -1,8 +1,6 @@
 %option noyywrap
 
 %{
-// Avoid error "error: fileno was not declared in this scope"
-extern "C" int fileno(FILE *stream);
 
 #include "c_parser.tab.hpp"
 
