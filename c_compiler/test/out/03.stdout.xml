@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<Program>
-<Function id="foo">
-<Parameter id="bar" />
-<Scope>
-</Scope>
-</Function>
-</Program>

@@ -3,48 +3,32 @@
 
 #include "ast.hpp"
 
-#include <vector>
-
 // Declaration that holds a list of declarations
 
-class DeclarationList : public Base {
-private:
-    mutable std::vector<const Base*> dec_list;
-
+class Declaration : public Node {
+protected:
+    Type* type;
+    std::string id;
+    Initializer* init;
+    Declaration* next_decl;
+    Declaration* list_next_decl;
+    
 public:
-    DeclarationList(const Base* _dec) {
-	dec_list.push_back(_dec);
-    }
+    Declaration(const std::string& _id = "");
 
-    virtual void print() const {
-	for(size_t i = 0; i < dec_list.size(); ++i) {
-	    dec_list[i]->print();
-	}
-    }
+    virtual void print() const;
+    virtual void printxml() const;
+    virtual void printasm() const;
 
-    virtual void push(const Base* _dec) const {
-	dec_list.push_back(_dec);
-    }
-};
+    void addDeclaration(Declaration* _next_decl);
+    void addList(Declaration* _next_decl);
 
-class VariableDeclaration : public Base {
-private:
-    mutable std::vector<const Base*> var_list;
+    void setType(Type* _type);
 
-public:
-    VariableDeclaration(const Base* _var) {
-	var_list.push_back(_var);
-    }
-
-    virtual void print() const {
-	for(size_t i = 0; i < var_list.size(); ++i) {
-	    var_list[i]->print();
-	}
-    }
-
-    virtual void push(const Base* _var) const {
-	var_list.push_back(_var);
-    }
+    Declaration* getNext() const;
+    Declaration* getNextListItem() const;
+    std::string getId() const;
+    std::string getType() const;
 };
 
 #endif

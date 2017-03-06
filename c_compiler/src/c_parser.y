@@ -1,7 +1,8 @@
 %code requires{
 
 #include "ast.hpp"
-extern ast_Top *g_root; // A way of getting the AST out
+    
+extern TranslationUnit* g_root; // A way of getting the AST out
 
 //! This is to fix problems when generating C++
 // We are declaring the functions provided by Flex, so
@@ -14,116 +15,161 @@ void yyerror(const char *);
 // Represents the value associated with any kind of
 // AST node.
 %union{
-    const Base *stmnt;
+    Node* node;
+    TranslationUnit* trans_unit;
+    Function* function;
+    Statement* statement;
+    Declaration* declaration;
+    Expression* expression;
+    Type* type;
+    Initializer* initializer;
     double number;
-    std::string *string;
+    std::string* string;
 }
-                        
-%token T_TYPE_SPEC T_TYPE_QUAL T_STRG_SPEC T_IDENTIFIER
-%token T_SC T_CMA T_LRB T_LCB T_RCB T_LSB T_RSB T_QU T_COL T_LOG_OR T_LOG_AND T_OR T_XOR T_AND T_EQUALITY_OP T_REL_OP T_SHIFT_OP T_MULT T_DIV T_REM T_TILDE T_NOT T_DOT T_ARROW T_INCDEC T_ADDSUB_OP T_ASSIGN_OPER T_EQ T_SIZEOF
-%token T_INT_CONST
-%token T_IF T_WHILE T_DO T_FOR T_RETURN
-%nonassoc T_RRB
-%nonassoc T_ELSE
+			               
+%token			T_IDENTIFIER T_SC T_CMA T_LRB T_LCB T_RCB T_LSB T_RSB T_QU T_COL T_LOG_OR
+			T_LOG_AND T_OR T_XOR T_AND T_EQUALITY_OP T_REL_OP T_SHIFT_OP T_MULT T_DIV
+			T_REM T_TILDE T_NOT T_DOT T_ARROW T_INCDEC T_ADDSUB_OP T_ASSIGN_OPER T_EQ
+			T_SIZEOF T_INT_CONST T_IF T_WHILE T_DO T_FOR T_RETURN
+
+			T_VOID T_CHAR T_SCHAR T_UCHAR T_SSINT T_USINT T_LINT T_ULINT T_UINT T_SINT
 			
-                        
-%type <stmnt> ExtDef ExtDeclaration
-			
-%type <stmnt> FuncDef ParameterList Parameter ParamDeclarator
-			
-%type <stmnt> DeclarationList Declaration DeclarationSpec DeclarationSpec_T InitDeclarator InitDeclaratorList Declarator
-			
-%type <stmnt> StatementList Statement CompoundStatement CompoundStatement_2 SelectionStatement ExpressionStatement JumpStatement IterationStatement
-			
-%type <stmnt> Expression AssignmentExpression ConditionalExpression LogicalOrExpression LogicalAndExpression InclusiveOrExpression ExclusiveOrExpression AndExpression EqualityExpression RelationalExpression ShiftExpression AdditiveExpression MultiplicativeExpression CastExpression UnaryExpression PostfixExpression PostfixExpression2 ArgumentExpressionList PrimaryExpression
+%nonassoc		T_RRB
+%nonassoc		T_ELSE
 
 			
-%type <number> Constant T_INT_CONST
-
+%type	<node>		ExternalDeclaration
 			
-%type <string> T_IDENTIFIER MultDivRemOP UnaryOperator ASSIGN_OPER T_ASSIGN_OPER T_EQ T_AND T_ADDSUB_OP T_TILDE T_NOT T_MULT T_DIV T_REM //T_Operator
+%type	<trans_unit>	TranslationUnit
+			
+%type	<function>	FunctionDefinition
+
+%type	<statement>	StatementList Statement CompoundStatement CompoundStatement_2
+			SelectionStatement
+			ExpressionStatement JumpStatement IterationStatement
+
+%type	<declaration>	ParameterList Parameter DeclarationList Declaration InitDeclaratorList
+			InitDeclarator
+			IdentifierList
+
+%type	<expression>	Expression AssignmentExpression ConditionalExpression LogicalOrExpression
+			LogicalAndExpression InclusiveOrExpression ExclusiveOrExpression
+			AndExpression EqualityExpression RelationalExpression ShiftExpression
+			AdditiveExpression MultiplicativeExpression CastExpression UnaryExpression
+			PostfixExpression PostfixExpression2 ArgumentExpressionList PrimaryExpression
+
+%type	<type>		DeclarationSpec
+
+%type	<string>	Declarator DirectDeclarator
+
+%type	<initializer>	Constant
+			
+%type	<number>        T_INT_CONST
+			
+%type	<string>	T_IDENTIFIER ASSIGN_OPER T_ASSIGN_OPER T_EQ T_AND T_ADDSUB_OP T_TILDE T_NOT
+			T_MULT T_DIV T_REM MultDivRemOP UnaryOperator
                         
 %start ROOT
                         
 %%
 
 ROOT:
-	        ExtDef { ; }
+		TranslationUnit { g_root = $1; }
 		;
 
 // EXTERNAL DEFINITION
 
-ExtDef:
-		ExtDeclaration { g_root->push($1); }
-        |       ExtDef ExtDeclaration { g_root->push($2); }
+TranslationUnit:
+		ExternalDeclaration { $$ = new TranslationUnit($1); }
+	|       TranslationUnit ExternalDeclaration { $$->push($2); }
 		;
 
-ExtDeclaration:
+ExternalDeclaration:
 		Declaration { $$ = $1; }
-        |       FuncDef { $$ = $1; }
+        |       FunctionDefinition { $$ = $1; }
 		;
 
 // FUNCTION DEFINITION
 
-FuncDef:
+FunctionDefinition:
 		DeclarationSpec T_IDENTIFIER T_LRB ParameterList T_RRB CompoundStatement { $$ = new Function(*$2, $4, $6); }
 		;
 
 ParameterList:
-		%empty { $$ = new ParamList(); }
-	| 	Parameter { $$ = new ParamList($1); }
-	|       ParameterList T_CMA Parameter { $$->push($3); }
+		%empty { $$ = new Declaration(); }
+	| 	Parameter { $$ = $1; }
+	|       ParameterList T_CMA Parameter { $3->addDeclaration($$); $$ = $3;}
 		;
 
 Parameter:
-		DeclarationSpec ParamDeclarator { $$ = $2; }
-		;
-
-ParamDeclarator:
-		T_IDENTIFIER { $$ = new Parameter(*$1);}
+		DeclarationSpec T_IDENTIFIER { $$ = new Declaration(*$2); }
 		;
 
 // Declaration
 
 DeclarationList:
-		Declaration { $$ = new DeclarationList($1); }
-	|	DeclarationList Declaration { $$->push($2); }
+		Declaration { $$ = $1; }
+	|	DeclarationList Declaration { $2->addDeclaration($$); $$ = $2; }
 		;
 
 Declaration:
-		DeclarationSpec InitDeclaratorList T_SC { $$ = $2; }
+		DeclarationSpec InitDeclaratorList T_SC {
+		    $$ = $2;
+		    Declaration* tmp_decl = $2;
+		    
+		    while(tmp_decl != nullptr) {
+			tmp_decl->setType($1);
+			tmp_decl = tmp_decl->getNextListItem();
+		    }
+			}
 		;
 
 DeclarationSpec:
-		DeclarationSpec_T { ; }
-	|	DeclarationSpec_T DeclarationSpec { ; }
-		;
-
-DeclarationSpec_T:
-		T_TYPE_SPEC { ; }
-	|	T_TYPE_QUAL { ; }
-	|	T_STRG_SPEC { ; }
+		T_VOID { $$ = new Void; }
+	|	T_CHAR { $$ = new Char; }
+	|	T_SCHAR { $$ = new Char; }
+	|	T_UCHAR { $$ = new Char; }
+	|	T_SSINT { $$ = new Int; }
+	|	T_USINT { $$ = new Int; }
+	|	T_LINT { $$ = new Int; }
+	|	T_ULINT { $$ = new Int; }
+	|	T_UINT { $$ = new Int; }
+	|	T_SINT { $$ = new Int; }
 		;
 
 InitDeclaratorList:
-		InitDeclarator { $$ = new VariableDeclaration($1); }
-	|       InitDeclaratorList T_CMA InitDeclarator { $$->push($3); }
+		InitDeclarator { $$ = new Declaration(*$1); }
+	|       InitDeclaratorList T_CMA InitDeclarator { $3->addList($$); $$ = $3; }
 		;
 
 InitDeclarator:
-		Declarator { ; }
-	|	Declarator T_EQ AssignmentExpression { ; }
+		Declarator { $$ = new Declaration(*$1); }
+	|	Declarator T_EQ AssignmentExpression { $$ = new Declaration(*$1); }
 		;
 
 Declarator:
-		T_IDENTIFIER {$$ = new Variable(*$1); }
+		DirectDeclarator { $$ = $1; }
+	|	T_MULT DirectDeclarator { $$ = $2; }
 		;
+
+DirectDeclarator:
+		T_IDENTIFIER { $$ = $1; }
+	|	T_LRB Declarator T_RRB { $$ = $2; }
+	|	DirectDeclarator T_LSB ConditionalExpression T_RSB { $$ = $1; }
+	|	DirectDeclarator T_LSB T_RSB { $$ = $1; }
+	|	DirectDeclarator T_LRB ParameterList T_RRB { $$ = $1; }
+	|	DirectDeclarator T_LRB IdentifierList T_RRB { $$ = $1; }
+		;
+
+IdentifierList:
+		T_IDENTIFIER { $$ = new Declaration(); }
+	|	IdentifierList T_CMA T_IDENTIFIER { $$ = new Declaration(); }
 
 // Statement
 
 StatementList:
-		Statement { $$ = new StatementList($1); }
-	|	StatementList Statement { $$->push($2); }
+		Statement { $$ = $1; }
+	|	StatementList Statement { $2->addStatement($$); $$ = $2; }
 		;
 
 Statement:
@@ -147,16 +193,16 @@ CompoundStatement_2:
 
 SelectionStatement:
 		T_IF T_LRB Expression T_RRB Statement { $$ = new SelectionStatement($5); }
-|	T_IF T_LRB Expression T_RRB Statement T_ELSE Statement { $$ = new SelectionStatement($5, $7); }
+	|	T_IF T_LRB Expression T_RRB Statement T_ELSE Statement { $$ = new SelectionStatement($5, $7); }
 		;
 
 ExpressionStatement:
 		T_SC { $$ = new ExpressionStatement(); }
-	|	Expression T_SC { $$ = $1; }
+|	Expression T_SC { $$ = new ExpressionStatement(); }
 		;
 
 JumpStatement:
-		T_RETURN ExpressionStatement { $$ = $2; }
+		  T_RETURN ExpressionStatement { $$ = new JumpStatement(); }
 		;
 
 IterationStatement:
@@ -244,7 +290,7 @@ MultDivRemOP:
 
 CastExpression:
 		UnaryExpression { $$ = $1; }
-	|	T_LRB T_TYPE_SPEC T_RRB CastExpression { $$ = $4; }
+	|	T_LRB DeclarationSpec T_RRB CastExpression { $$ = $4; }
 		;
 
 UnaryExpression:
@@ -252,7 +298,7 @@ UnaryExpression:
 	|	T_INCDEC UnaryExpression { $$ = $2; }
 	|	UnaryOperator CastExpression { $$ = $2; }
 	|	T_SIZEOF UnaryExpression { $$ = $2; }
-	|	T_SIZEOF T_LRB T_TYPE_SPEC T_RRB { $$ = new Expression(); }
+	|	T_SIZEOF T_LRB DeclarationSpec T_RRB { $$ = new Expression(); }
 		;
 
 UnaryOperator:
@@ -274,30 +320,30 @@ PostfixExpression:
 
 PostfixExpression2:
 		T_RRB { $$ = new Expression(); }
-	|	ArgumentExpressionList T_RRB { $$ = $1; }
+	|	ArgumentExpressionList T_RRB { $$ = new Expression; }
 		;
 
 ArgumentExpressionList:
-		AssignmentExpression { $$ = $1; }
-	|	ArgumentExpressionList T_CMA AssignmentExpression { $$ = $3; }
+		AssignmentExpression { $$ = new Expression; }
+	|	ArgumentExpressionList T_CMA AssignmentExpression { $$ = new Expression; }
 		;
 
 PrimaryExpression:
 		T_IDENTIFIER { $$ = new Expression(); }
-	|       Constant { $$ = new Expression(); }
+	|       Constant { $$ = new Expression($1); }
 	|	T_LRB Expression T_RRB { $$ = $2; }
 		;
 
 Constant:
-		T_INT_CONST { $$ = $1; }
+		T_INT_CONST { $$ = new Initializer(); }
 		;
 
 %%
 
-ast_Top *g_root; // Definition of variable (to match declaration earlier)
+TranslationUnit* g_root; // Definition of variable (to match declaration earlier)
 
-ast_Top *parseAST() {
-    g_root = new ast_Top;
+TranslationUnit* parseAST() {
+    g_root = 0;
     yyparse();
     return g_root;
 }

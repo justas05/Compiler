@@ -1,14 +1,25 @@
 #ifndef AST_HPP
 #define AST_HPP
 
-#include "base.hpp"
+#include <vector>
+#include <string>
+#include <iostream>
+#include <map>
+#include <cstdint>
+
+struct VarLocation;
+
+typedef std::map<std::string, VarLocation> VariableStack;
+
+#include "node.hpp"
+#include "expression.hpp"
+#include "type.hpp"
+#include "initializer.hpp"
+#include "declaration.hpp"
 #include "statement.hpp"
 #include "function.hpp"
-#include "declaration.hpp"
-#include "expression.hpp"
-#include "primitives.hpp"
-#include "ast_top.hpp"
+#include "translation_unit.hpp"
 
-ast_Top *parseAST();
+TranslationUnit* parseAST();
 
 #endif

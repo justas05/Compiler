@@ -1,0 +1,166 @@
+<?xml version="1.0"?>
+<Program>
+<Variable id="a" />
+<Variable id="b" />
+<Variable id="c" />
+<Variable id="d" />
+<Variable id="e" />
+<Variable id="f" />
+<Function id="f">
+<Scope>
+</Scope>
+</Function>
+<Function id="foo">
+<Parameter id="bar" />
+<Scope>
+</Scope>
+</Function>
+<Function id="foo">
+<Parameter id="bar1" />
+<Parameter id="bar2" />
+<Scope>
+<Variable id="x" />
+<Variable id="y" />
+<Variable id="z" />
+</Scope>
+</Function>
+<Function id="foo">
+<Parameter id="x" />
+<Parameter id="y" />
+<Scope>
+<Scope>
+</Scope>
+</Scope>
+</Function>
+<Function id="f">
+<Parameter id="a" />
+<Parameter id="b" />
+<Parameter id="c" />
+<Scope>
+<Variable id="d" />
+<Scope>
+<Variable id="e" />
+</Scope>
+</Scope>
+</Function>
+<Function id="foo">
+<Parameter id="a" />
+<Scope>
+<Scope>
+<Variable id="z" />
+</Scope>
+</Scope>
+</Function>
+<Function id="func">
+<Parameter id="a" />
+<Parameter id="b" />
+<Scope>
+<Variable id="c" />
+<Scope>
+<Variable id="d" />
+</Scope>
+<Scope>
+<Variable id="e" />
+</Scope>
+</Scope>
+</Function>
+<Function id="x">
+<Scope>
+</Scope>
+</Function>
+<Variable id="g" />
+<Function id="zz">
+<Parameter id="a" />
+<Parameter id="b" />
+<Parameter id="c" />
+<Scope>
+<Scope>
+<Variable id="a" />
+</Scope>
+<Scope>
+<Variable id="fsdfsdfs" />
+</Scope>
+</Scope>
+</Function>
+<Function id="f">
+<Scope>
+</Scope>
+</Function>
+<Variable id="g" />
+<Function id="x">
+<Parameter id="y" />
+<Scope>
+<Variable id="z" />
+<Scope>
+<Variable id="r" />
+</Scope>
+<Scope>
+<Variable id="f" />
+</Scope>
+</Scope>
+</Function>
+<Function id="f">
+<Scope>
+<Variable id="x" />
+<Scope>
+<Variable id="y" />
+</Scope>
+</Scope>
+</Function>
+<Function id="f">
+<Parameter id="b" />
+<Parameter id="c" />
+<Scope>
+<Variable id="a" />
+</Scope>
+</Function>
+<Function id="func">
+<Parameter id="x" />
+<Parameter id="y" />
+<Scope>
+<Variable id="i" />
+<Scope>
+<Variable id="z" />
+</Scope>
+</Scope>
+</Function>
+<Function id="function_1">
+<Parameter id="a" />
+<Parameter id="b" />
+<Scope>
+<Variable id="x" />
+<Scope>
+<Variable id="c" />
+</Scope>
+</Scope>
+</Function>
+<Function id="add">
+<Parameter id="a" />
+<Parameter id="b" />
+<Scope>
+<Variable id="c" />
+</Scope>
+</Function>
+<Function id="sub">
+<Parameter id="a" />
+<Parameter id="b" />
+<Scope>
+<Variable id="c" />
+</Scope>
+</Function>
+<Function id="mult_by_5">
+<Parameter id="a" />
+<Scope>
+<Variable id="b" />
+</Scope>
+</Function>
+<Function id="add_5">
+<Parameter id="a" />
+<Scope>
+<Variable id="i" />
+<Scope>
+<Variable id="b" />
+</Scope>
+</Scope>
+</Function>
+</Program>

@@ -3,79 +3,96 @@
 
 #include "ast.hpp"
 
-class Statement : public Base {
+
+class Statement : public Node {
 protected:
-    mutable std::vector<const Base*> list;
+    Statement* next_statement;
     
 public:
-    Statement() {}
-    
-    Statement(const Base* _el) {
-        list.push_back(_el);
-    }
+    Statement(Statement* statement = nullptr);
 
-    Statement(const Base* _dec, const Base* _statement) {
-        list.push_back(_dec);
-        list.push_back(_statement);
-    }
-    virtual void print() const {
-	for(size_t i = 0; i < list.size(); ++i) {
-	    list[i]->print();
-	}
-    }
+    virtual void print() const = 0;
+    virtual void printxml() const = 0;
+    virtual void printasm() const = 0;
 
-    virtual void push(const Base* _var) const {
-        list.push_back(_var);
-    }
+    virtual void count_variables(int32_t& var_count) const = 0;
+
+    void addStatement(Statement* _next);
 };
 
-class StatementList : public Statement {  
-public:
-    StatementList(const Base* _statement) : Statement(_statement) {}
-};
 
 class CompoundStatement : public Statement {
+protected:
+    Declaration* m_decl;
+    Statement* m_statement;
+    
 public:
-    CompoundStatement() : Statement() {}
-    CompoundStatement(const Base* _el) : Statement(_el) {}
-    CompoundStatement(const Base* _dec, const Base* _statement) :
-        Statement(_dec, _statement) {}
+    CompoundStatement(Declaration* decl = nullptr, Statement* statement = nullptr);
+    CompoundStatement(Statement* statement);
 
-    virtual void print() const override {
-	std::cout << "<Scope>" << std::endl;
-	for(size_t i = 0; i < list.size(); ++i) {
-	    list[i]->print();
-	}
-	std::cout << "</Scope>" << std::endl;
-    }
+    virtual void print() const;
+    virtual void printxml() const;
+    virtual void printasm() const;
+
+    virtual void count_variables(int32_t& var_count) const;
 };
+
 
 class SelectionStatement : public Statement {
+protected:
+    Statement* m_if;
+    Statement* m_else;
 public:
-    SelectionStatement() : Statement() {}
-    SelectionStatement(const Base* _el) : Statement(_el) {}
-    SelectionStatement(const Base* _if, const Base* _else) :
-        Statement(_if, _else) {}
+    SelectionStatement(Statement* _if = nullptr, Statement* _else = nullptr);
+
+    virtual void print() const;
+    virtual void printxml() const;
+    virtual void printasm() const;
+
+    virtual void count_variables(int32_t& var_count) const;
 };
+
 
 class ExpressionStatement : public Statement {
+protected:
+    Expression* m_expr;
 public:
-    ExpressionStatement() : Statement() {}
-    ExpressionStatement(const Base* _el) : Statement(_el) {}
+    ExpressionStatement(Expression* expr = nullptr);
+
+    virtual void print() const;
+    virtual void printxml() const;
+    virtual void printasm() const;
+
+    virtual void count_variables(int32_t& var_count) const;
 };
+
 
 class JumpStatement : public Statement {
+protected:
+    Expression* m_expr;
 public:
-    JumpStatement() : Statement() {}
-    JumpStatement(const Base* _el) : Statement(_el) {}
+    JumpStatement(Expression* expr = nullptr);
+
+    virtual void print() const;
+    virtual void printxml() const;
+    virtual void printasm() const;
+
+    virtual void count_variables(int32_t& var_count) const;
 };
 
+
 class IterationStatement : public Statement {
+protected:
+    Statement* m_statement;
 public:
-    IterationStatement() : Statement() {}
-    IterationStatement(const Base* _el) : Statement(_el) {}
-    IterationStatement(const Base* _if, const Base* _else) :
-        Statement(_if, _else) {}
+    IterationStatement(Statement* statement);
+
+    virtual void print() const;
+    virtual void printxml() const;
+    virtual void printasm() const;
+
+    virtual void count_variables(int32_t& var_count) const;
 };
+
 
 #endif

@@ -74,3 +74,26 @@
 ** TODO Coursework (c compiler)
    DEADLINE: <2017-03-28 Tue>
 
+*** Task
+    
+*** Mips Assembly
+
+    - %hi(id) :: loads the upper address of the global variable id
+    - %lo(id) :: loads the lower address of the global variable id
+    - addiu :: Add Immediate Unsigned
+    - jr :: Jump Register
+    - li :: Pseudo instruction interpreted as (	lui $rd, LabelAddr[31:16]
+                                                ori $rd,$rd, LabelAddr[15:0] )
+    - lui :: loads uppper immediate.
+    - lw :: Load Word
+    - move :: Pseudo instruction interpreted as (add $rt, $rs, $zero)
+    - nop :: No Operation
+    - sw :: Store Word
+
+
+*** TODOs
+
+    - Analyse tree with map including "name", and struct with "type" and "stack 
+      position", and a counter passed by reference.
+    - This function will be called by printasm() in the base class and will only be
+      implemented by function.
