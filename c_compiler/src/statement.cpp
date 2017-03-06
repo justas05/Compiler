@@ -67,8 +67,12 @@ void CompoundStatement::count_variables(int32_t& var_count) const
 	while(declaration_list != nullptr) {
 	    var_count++;
 
+	    std::cout << declaration_list->getType() << std::endl;
+
 	    declaration_list = declaration_list->getNextListItem();
 	}
+
+	std::cout << declaration->getType() << std::endl;
 
 	var_count++;
 	

@@ -9,3 +9,4 @@ c_compiler/build/
 *.output
 #*
 .#*
+*.log

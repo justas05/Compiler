@@ -1,4 +1,4 @@
- #ifndef AST_FUNCTION_HPP
+#ifndef AST_FUNCTION_HPP
 #define AST_FUNCTION_HPP
 
 #include "ast.hpp"

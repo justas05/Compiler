@@ -27,11 +27,12 @@ void yyerror(const char *);
     std::string* string;
 }
 			               
-%token			T_TYPE_SPEC T_TYPE_QUAL T_STRG_SPEC T_IDENTIFIER T_SC T_CMA T_LRB T_LCB T_RCB
-			T_LSB T_RSB T_QU T_COL T_LOG_OR T_LOG_AND T_OR T_XOR T_AND T_EQUALITY_OP
-			T_REL_OP T_SHIFT_OP T_MULT T_DIV T_REM T_TILDE T_NOT T_DOT T_ARROW T_INCDEC
-			T_ADDSUB_OP T_ASSIGN_OPER T_EQ T_SIZEOF T_INT_CONST T_IF T_WHILE T_DO T_FOR
-			T_RETURN
+%token			T_IDENTIFIER T_SC T_CMA T_LRB T_LCB T_RCB T_LSB T_RSB T_QU T_COL T_LOG_OR
+			T_LOG_AND T_OR T_XOR T_AND T_EQUALITY_OP T_REL_OP T_SHIFT_OP T_MULT T_DIV
+			T_REM T_TILDE T_NOT T_DOT T_ARROW T_INCDEC T_ADDSUB_OP T_ASSIGN_OPER T_EQ
+			T_SIZEOF T_INT_CONST T_IF T_WHILE T_DO T_FOR T_RETURN
+
+			T_VOID T_CHAR T_SCHAR T_UCHAR T_SSINT T_USINT T_LINT T_ULINT T_UINT T_SINT
 			
 %nonassoc		T_RRB
 %nonassoc		T_ELSE
@@ -57,7 +58,7 @@ void yyerror(const char *);
 			AdditiveExpression MultiplicativeExpression CastExpression UnaryExpression
 			PostfixExpression PostfixExpression2 ArgumentExpressionList PrimaryExpression
 
-%type	<type>		DeclarationSpec DeclarationSpec_T
+%type	<type>		DeclarationSpec
 
 %type	<string>	Declarator DirectDeclarator
 
@@ -112,18 +113,28 @@ DeclarationList:
 		;
 
 Declaration:
-		DeclarationSpec InitDeclaratorList T_SC { $$ = $2; }
+		DeclarationSpec InitDeclaratorList T_SC {
+		    $$ = $2;
+		    Declaration* tmp_decl = $2;
+		    
+		    while(tmp_decl != nullptr) {
+			tmp_decl->setType($1);
+			tmp_decl = tmp_decl->getNextListItem();
+		    }
+			}
 		;
 
 DeclarationSpec:
-		DeclarationSpec_T { ; }
-	|	DeclarationSpec_T DeclarationSpec { ; }
-		;
-
-DeclarationSpec_T:
-		T_TYPE_SPEC { ; }
-	|	T_TYPE_QUAL { ; }
-	|	T_STRG_SPEC { ; }
+		T_VOID { $$ = new Void; }
+	|	T_CHAR { $$ = new Char; }
+	|	T_SCHAR { $$ = new Char; }
+	|	T_UCHAR { $$ = new Char; }
+	|	T_SSINT { $$ = new Int; }
+	|	T_USINT { $$ = new Int; }
+	|	T_LINT { $$ = new Int; }
+	|	T_ULINT { $$ = new Int; }
+	|	T_UINT { $$ = new Int; }
+	|	T_SINT { $$ = new Int; }
 		;
 
 InitDeclaratorList:
@@ -279,7 +290,7 @@ MultDivRemOP:
 
 CastExpression:
 		UnaryExpression { $$ = $1; }
-	|	T_LRB T_TYPE_SPEC T_RRB CastExpression { $$ = $4; }
+	|	T_LRB DeclarationSpec T_RRB CastExpression { $$ = $4; }
 		;
 
 UnaryExpression:
@@ -287,7 +298,7 @@ UnaryExpression:
 	|	T_INCDEC UnaryExpression { $$ = $2; }
 	|	UnaryOperator CastExpression { $$ = $2; }
 	|	T_SIZEOF UnaryExpression { $$ = $2; }
-	|	T_SIZEOF T_LRB T_TYPE_SPEC T_RRB { $$ = new Expression(); }
+	|	T_SIZEOF T_LRB DeclarationSpec T_RRB { $$ = new Expression(); }
 		;
 
 UnaryOperator:

@@ -14,13 +14,13 @@ public:
 };
 
 
-class Specifier : Type {
+class Specifier : public Type {
 public:
     virtual std::string getType() const = 0;
 };
 
 
-class Pointer : Type {
+class Pointer : public Type {
 protected:
     Type* pointer_type;
 
@@ -31,7 +31,7 @@ public:
 };
 
 
-class Array : Type {
+class Array : public Type {
 protected:
     int32_t size;
     Type* array_type;
@@ -43,7 +43,7 @@ public:
 };
 
 
-class Void : Specifier {
+class Void : public Specifier {
 public:
     Void();
     
@@ -51,7 +51,7 @@ public:
 };
 
 
-class Int : Specifier {
+class Int : public Specifier {
 public:
     Int();
     
@@ -59,7 +59,7 @@ public:
 };
 
 
-class Char : Specifier {
+class Char : public Specifier {
 public:
     Char();
     

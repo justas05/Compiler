@@ -23,9 +23,12 @@ public:
     void addDeclaration(Declaration* _next_decl);
     void addList(Declaration* _next_decl);
 
+    void setType(Type* _type);
+
     Declaration* getNext() const;
     Declaration* getNextListItem() const;
     std::string getId() const;
+    std::string getType() const;
 };
 
 #endif

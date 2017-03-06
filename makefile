@@ -70,7 +70,7 @@ $(PARSRCDIR)/c_parser.tab.cpp $(PARSRCDIR)/c_parser.tab.hpp : $(PARSRCDIR)/c_par
 bin/c_compiler:	$(COMPBUILDDIR)/compiler_main.o $(COMPBUILDDIR)/statement.o \
 		$(COMPBUILDDIR)/function.o $(COMPBUILDDIR)/expression.o \
 		$(COMPBUILDDIR)/initializer.o $(COMPBUILDDIR)/translation_unit.o \
-		$(COMPBUILDDIR)/declaration.o \
+		$(COMPBUILDDIR)/declaration.o $(COMPBUILDDIR)/type.o \
 		$(COMPBUILDDIR)/c_parser.tab.o $(COMPBUILDDIR)/c_lexer.yy.o
 	@echo "Linking..."
 	@echo " mkdir -p bin"; mkdir -p bin
