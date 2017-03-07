@@ -22,7 +22,6 @@ void yyerror(const char *);
     Declaration* declaration;
     Expression* expression;
     Type* type;
-    Initializer* initializer;
     double number;
     std::string* string;
 }
@@ -57,13 +56,12 @@ void yyerror(const char *);
 			AndExpression EqualityExpression RelationalExpression ShiftExpression
 			AdditiveExpression MultiplicativeExpression CastExpression UnaryExpression
 			PostfixExpression PostfixExpression2 ArgumentExpressionList PrimaryExpression
+			Constant
 
 %type	<type>		DeclarationSpec
 
 %type	<string>	Declarator DirectDeclarator
 
-%type	<initializer>	Constant
-			
 %type	<number>        T_INT_CONST
 			
 %type	<string>	T_IDENTIFIER ASSIGN_OPER T_ASSIGN_OPER T_EQ T_AND T_ADDSUB_OP T_TILDE T_NOT
@@ -202,7 +200,7 @@ ExpressionStatement:
 		;
 
 JumpStatement:
-		  T_RETURN ExpressionStatement { $$ = new JumpStatement(); }
+		  T_RETURN Expression T_SC { $$ = new JumpStatement($2); }
 		;
 
 IterationStatement:
@@ -298,7 +296,7 @@ UnaryExpression:
 	|	T_INCDEC UnaryExpression { $$ = $2; }
 	|	UnaryOperator CastExpression { $$ = $2; }
 	|	T_SIZEOF UnaryExpression { $$ = $2; }
-	|	T_SIZEOF T_LRB DeclarationSpec T_RRB { $$ = new Expression(); }
+	|	T_SIZEOF T_LRB DeclarationSpec T_RRB { $$ = new Constant(0); }
 		;
 
 UnaryOperator:
@@ -313,29 +311,29 @@ PostfixExpression:
 		PrimaryExpression { $$ = $1; }
 	|	PostfixExpression T_LSB Expression T_RSB { $$ = $3; }
 	|	PostfixExpression T_LRB PostfixExpression2 { $$ = $3; }
-	|	PostfixExpression T_DOT T_IDENTIFIER { $$ = new Expression(); }
-	|	PostfixExpression T_ARROW T_IDENTIFIER { $$ = new Expression(); }
-	|	PostfixExpression T_INCDEC { $$ = new Expression(); }
+	|	PostfixExpression T_DOT T_IDENTIFIER { $$ = $1; }
+	|	PostfixExpression T_ARROW T_IDENTIFIER { $$ = $1; }
+	|	PostfixExpression T_INCDEC { $$ = $1; }
 		;
 
 PostfixExpression2:
-		T_RRB { $$ = new Expression(); }
-	|	ArgumentExpressionList T_RRB { $$ = new Expression; }
+		T_RRB { $$ = new Constant(0); }
+	|	ArgumentExpressionList T_RRB { $$ = new Constant(0); }
 		;
 
 ArgumentExpressionList:
-		AssignmentExpression { $$ = new Expression; }
-	|	ArgumentExpressionList T_CMA AssignmentExpression { $$ = new Expression; }
+		AssignmentExpression { $$ = $1; }
+	|	ArgumentExpressionList T_CMA AssignmentExpression { $$ = $1; }
 		;
 
 PrimaryExpression:
-		T_IDENTIFIER { $$ = new Expression(); }
-	|       Constant { $$ = new Expression($1); }
+		T_IDENTIFIER { $$ = new Identifier(*$1); }
+	|       Constant { $$ = $1; }
 	|	T_LRB Expression T_RRB { $$ = $2; }
 		;
 
 Constant:
-		T_INT_CONST { $$ = new Initializer(); }
+		T_INT_CONST { $$ = new Constant($1); }
 		;
 
 %%

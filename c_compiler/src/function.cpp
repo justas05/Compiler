@@ -45,9 +45,23 @@ void Function::printxml() const
 
 void Function::printasm() const
 {
+    // Counting all the variables being declared in the function
     int32_t count = 0;
     if(statement != nullptr)
 	statement->count_variables(count);
 
-    std::cout << id << ": " << count << " variables defined" << std::endl;
+    // This includes the space for the old frame counter and (return address)?
+    int32_t memory_needed = 4*count+8;
+
+    std::cout << "\t.text\n\t.globl\t" << id << std::endl << id << ":\n\taddiu\t$sp,$sp,-"
+	      << memory_needed << "\n\tsw\t$fp," << memory_needed-4 << "($sp)\n\tmove\t$fp,$sp"
+	      << std::endl;
+
+    // TODO print asm for parameters
+
+    // Prints the asm for the compound statement in the function
+    statement->printasm();
+
+    std::cout << "\tmove\t$sp,$fp\n\tlw\t$fp," << memory_needed-4 << "($sp)\n\taddiu\t$sp,$sp,"
+	      << memory_needed << "\n\tjr\t$31\n\tnop" << std::endl;
 }
