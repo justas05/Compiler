@@ -1,0 +1,683 @@
+
+include/node.hpp,96
+#define AST_BASE_HPPAST_BASE_HPP2,21
+class Node {Node7,64
+    virtual ~Node() {}~Node9,85
+
+include/statement.hpp,783
+#define AST_STATEMENT_HPPAST_STATEMENT_HPP2,26
+class Statement : public Node {Statement7,74
+    Statement* next_statement;next_statement9,117
+class CompoundStatement : public Statement {CompoundStatement24,435
+    Declaration* m_decl;m_decl26,491
+    Statement* m_statement;m_statement27,516
+class SelectionStatement : public Statement {SelectionStatement41,855
+    Statement* m_if;m_if43,912
+    Statement* m_else;m_else44,933
+class ExpressionStatement : public Statement {ExpressionStatement56,1211
+    Expression* m_expr;m_expr58,1269
+class JumpStatement : public Statement {JumpStatement70,1523
+    Expression* m_expr;m_expr72,1575
+class IterationStatement : public Statement {IterationStatement84,1823
+    Statement* m_statement;m_statement86,1880
+
+include/function.hpp,363
+#define AST_FUNCTION_HPPAST_FUNCTION_HPP2,25
+struct VarLocation {VarLocation7,72
+    Type* type;type8,93
+    int32_t stack_position;stack_position9,109
+class Function : public Node {Function13,142
+    Type* type;type15,184
+    std::string id;id16,200
+    Declaration* parameter_list;parameter_list17,220
+    Statement* statement;statement18,253
+
+include/expression.hpp,286
+#define AST_EXPRESSION_HPPAST_EXPRESSION_HPP2,27
+class Expression : public Node {Expression6,75
+class Identifier : public Expression {Identifier15,232
+    std::string m_id;m_id17,280
+class Constant : public Expression {Constant25,390
+    int32_t m_constant;m_constant27,436
+
+include/translation_unit.hpp,163
+#define EXTERNAL_HPPEXTERNAL_HPP2,21
+class TranslationUnit : public Node {TranslationUnit7,64
+    std::vector<Node* > translation_unit;translation_unit9,113
+
+include/type.hpp,447
+#define TYPE_HPPTYPE_HPP2,17
+class Type : public Node {Type7,56
+class Specifier : public Type {Specifier17,244
+class Pointer : public Type {Pointer23,334
+    Type* pointer_type;pointer_type25,375
+class Array : public Type {Array34,493
+    int32_t size;size36,532
+    Type* array_type;array_type37,550
+class Void : public Specifier {Void46,681
+class Int : public Specifier {Int54,784
+class Char : public Specifier {Char62,885
+
+include/ast.hpp,108
+#define AST_HPPAST_HPP2,16
+typedef std::map<std::string, VarLocation> VariableStack;VariableStack12,145
+
+include/declaration.hpp,297
+#define AST_DECLARATION_HPPAST_DECLARATION_HPP2,28
+class Declaration : public Node {Declaration8,127
+    Type* type;type10,172
+    std::string id;id11,188
+    Expression* init;init12,208
+    Declaration* next_decl;next_decl13,230
+    Declaration* list_next_decl;list_next_decl14,258
+
+src/c_parser.tab.cpp,9030
+#define YYBISON YYBISON44,2037
+#define YYBISON_VERSION YYBISON_VERSION47,2078
+#define YYSKELETON_NAME YYSKELETON_NAME50,2133
+#define YYPURE YYPURE53,2188
+#define YYPUSH YYPUSH56,2227
+#define YYPULL YYPULL59,2266
+#   define YY_NULLPTR YY_NULLPTR70,2471
+#   define YY_NULLPTR YY_NULLPTR72,2509
+# undef YYERROR_VERBOSEYYERROR_VERBOSE78,2614
+# define YYERROR_VERBOSE YYERROR_VERBOSE79,2638
+# define YYERROR_VERBOSE YYERROR_VERBOSE81,2671
+# define YY_YY_C_COMPILER_SRC_C_PARSER_TAB_HPP_INCLUDEDYY_YY_C_COMPILER_SRC_C_PARSER_TAB_HPP_INCLUDED87,2863
+# define YYDEBUG YYDEBUG90,2956
+# define YYTOKENTYPEYYTOKENTYPE114,3494
+  enum yytokentypeyytokentype115,3515
+    T_IDENTIFIER = 258,T_IDENTIFIER117,3538
+    T_SC = 259,T_SC118,3562
+    T_CMA = 260,T_CMA119,3578
+    T_LRB = 261,T_LRB120,3595
+    T_LCB = 262,T_LCB121,3612
+    T_RCB = 263,T_RCB122,3629
+    T_LSB = 264,T_LSB123,3646
+    T_RSB = 265,T_RSB124,3663
+    T_QU = 266,T_QU125,3680
+    T_COL = 267,T_COL126,3696
+    T_LOG_OR = 268,T_LOG_OR127,3713
+    T_LOG_AND = 269,T_LOG_AND128,3733
+    T_OR = 270,T_OR129,3754
+    T_XOR = 271,T_XOR130,3770
+    T_AND = 272,T_AND131,3787
+    T_EQUALITY_OP = 273,T_EQUALITY_OP132,3804
+    T_REL_OP = 274,T_REL_OP133,3829
+    T_SHIFT_OP = 275,T_SHIFT_OP134,3849
+    T_MULT = 276,T_MULT135,3871
+    T_DIV = 277,T_DIV136,3889
+    T_REM = 278,T_REM137,3906
+    T_TILDE = 279,T_TILDE138,3923
+    T_NOT = 280,T_NOT139,3942
+    T_DOT = 281,T_DOT140,3959
+    T_ARROW = 282,T_ARROW141,3976
+    T_INCDEC = 283,T_INCDEC142,3995
+    T_ADDSUB_OP = 284,T_ADDSUB_OP143,4015
+    T_ASSIGN_OPER = 285,T_ASSIGN_OPER144,4038
+    T_EQ = 286,T_EQ145,4063
+    T_SIZEOF = 287,T_SIZEOF146,4079
+    T_INT_CONST = 288,T_INT_CONST147,4099
+    T_IF = 289,T_IF148,4122
+    T_WHILE = 290,T_WHILE149,4138
+    T_DO = 291,T_DO150,4157
+    T_FOR = 292,T_FOR151,4173
+    T_RETURN = 293,T_RETURN152,4190
+    T_VOID = 294,T_VOID153,4210
+    T_CHAR = 295,T_CHAR154,4228
+    T_SCHAR = 296,T_SCHAR155,4246
+    T_UCHAR = 297,T_UCHAR156,4265
+    T_SSINT = 298,T_SSINT157,4284
+    T_USINT = 299,T_USINT158,4303
+    T_LINT = 300,T_LINT159,4322
+    T_ULINT = 301,T_ULINT160,4340
+    T_UINT = 302,T_UINT161,4359
+    T_SINT = 303,T_SINT162,4377
+    T_RRB = 304,T_RRB163,4395
+    T_ELSE = 305T_ELSE164,4412
+union YYSTYPEYYSTYPE171,4517
+    Node* node;node175,4589
+    TranslationUnit* trans_unit;trans_unit176,4605
+    Function* function;function177,4638
+    Statement* statement;statement178,4662
+    Declaration* declaration;declaration179,4688
+    Expression* expression;expression180,4718
+    Type* type;type181,4746
+    double number;number182,4762
+    std::string* string;string183,4781
+typedef union YYSTYPE YYSTYPE;YYSTYPE188,4873
+# define YYSTYPE_IS_TRIVIAL YYSTYPE_IS_TRIVIAL189,4904
+# define YYSTYPE_IS_DECLARED YYSTYPE_IS_DECLARED190,4934
+# undef shortshort205,5209
+typedef YYTYPE_UINT8 yytype_uint8;yytype_uint8209,5251
+typedef unsigned char yytype_uint8;yytype_uint8211,5292
+typedef YYTYPE_INT8 yytype_int8;yytype_int8215,5355
+typedef signed char yytype_int8;yytype_int8217,5394
+typedef YYTYPE_UINT16 yytype_uint16;yytype_uint16221,5456
+typedef unsigned short int yytype_uint16;yytype_uint16223,5499
+typedef YYTYPE_INT16 yytype_int16;yytype_int16227,5569
+typedef short int yytype_int16;yytype_int16229,5610
+#  define YYSIZE_T YYSIZE_T234,5689
+#  define YYSIZE_T YYSIZE_T236,5744
+#  define YYSIZE_T YYSIZE_T239,5853
+#  define YYSIZE_T YYSIZE_T241,5886
+#define YYSIZE_MAXIMUM YYSIZE_MAXIMUM245,5934
+#   define YY_(YY_251,6104
+#  define YY_(YY_255,6190
+#  define YY_ATTRIBUTE(YY_ATTRIBUTE263,6447
+#  define YY_ATTRIBUTE(YY_ATTRIBUTE265,6503
+# define YY_ATTRIBUTE_PURE YY_ATTRIBUTE_PURE270,6586
+# define YY_ATTRIBUTE_UNUSED YY_ATTRIBUTE_UNUSED274,6677
+#  define _Noreturn _Noreturn280,6874
+#  define _Noreturn _Noreturn282,6923
+# define YYUSE(YYUSE288,7083
+# define YYUSE(YYUSE290,7120
+# define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN295,7295
+# define YY_IGNORE_MAYBE_UNINITIALIZED_END YY_IGNORE_MAYBE_UNINITIALIZED_END299,7505
+# define YY_INITIAL_VALUE(YY_INITIAL_VALUE302,7591
+# define YY_IGNORE_MAYBE_UNINITIALIZED_BEGINYY_IGNORE_MAYBE_UNINITIALIZED_BEGIN305,7681
+# define YY_IGNORE_MAYBE_UNINITIALIZED_ENDYY_IGNORE_MAYBE_UNINITIALIZED_END306,7726
+# define YY_INITIAL_VALUE(YY_INITIAL_VALUE309,7801
+#    define YYSTACK_ALLOC YYSTACK_ALLOC320,8049
+#    define YYSTACK_ALLOC YYSTACK_ALLOC324,8212
+#    define alloca alloca327,8332
+#    define YYSTACK_ALLOC YYSTACK_ALLOC329,8368
+#      define EXIT_SUCCESS EXIT_SUCCESS334,8598
+#  define YYSTACK_FREE(YYSTACK_FREE343,8748
+#   define YYSTACK_ALLOC_MAXIMUM YYSTACK_ALLOC_MAXIMUM349,9138
+#  define YYSTACK_ALLOC YYSTACK_ALLOC352,9220
+#  define YYSTACK_FREE YYSTACK_FREE353,9253
+#   define YYSTACK_ALLOC_MAXIMUM YYSTACK_ALLOC_MAXIMUM355,9315
+#    define EXIT_SUCCESS EXIT_SUCCESS362,9612
+#   define YYMALLOC YYMALLOC366,9677
+#   define YYFREE YYFREE372,9850
+union yyallocyyalloc386,10246
+  yytype_int16 yyss_alloc;yyss_alloc388,10262
+  YYSTYPE yyvs_alloc;yyvs_alloc389,10289
+# define YYSTACK_GAP_MAXIMUM YYSTACK_GAP_MAXIMUM393,10390
+# define YYSTACK_BYTES(YYSTACK_BYTES397,10538
+# define YYCOPY_NEEDED YYCOPY_NEEDED401,10653
+# define YYSTACK_RELOCATE(YYSTACK_RELOCATE408,10962
+#   define YYCOPY(YYCOPY426,11841
+#   define YYCOPY(YYCOPY429,11947
+#define YYFINAL YYFINAL442,12416
+#define YYLAST YYLAST444,12476
+#define YYNTOKENS YYNTOKENS447,12539
+#define YYNNTS YYNNTS449,12602
+#define YYNRULES YYNRULES451,12657
+#define YYNSTATES YYNSTATES453,12717
+#define YYUNDEFTOK YYUNDEFTOK457,12857
+#define YYMAXUTOK YYMAXUTOK458,12879
+#define YYTRANSLATE(YYTRANSLATE460,12904
+static const yytype_uint8 yytranslate[] =yytranslate465,13180
+static const yytype_uint16 yyrline[] =yyrline502,15546
+static const char *const yytname[] =yytname522,16610
+static const yytype_uint16 yytoknum[] =yytoknum552,18299
+#define YYPACT_NINF YYPACT_NINF563,18727
+#define yypact_value_is_default(yypact_value_is_default565,18753
+#define YYTABLE_NINF YYTABLE_NINF568,18825
+#define yytable_value_is_error(yytable_value_is_error570,18850
+static const yytype_int16 yypact[] =yypact575,18992
+static const yytype_uint8 yydefact[] =yydefact602,20659
+static const yytype_int16 yypgoto[] =yypgoto627,22171
+static const yytype_int16 yydefgoto[] =yydefgoto637,22582
+static const yytype_uint8 yytable[] =yytable649,23168
+static const yytype_int16 yycheck[] =yycheck698,26482
+static const yytype_uint8 yystos[] =yystos749,29897
+static const yytype_uint8 yyr1[] =yyr1774,31447
+static const yytype_uint8 yyr2[] =yyr2791,32404
+#define yyerrok yyerrok808,33286
+#define yyclearin yyclearin809,33328
+#define YYEMPTY YYEMPTY810,33371
+#define YYEOF YYEOF811,33400
+#define YYACCEPT YYACCEPT813,33427
+#define YYABORT YYABORT814,33468
+#define YYERROR YYERROR815,33508
+#define YYRECOVERING(YYRECOVERING818,33550
+#define YYBACKUP(YYBACKUP820,33591
+#define YYTERROR YYTERROR838,34606
+#define YYERRCODE YYERRCODE839,34632
+#  define YYFPRINTF YYFPRINTF848,34789
+# define YYDPRINTF(YYDPRINTF851,34826
+# define YY_LOCATION_PRINT(YY_LOCATION_PRINT859,35122
+# define YY_SYMBOL_PRINT(YY_SYMBOL_PRINT863,35180
+yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep)yy_symbol_value_print880,35981
+yy_symbol_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvaluep)yy_symbol_print899,36380
+yy_stack_print (yytype_int16 *yybottom, yytype_int16 *yytop)yy_stack_print914,36944
+# define YY_STACK_PRINT(YY_STACK_PRINT925,37194
+yy_reduce_print (yytype_int16 *yyssp, YYSTYPE *yyvsp, int yyrule)yy_reduce_print937,37641
+# define YY_REDUCE_PRINT(YY_REDUCE_PRINT956,38249
+int yydebug;yydebug964,38539
+# define YYDPRINTF(YYDPRINTF966,38573
+# define YY_SYMBOL_PRINT(YY_SYMBOL_PRINT967,38598
+# define YY_STACK_PRINT(YY_STACK_PRINT968,38653
+# define YY_REDUCE_PRINT(YY_REDUCE_PRINT969,38690
+# define YYINITDEPTH YYINITDEPTH975,38824
+# define YYMAXDEPTH YYMAXDEPTH986,39180
+#   define yystrlen yystrlen994,39299
+yystrlen (const char *yystr)yystrlen998,39385
+#   define yystpcpy yystpcpy1010,39611
+yystpcpy (char *yydest, const char *yysrc)yystpcpy1015,39749
+yytnamerr (char *yyres, const char *yystr)yytnamerr1037,40397
+yysyntax_error (YYSIZE_T *yymsg_alloc, char **yymsg,yysyntax_error1085,41559
+# define YYCASE_(YYCASE_1161,44945
+# undef YYCASE_YYCASE_1171,45496
+yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep)yydestruct1217,46620
+int yychar;yychar1233,46928
+YYSTYPE yylval;yylval1236,46992
+int yynerrs;yynerrs1238,47047
+yyparse (void)yyparse1246,47109
+#define YYPOPSTACK(YYPOPSTACK1286,48119
+TranslationUnit* g_root; // Definition of variable (to match declaration earlier)g_root2398,82507
+TranslationUnit* parseAST() {parseAST2400,82590
+
+src/function.cpp,249
+Function::Function(const std::string& _id, Declaration* _parameter_list, Statement* _statement)Function6,45
+void Function::print() constprint10,215
+void Function::printxml() constprintxml21,403
+void Function::printasm() constprintasm46,1054
+
+src/c_lexer.yy.cpp,9407
+#define  YY_INT_ALIGNED YY_INT_ALIGNED5,82
+#define FLEX_SCANNERFLEX_SCANNER9,160
+#define YY_FLEX_MAJOR_VERSION YY_FLEX_MAJOR_VERSION10,181
+#define YY_FLEX_MINOR_VERSION YY_FLEX_MINOR_VERSION11,213
+#define YY_FLEX_SUBMINOR_VERSION YY_FLEX_SUBMINOR_VERSION12,245
+#define FLEX_BETAFLEX_BETA14,313
+#define FLEXINT_HFLEXINT_H30,611
+#define __STDC_LIMIT_MACROS __STDC_LIMIT_MACROS40,922
+typedef int8_t flex_int8_t;flex_int8_t44,982
+typedef uint8_t flex_uint8_t;flex_uint8_t45,1010
+typedef int16_t flex_int16_t;flex_int16_t46,1040
+typedef uint16_t flex_uint16_t;flex_uint16_t47,1070
+typedef int32_t flex_int32_t;flex_int32_t48,1102
+typedef uint32_t flex_uint32_t;flex_uint32_t49,1132
+typedef signed char flex_int8_t;flex_int8_t51,1170
+typedef short int flex_int16_t;flex_int16_t52,1203
+typedef int flex_int32_t;flex_int32_t53,1235
+typedef unsigned char flex_uint8_t; flex_uint8_t54,1261
+typedef unsigned short int flex_uint16_t;flex_uint16_t55,1298
+typedef unsigned int flex_uint32_t;flex_uint32_t56,1340
+#define INT8_MIN INT8_MIN60,1426
+#define INT16_MIN INT16_MIN63,1489
+#define INT32_MIN INT32_MIN66,1556
+#define INT8_MAX INT8_MAX69,1627
+#define INT16_MAX INT16_MAX72,1689
+#define INT32_MAX INT32_MAX75,1753
+#define UINT8_MAX UINT8_MAX78,1822
+#define UINT16_MAX UINT16_MAX81,1886
+#define UINT32_MAX UINT32_MAX84,1952
+#define YY_USE_CONSTYY_USE_CONST94,2122
+#define YY_USE_CONSTYY_USE_CONST101,2243
+#define yyconst yyconst107,2345
+#define yyconstyyconst109,2373
+#define YY_NULL YY_NULL113,2430
+#define YY_SC_TO_UI(YY_SC_TO_UI120,2677
+#define BEGIN BEGIN126,2908
+#define YY_START YY_START132,3107
+#define YYSTATE YYSTATE133,3147
+#define YY_STATE_EOF(YY_STATE_EOF136,3230
+#define YY_NEW_FILE YY_NEW_FILE139,3350
+#define YY_END_OF_BUFFER_CHAR YY_END_OF_BUFFER_CHAR141,3389
+#define YY_BUF_SIZE YY_BUF_SIZE150,3655
+#define YY_BUF_SIZE YY_BUF_SIZE152,3687
+#define YY_STATE_BUF_SIZE YY_STATE_BUF_SIZE158,3837
+#define YY_TYPEDEF_YY_BUFFER_STATEYY_TYPEDEF_YY_BUFFER_STATE161,3945
+typedef struct yy_buffer_state *YY_BUFFER_STATE;YY_BUFFER_STATE162,3980
+#define YY_TYPEDEF_YY_SIZE_TYY_TYPEDEF_YY_SIZE_T166,4066
+typedef size_t yy_size_t;yy_size_t167,4095
+#define EOB_ACT_CONTINUE_SCAN EOB_ACT_CONTINUE_SCAN174,4183
+#define EOB_ACT_END_OF_FILE EOB_ACT_END_OF_FILE175,4215
+#define EOB_ACT_LAST_MATCH EOB_ACT_LAST_MATCH176,4245
+    #define YY_LESS_LINENO(YY_LESS_LINENO178,4275
+    #define YY_LINENO_REWIND_TO(YY_LINENO_REWIND_TO179,4305
+#define yyless(yyless182,4427
+#define unput(unput195,4782
+#define YY_STRUCT_YY_BUFFER_STATEYY_STRUCT_YY_BUFFER_STATE198,4862
+struct yy_buffer_stateyy_buffer_state199,4896
+	FILE *yy_input_file;yy_input_file201,4922
+	char *yy_ch_buf;		/* input buffer */yy_ch_buf203,4945
+	char *yy_buf_pos;		/* current position in input buffer */yy_buf_pos204,4983
+	yy_size_t yy_buf_size;yy_buf_size209,5126
+	int yy_n_chars;yy_n_chars214,5236
+	int yy_is_our_buffer;yy_is_our_buffer220,5398
+	int yy_is_interactive;yy_is_interactive227,5636
+	int yy_at_bol;yy_at_bol233,5803
+    int yy_bs_lineno; /**< The line count. */yy_bs_lineno235,5820
+    int yy_bs_column; /**< The column count. */yy_bs_column236,5866
+	int yy_fill_buffer;yy_fill_buffer241,6001
+	int yy_buffer_status;yy_buffer_status243,6023
+#define YY_BUFFER_NEW YY_BUFFER_NEW245,6047
+#define YY_BUFFER_NORMAL YY_BUFFER_NORMAL246,6071
+#define YY_BUFFER_EOF_PENDING YY_BUFFER_EOF_PENDING257,6569
+static size_t yy_buffer_stack_top = 0; /**< index of top of stack. */yy_buffer_stack_top263,6677
+static size_t yy_buffer_stack_max = 0; /**< capacity of stack. */yy_buffer_stack_max264,6747
+static YY_BUFFER_STATE * yy_buffer_stack = 0; /**< Stack as an array. */yy_buffer_stack265,6813
+#define YY_CURRENT_BUFFER YY_CURRENT_BUFFER273,7081
+#define YY_CURRENT_BUFFER_LVALUE YY_CURRENT_BUFFER_LVALUE280,7377
+static char yy_hold_char;yy_hold_char283,7519
+static int yy_n_chars;		/* number of characters read into yy_ch_buf */yy_n_chars284,7545
+yy_size_t yyleng;yyleng285,7616
+static char *yy_c_buf_p = (char *) 0;yy_c_buf_p288,7680
+static int yy_init = 0;		/* whether we need to initialize */yy_init289,7718
+static int yy_start = 0;	/* start state number */yy_start290,7779
+static int yy_did_buffer_switch_on_eof;yy_did_buffer_switch_on_eof295,7958
+#define YY_FLUSH_BUFFER YY_FLUSH_BUFFER309,8478
+#define yy_new_buffer yy_new_buffer319,8820
+#define yy_set_interactive(yy_set_interactive321,8860
+#define yy_set_bol(yy_set_bol331,9136
+#define YY_AT_BOL(YY_AT_BOL341,9379
+#define yywrap(yywrap345,9462
+#define YY_SKIP_YYWRAPYY_SKIP_YYWRAP346,9496
+typedef unsigned char YY_CHAR;YY_CHAR348,9520
+FILE *yyin = (FILE *) 0, *yyout = (FILE *) 0;yyin350,9552
+FILE *yyin = (FILE *) 0, *yyout = (FILE *) 0;yyout350,9552
+typedef int yy_state_type;yy_state_type352,9599
+int yylineno = 1;yylineno356,9649
+#undef yytext_ptryytext_ptr360,9707
+#define yytext_ptr yytext_ptr362,9732
+#define YY_DO_BEFORE_ACTION YY_DO_BEFORE_ACTION375,10161
+#define YY_NUM_RULES YY_NUM_RULES382,10324
+#define YY_END_OF_BUFFER YY_END_OF_BUFFER383,10348
+struct yy_trans_infoyy_trans_info386,10457
+	flex_int32_t yy_verify;yy_verify388,10481
+	flex_int32_t yy_nxt;yy_nxt389,10506
+static yyconst flex_int16_t yy_accept[166] =yy_accept391,10532
+static yyconst YY_CHAR yy_ec[256] =yy_ec413,11672
+static yyconst YY_CHAR yy_meta[55] =yy_meta445,13389
+static yyconst flex_uint16_t yy_base[168] =yy_base455,13799
+static yyconst flex_int16_t yy_def[168] =yy_def477,14950
+static yyconst flex_uint16_t yy_nxt[284] =yy_nxt499,16099
+static yyconst flex_int16_t yy_chk[284] =yy_chk534,18006
+static yy_state_type yy_last_accepting_state;yy_last_accepting_state569,19912
+static char *yy_last_accepting_cpos;yy_last_accepting_cpos570,19958
+int yy_flex_debug = 0;yy_flex_debug573,20022
+#define REJECT REJECT578,20148
+#define yymore(yymore579,20192
+#define YY_MORE_ADJ YY_MORE_ADJ580,20238
+#define YY_RESTORE_YY_MORE_OFFSETYY_RESTORE_YY_MORE_OFFSET581,20260
+char *yytext;yytext582,20294
+#define INITIAL INITIAL590,20457
+#define YY_EXTRA_TYPE YY_EXTRA_TYPE601,20759
+#define YY_READ_BUF_SIZE YY_READ_BUF_SIZE675,22080
+#define YY_READ_BUF_SIZE YY_READ_BUF_SIZE677,22117
+#define ECHO ECHO686,22357
+#define YY_INPUT(YY_INPUT693,22567
+#define yyterminate(yyterminate730,23481
+#define YY_START_STACK_INCR YY_START_STACK_INCR735,23616
+#define YY_FATAL_ERROR(YY_FATAL_ERROR740,23706
+#define YY_DECL_IS_OURS YY_DECL_IS_OURS749,23939
+#define YY_DECL YY_DECL753,23992
+#define YY_USER_ACTIONYY_USER_ACTION760,24168
+#define YY_BREAK YY_BREAK765,24261
+#define YY_RULE_SETUP YY_RULE_SETUP768,24303
+static int yy_get_next_buffer (void)yy_get_next_buffer1268,35271
+    static yy_state_type yy_get_previous_state (void)yy_get_previous_state1402,38843
+    static yy_state_type yy_try_NUL_trans  (yy_state_type yy_current_state )yy_try_NUL_trans1434,39718
+    static void yyunput (int c, char * yy_bp )yyunput1459,40385
+    static int yyinput (void)yyinput1500,41414
+    void yyrestart  (FILE * input_file )yyrestart1577,43181
+    void yy_switch_to_buffer  (YY_BUFFER_STATE  new_buffer )yy_switch_to_buffer1594,43542
+static void yy_load_buffer_state  (void)yy_load_buffer_state1625,44385
+    YY_BUFFER_STATE yy_create_buffer  (FILE * file, int  size )yy_create_buffer1639,44858
+    void yy_delete_buffer (YY_BUFFER_STATE  b )yy_delete_buffer1667,45560
+    static void yy_init_buffer  (YY_BUFFER_STATE  b, FILE * file )yy_init_buffer1686,46009
+    void yy_flush_buffer (YY_BUFFER_STATE  b )yy_flush_buffer1714,46742
+void yypush_buffer_state (YY_BUFFER_STATE new_buffer )yypush_buffer_state1743,47428
+void yypop_buffer_state (void)yypop_buffer_state1773,48193
+static void yyensure_buffer_stack (void)yyensure_buffer_stack1792,48588
+YY_BUFFER_STATE yy_scan_buffer  (char * base, yy_size_t  size )yy_scan_buffer1841,50272
+YY_BUFFER_STATE yy_scan_string (yyconst char * yystr )yy_scan_string1878,51345
+YY_BUFFER_STATE yy_scan_bytes  (yyconst char * yybytes, yy_size_t  _yybytes_len )yy_scan_bytes1891,51762
+#define YY_EXIT_FAILURE YY_EXIT_FAILURE1922,52497
+static void yy_fatal_error (yyconst char* msg )yy_fatal_error1925,52531
+#undef yylessyyless1933,52708
+#define yyless(yyless1934,52722
+int yyget_lineno  (void)yyget_lineno1953,53181
+FILE *yyget_in  (void)yyget_in1962,53275
+FILE *yyget_out  (void)yyget_out1970,53359
+yy_size_t yyget_leng  (void)yyget_leng1978,53459
+char *yyget_text  (void)yyget_text1987,53552
+void yyset_lineno (int  _line_number )yyset_lineno1996,53681
+void yyset_in (FILE *  _in_str )yyset_in2008,53909
+void yyset_out (FILE *  _out_str )yyset_out2013,53972
+int yyget_debug  (void)yyget_debug2018,54039
+void yyset_debug (int  _bdebug )yyset_debug2023,54098
+static int yy_init_globals (void)yy_init_globals2028,54170
+int yylex_destroy  (void)yylex_destroy2057,54852
+static void yy_flex_strncpy (char* s1, yyconst char * s2, int n )yy_flex_strncpy2083,55406
+static int yy_flex_strlen (yyconst char * s )yy_flex_strlen2093,55561
+void *yyalloc (yy_size_t  size )yyalloc2103,55669
+void *yyrealloc  (void * ptr, yy_size_t  size )yyrealloc2108,55742
+void yyfree (void * ptr )yyfree2121,56201
+#define YYTABLES_NAME YYTABLES_NAME2126,56297
+void yyerror(char const *s) {yyerror2132,56373
+
+src/expression.cpp,312
+void Expression::print() constprint6,47
+void Expression::printxml() constprintxml9,82
+Identifier::Identifier(const std::string& id)Identifier15,147
+void Identifier::printasm() constprintasm19,212
+Constant::Constant(const int32_t& constant)Constant25,275
+void Constant::printasm() constprintasm29,350
+
+src/statement.cpp,1960
+Statement::Statement(Statement* statement)Statement6,59
+void Statement::addStatement(Statement* _next)addStatement10,138
+CompoundStatement::CompoundStatement(Declaration* decl, Statement* statement)CompoundStatement18,253
+CompoundStatement::CompoundStatement(Statement* statement)CompoundStatement22,391
+void CompoundStatement::print() constprint26,483
+void CompoundStatement::printxml() constprintxml35,629
+void CompoundStatement::printasm() constprintasm51,945
+void CompoundStatement::count_variables(int32_t& var_count) constcount_variables62,1154
+SelectionStatement::SelectionStatement(Statement* _if, Statement* _else)SelectionStatement90,1751
+void SelectionStatement::print() constprint93,1872
+void SelectionStatement::printxml() constprintxml99,1956
+void SelectionStatement::printasm() constprintasm109,2156
+void SelectionStatement::count_variables(int32_t& var_count) constcount_variables112,2202
+ExpressionStatement::ExpressionStatement(Expression* expr)ExpressionStatement127,2514
+void ExpressionStatement::print() constprint131,2609
+void ExpressionStatement::printxml() constprintxml134,2653
+void ExpressionStatement::printasm() constprintasm137,2700
+void ExpressionStatement::count_variables(int32_t& var_count) constcount_variables140,2747
+JumpStatement::JumpStatement(Expression* expr)JumpStatement149,2930
+void JumpStatement::print() constprint153,3000
+void JumpStatement::printxml() constprintxml156,3038
+void JumpStatement::printasm() constprintasm162,3143
+void JumpStatement::count_variables(int32_t& var_count) constcount_variables167,3209
+IterationStatement::IterationStatement(Statement* statement)IterationStatement176,3391
+void IterationStatement::print() constprint180,3485
+void IterationStatement::printxml() constprintxml183,3528
+void IterationStatement::printasm() constprintasm191,3695
+void IterationStatement::count_variables(int32_t& var_count) constcount_variables194,3741
+
+src/c_parser.tab.hpp,2446
+# define YY_YY_C_COMPILER_SRC_C_PARSER_TAB_HPP_INCLUDEDYY_YY_C_COMPILER_SRC_C_PARSER_TAB_HPP_INCLUDED34,1569
+# define YYDEBUG YYDEBUG37,1662
+# define YYTOKENTYPEYYTOKENTYPE61,2201
+  enum yytokentypeyytokentype62,2222
+    T_IDENTIFIER = 258,T_IDENTIFIER64,2245
+    T_SC = 259,T_SC65,2269
+    T_CMA = 260,T_CMA66,2285
+    T_LRB = 261,T_LRB67,2302
+    T_LCB = 262,T_LCB68,2319
+    T_RCB = 263,T_RCB69,2336
+    T_LSB = 264,T_LSB70,2353
+    T_RSB = 265,T_RSB71,2370
+    T_QU = 266,T_QU72,2387
+    T_COL = 267,T_COL73,2403
+    T_LOG_OR = 268,T_LOG_OR74,2420
+    T_LOG_AND = 269,T_LOG_AND75,2440
+    T_OR = 270,T_OR76,2461
+    T_XOR = 271,T_XOR77,2477
+    T_AND = 272,T_AND78,2494
+    T_EQUALITY_OP = 273,T_EQUALITY_OP79,2511
+    T_REL_OP = 274,T_REL_OP80,2536
+    T_SHIFT_OP = 275,T_SHIFT_OP81,2556
+    T_MULT = 276,T_MULT82,2578
+    T_DIV = 277,T_DIV83,2596
+    T_REM = 278,T_REM84,2613
+    T_TILDE = 279,T_TILDE85,2630
+    T_NOT = 280,T_NOT86,2649
+    T_DOT = 281,T_DOT87,2666
+    T_ARROW = 282,T_ARROW88,2683
+    T_INCDEC = 283,T_INCDEC89,2702
+    T_ADDSUB_OP = 284,T_ADDSUB_OP90,2722
+    T_ASSIGN_OPER = 285,T_ASSIGN_OPER91,2745
+    T_EQ = 286,T_EQ92,2770
+    T_SIZEOF = 287,T_SIZEOF93,2786
+    T_INT_CONST = 288,T_INT_CONST94,2806
+    T_IF = 289,T_IF95,2829
+    T_WHILE = 290,T_WHILE96,2845
+    T_DO = 291,T_DO97,2864
+    T_FOR = 292,T_FOR98,2880
+    T_RETURN = 293,T_RETURN99,2897
+    T_VOID = 294,T_VOID100,2917
+    T_CHAR = 295,T_CHAR101,2935
+    T_SCHAR = 296,T_SCHAR102,2953
+    T_UCHAR = 297,T_UCHAR103,2972
+    T_SSINT = 298,T_SSINT104,2991
+    T_USINT = 299,T_USINT105,3010
+    T_LINT = 300,T_LINT106,3029
+    T_ULINT = 301,T_ULINT107,3047
+    T_UINT = 302,T_UINT108,3066
+    T_SINT = 303,T_SINT109,3084
+    T_RRB = 304,T_RRB110,3102
+    T_ELSE = 305T_ELSE111,3119
+union YYSTYPEYYSTYPE118,3224
+    Node* node;node122,3297
+    TranslationUnit* trans_unit;trans_unit123,3313
+    Function* function;function124,3346
+    Statement* statement;statement125,3370
+    Declaration* declaration;declaration126,3396
+    Expression* expression;expression127,3426
+    Type* type;type128,3454
+    double number;number129,3470
+    std::string* string;string130,3489
+typedef union YYSTYPE YYSTYPE;YYSTYPE135,3582
+# define YYSTYPE_IS_TRIVIAL YYSTYPE_IS_TRIVIAL136,3613
+# define YYSTYPE_IS_DECLARED YYSTYPE_IS_DECLARED137,3643
+
+src/compiler_main.cpp,43
+int main(int argc, char *argv[])main5,41
+
+src/declaration.cpp,651
+Declaration::Declaration(const std::string& _id)Declaration6,48
+void Declaration::print() constprint10,115
+void Declaration::printxml() constprintxml19,255
+void Declaration::printasm() constprintasm32,504
+void Declaration::addDeclaration(Declaration* _next_decl)addDeclaration35,543
+void Declaration::addList(Declaration* _next_decl)addList40,634
+void Declaration::setType(Type* _type)setType45,723
+Declaration* Declaration::getNext() constgetNext50,785
+Declaration* Declaration::getNextListItem() constgetNextListItem55,854
+std::string Declaration::getId() constgetId60,936
+std::string Declaration::getType() constgetType65,995
+
+src/translation_unit.cpp,276
+TranslationUnit::TranslationUnit(Node* decl)TranslationUnit6,53
+void TranslationUnit::print() constprint11,119
+void TranslationUnit::printxml() constprintxml18,223
+void TranslationUnit::printasm() constprintasm27,445
+void TranslationUnit::push(Node* decl)push34,555
+
+src/type.cpp,626
+void Type::print() constprint6,41
+void Type::printxml() constprintxml11,119
+void Type::printasm() constprintasm14,151
+Pointer::Pointer(Type* _pointer_type) : pointer_type(_pointer_type)Pointer20,207
+std::string Pointer::getType() constgetType23,279
+Array::Array(Type* _array_type, int32_t _size) : size(_size), array_type(_array_type)Array31,392
+std::string Array::getType() constgetType34,482
+Void::Void()Void42,588
+std::string Void::getType() constgetType45,605
+Int::Int()Int53,682
+std::string Int::getType() constgetType56,697
+Char::Char()Char64,774
+std::string Char::getType() constgetType67,791
+
+src/c_parser.y,1943
+ROOT:ROOT74,2156
+TranslationUnit:TranslationUnit80,2226
+ExternalDeclaration:ExternalDeclaration85,2367
+FunctionDefinition:FunctionDefinition92,2492
+ParameterList:ParameterList96,2628
+Parameter:Parameter102,2787
+DeclarationList:DeclarationList108,2881
+Declaration:Declaration113,2998
+DeclarationSpec:DeclarationSpec125,3233
+InitDeclaratorList:InitDeclaratorList138,3543
+InitDeclarator:InitDeclarator143,3695
+Declarator:Declarator148,3831
+DirectDeclarator:DirectDeclarator153,3920
+IdentifierList:IdentifierList162,4241
+StatementList:StatementList168,4380
+Statement:Statement173,4487
+CompoundStatement:CompoundStatement181,4678
+CompoundStatement_2:CompoundStatement_2185,4743
+SelectionStatement:SelectionStatement192,5008
+ExpressionStatement:ExpressionStatement197,5209
+JumpStatement:JumpStatement202,5332
+IterationStatement:IterationStatement206,5413
+Expression:Expression214,5664
+AssignmentExpression:AssignmentExpression218,5717
+ASSIGN_OPER:ASSIGN_OPER223,5846
+ConditionalExpression:ConditionalExpression228,5899
+LogicalOrExpression:LogicalOrExpression233,6042
+LogicalAndExpression:LogicalAndExpression238,6170
+InclusiveOrExpression:InclusiveOrExpression243,6303
+ExclusiveOrExpression:ExclusiveOrExpression248,6433
+AndExpression:AndExpression253,6548
+EqualityExpression:EqualityExpression258,6657
+RelationalExpression:RelationalExpression263,6795
+ShiftExpression:ShiftExpression268,6921
+AdditiveExpression:AdditiveExpression273,7039
+MultiplicativeExpression:MultiplicativeExpression278,7176
+MultDivRemOP:MultDivRemOP283,7306
+CastExpression:CastExpression289,7391
+UnaryExpression:UnaryExpression294,7502
+UnaryOperator:UnaryOperator302,7750
+PostfixExpression:PostfixExpression310,7888
+PostfixExpression2:PostfixExpression2319,8212
+ArgumentExpressionList:ArgumentExpressionList324,8329
+PrimaryExpression:PrimaryExpression329,8460
+Constant:Constant335,8599
+
+test/out/03.s,16
+main:main3,20
+
+test/out/01.s,16
+main:main3,20
+
+test/out/04.s,28
+main:main3,20
+f:f14,153
+
+test/out/02.s,16
+main:main3,20
+
+test/in/02.c,22
+int main() {main1,0
+
+test/in/01.c,22
+int main() {main1,0
+
+test/in/03.c,22
+int main() {main1,0
+
+test/in/04.c,51
+int main() {main1,0
+int f(int a, int v) {f7,55
+
+test/ref/03.s,18
+main:main15,207
+
+test/ref/01.s,18
+main:main15,207
+
+test/ref/04.s,30
+main:main15,207
+f:f47,695
+
+test/ref/02.s,18
+main:main15,207
