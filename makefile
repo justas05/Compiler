@@ -1,7 +1,7 @@
 CC := g++ # this is the main compiler
 # CC := clang --analyze # and comment out the linker last line
 
-CFLAGS := -g -Wall -Wextra -Wpedantic -std=c++14
+CFLAGS := -g -Wall -Wextra -Wpedantic -std=c++11
 
 LEXINC := -Ic_lexer/include
 LEXBUILDDIR := c_lexer/build
@@ -69,7 +69,7 @@ $(PARSRCDIR)/c_parser.tab.cpp $(PARSRCDIR)/c_parser.tab.hpp : $(PARSRCDIR)/c_par
 # Make the c_parser
 bin/c_compiler:	$(COMPBUILDDIR)/compiler_main.o $(COMPBUILDDIR)/statement.o \
 		$(COMPBUILDDIR)/function.o $(COMPBUILDDIR)/expression.o \
-		$(COMPBUILDDIR)/initializer.o $(COMPBUILDDIR)/translation_unit.o \
+		$(COMPBUILDDIR)/translation_unit.o \
 		$(COMPBUILDDIR)/declaration.o $(COMPBUILDDIR)/type.o \
 		$(COMPBUILDDIR)/c_parser.tab.o $(COMPBUILDDIR)/c_lexer.yy.o
 	@echo "Linking..."
@@ -101,8 +101,18 @@ $(COMPSRCDIR)/c_parser.tab.cpp $(COMPSRCDIR)/c_parser.tab.hpp : $(COMPSRCDIR)/c_
 
 clean :
 	@echo "Cleaning..."
-	@echo " rm -r $(LEXBUILDDIR) bin $(LEXSRCDIR)/c_lexer.yy.cpp"; rm -r bin $(LEXBUILDDIR) $(LEXSRCDIR)/c_lexer.yy.cpp $(PARBUILDDIR) $(PARSRCDIR)/c_lexer.yy.cpp $(PARSRCDIR)/c_parser.tab.cpp $(PARSRCDIR)/c_parser.tab.hpp $(PARSRCDIR)/c_parser.output
+	rm -rf bin
+	rm -rf $(LEXBUILDDIR)
+	rm -f $(LEXSRCDIR)/c_lexer.yy.cpp
+	rm -rf $(PARBUILDDIR)
+	rm -f $(PARSRCDIR)/c_lexer.yy.cpp
+	rm -f $(PARSRCDIR)/c_parser.tab.cpp
+	rm -f $(PARSRCDIR)/c_parser.tab.hpp
+	rm -f $(PARSRCDIR)/c_parser.output
+	rm -rf $(COMPBUILDDIR)
+	rm -f $(COMPSRCDIR)/c_lexer.yy.cpp
+	rm -f $(COMPSRCDIR)/c_parser.tab.cpp
+	rm -f $(COMPSRCDIR)/c_parser.tab.hpp
+	rm -f $(COMPSRCDIR)/c_parser.output
 
 .PHONY : clean
-
-.PRECIOUS : $(LEXSRCDIR)/%.yy.cpp $(PARSRCDIR)/%.yy.cpp $(PARSRCDIR)/%.tab.cpp $(PARSRCDIR)/%.tab.hpp

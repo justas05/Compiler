@@ -12,9 +12,8 @@ struct VarLocation;
 typedef std::map<std::string, VarLocation> VariableStack;
 
 #include "node.hpp"
-#include "expression.hpp"
 #include "type.hpp"
-#include "initializer.hpp"
+#include "expression.hpp"
 #include "declaration.hpp"
 #include "statement.hpp"
 #include "function.hpp"

@@ -9,7 +9,7 @@ class Declaration : public Node {
 protected:
     Type* type;
     std::string id;
-    Initializer* init;
+    Expression* init;
     Declaration* next_decl;
     Declaration* list_next_decl;
     
