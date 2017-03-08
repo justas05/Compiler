@@ -30,7 +30,14 @@ void Declaration::printxml() const
 }
 
 void Declaration::printasm() const
-{}
+{
+    if(init == nullptr)
+	std::cout << "\t.comm\t" << id << ",4,4" << std::endl;
+    else {
+	std::cout << "\t.data\n\t.globl\t" << id << std::endl;
+	std::cout << id << ":\n\t.word\t" << std::endl;
+    }
+}
 
 void Declaration::addDeclaration(Declaration* _next_decl)
 {
