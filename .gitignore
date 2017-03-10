@@ -14,3 +14,4 @@ c_compiler/build/
 *~
 working/
 ./test/
+*.s
