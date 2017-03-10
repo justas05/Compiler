@@ -1,12 +1,14 @@
 # specific ignored folders
 
-./bin/
-./working/
-./test/
+/working/
+/test/
 
 # ignored all called
 
 build/
+bin/
+ref/
+out/
 
 # ignore all files with these extensions
 
@@ -23,6 +25,3 @@ build/
 # emacs temp files
 
 .#*
-
-ref/
-out/
