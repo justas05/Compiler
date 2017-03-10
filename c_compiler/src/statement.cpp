@@ -150,11 +150,9 @@ VariableStackBindings ExpressionStatement::printasm(VariableStackBindings bindin
 {
     if(next_statement != nullptr)
 	next_statement->printasm(bindings);
-    
-    if(m_expr != nullptr) {
-	std::cout << "SHould print" << std::endl;
+
+    if(m_expr != nullptr)
 	m_expr->printasm(bindings);
-    }
     
     return bindings;
 }

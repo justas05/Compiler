@@ -202,7 +202,7 @@ SelectionStatement:
 
 ExpressionStatement:
 		T_SC { $$ = new ExpressionStatement(); }
-|	Expression T_SC { $$ = new ExpressionStatement(); }
+|	Expression T_SC { $$ = new ExpressionStatement($1); }
 		;
 
 JumpStatement:
@@ -223,7 +223,7 @@ Expression:
 
 AssignmentExpression:
 		ConditionalExpression { $$ = $1; }
-	|	UnaryExpression ASSIGN_OPER AssignmentExpression { $$ = $1; }
+|	UnaryExpression ASSIGN_OPER AssignmentExpression { $$ = new AssignmentExpression($1, $3); }
 		;
 
 ASSIGN_OPER:

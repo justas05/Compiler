@@ -117,6 +117,10 @@
      Have to be careful because of the way the expressions are parsed.
      Constant expressions will just output li    $2, 6 for example
 
+***** Assignment
+
+      I'm assuming that the right hand side of an assigment is always a variable.
+
 **** TODO Function class
 
 **** TODO Statement class
