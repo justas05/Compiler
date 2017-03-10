@@ -278,7 +278,7 @@ ShiftExpression:
 
 AdditiveExpression:
 		MultiplicativeExpression { $$ = $1; }
-	|	AdditiveExpression T_ADDSUB_OP MultiplicativeExpression { $$ = $3; }
+|	AdditiveExpression T_ADDSUB_OP MultiplicativeExpression { $$ = new AdditiveExpression($1, *$2, $3); }
 		;
 
 MultiplicativeExpression:

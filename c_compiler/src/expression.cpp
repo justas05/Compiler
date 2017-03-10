@@ -50,6 +50,26 @@ VariableStackBindings AssignmentExpression::printasm(VariableStackBindings bindi
 }
 
 
+// Additive Expression definition
+
+AdditiveExpression::AdditiveExpression(Expression* _lhs, const std::string& _operand, Expression* _rhs)
+    : OperationExpression(_lhs, _rhs), operand(_operand)
+{}
+
+VariableStackBindings AdditiveExpression::printasm(VariableStackBindings bindings) const
+{
+    rhs->printasm(bindings);
+
+    std::cout << "\tmove\t$3,$2" << std::endl;
+
+    lhs->printasm(bindings);
+
+    std::cout << "\tadd\t$2,$2,$3" << std::endl;
+
+    return bindings;
+}
+
+
 // Identifier definition
 
 Identifier::Identifier(const std::string& id)

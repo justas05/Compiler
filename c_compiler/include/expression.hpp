@@ -39,6 +39,18 @@ public:
 };
 
 
+class AdditiveExpression : public OperationExpression
+{
+private:
+    std::string operand;
+
+public:
+    AdditiveExpression(Expression* _lhs, const std::string& _operand, Expression* _rhs);
+
+    virtual VariableStackBindings printasm(VariableStackBindings bindings) const;
+};
+
+
 class Identifier : public Expression
 {
 private:
