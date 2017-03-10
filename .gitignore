@@ -13,3 +13,4 @@ c_compiler/build/
 .vagrant
 *~
 working/
+./test/
