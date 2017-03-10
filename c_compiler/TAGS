@@ -4,22 +4,22 @@ include/node.hpp,96
 class Node {Node7,64
     virtual ~Node() {}~Node9,85
 
-include/statement.hpp,783
+include/statement.hpp,786
 #define AST_STATEMENT_HPPAST_STATEMENT_HPP2,26
 class Statement : public Node {Statement7,74
     Statement* next_statement;next_statement9,117
-class CompoundStatement : public Statement {CompoundStatement24,435
-    Declaration* m_decl;m_decl26,491
-    Statement* m_statement;m_statement27,516
-class SelectionStatement : public Statement {SelectionStatement41,855
-    Statement* m_if;m_if43,912
-    Statement* m_else;m_else44,933
-class ExpressionStatement : public Statement {ExpressionStatement56,1211
-    Expression* m_expr;m_expr58,1269
-class JumpStatement : public Statement {JumpStatement70,1523
-    Expression* m_expr;m_expr72,1575
-class IterationStatement : public Statement {IterationStatement84,1823
-    Statement* m_statement;m_statement86,1880
+class CompoundStatement : public Statement {CompoundStatement26,524
+    Declaration* m_decl;m_decl28,580
+    Statement* m_statement;m_statement29,605
+class SelectionStatement : public Statement {SelectionStatement45,1029
+    Statement* m_if;m_if47,1086
+    Statement* m_else;m_else48,1107
+class ExpressionStatement : public Statement {ExpressionStatement62,1470
+    Expression* m_expr;m_expr64,1528
+class JumpStatement : public Statement {JumpStatement78,1867
+    Expression* m_expr;m_expr80,1919
+class IterationStatement : public Statement {IterationStatement94,2252
+    Statement* m_statement;m_statement96,2309
 
 include/function.hpp,363
 #define AST_FUNCTION_HPPAST_FUNCTION_HPP2,25
@@ -35,10 +35,10 @@ class Function : public Node {Function13,142
 include/expression.hpp,286
 #define AST_EXPRESSION_HPPAST_EXPRESSION_HPP2,27
 class Expression : public Node {Expression6,75
-class Identifier : public Expression {Identifier15,232
-    std::string m_id;m_id17,280
-class Constant : public Expression {Constant25,390
-    int32_t m_constant;m_constant27,436
+class Identifier : public Expression {Identifier16,267
+    std::string m_id;m_id18,315
+class Constant : public Expression {Constant26,425
+    int32_t m_constant;m_constant28,471
 
 include/translation_unit.hpp,163
 #define EXTERNAL_HPPEXTERNAL_HPP2,21
@@ -65,11 +65,11 @@ typedef std::map<std::string, VarLocation> VariableStack;VariableStack12,145
 include/declaration.hpp,297
 #define AST_DECLARATION_HPPAST_DECLARATION_HPP2,28
 class Declaration : public Node {Declaration8,127
-    Type* type;type10,172
-    std::string id;id11,188
-    Expression* init;init12,208
-    Declaration* next_decl;next_decl13,230
-    Declaration* list_next_decl;list_next_decl14,258
+    Type* type;type10,170
+    std::string id;id11,186
+    Expression* init;init12,206
+    Declaration* next_decl;next_decl13,228
+    Declaration* list_next_decl;list_next_decl14,256
 
 src/c_parser.tab.cpp,9030
 #define YYBISON YYBISON44,2037
@@ -461,7 +461,7 @@ void Identifier::printasm() constprintasm19,212
 Constant::Constant(const int32_t& constant)Constant25,275
 void Constant::printasm() constprintasm29,350
 
-src/statement.cpp,1960
+src/statement.cpp,2074
 Statement::Statement(Statement* statement)Statement6,59
 void Statement::addStatement(Statement* _next)addStatement10,138
 CompoundStatement::CompoundStatement(Declaration* decl, Statement* statement)CompoundStatement18,253
@@ -470,26 +470,27 @@ void CompoundStatement::print() constprint26,483
 void CompoundStatement::printxml() constprintxml35,629
 void CompoundStatement::printasm() constprintasm51,945
 void CompoundStatement::count_variables(int32_t& var_count) constcount_variables62,1154
-SelectionStatement::SelectionStatement(Statement* _if, Statement* _else)SelectionStatement90,1751
-void SelectionStatement::print() constprint93,1872
-void SelectionStatement::printxml() constprintxml99,1956
-void SelectionStatement::printasm() constprintasm109,2156
-void SelectionStatement::count_variables(int32_t& var_count) constcount_variables112,2202
-ExpressionStatement::ExpressionStatement(Expression* expr)ExpressionStatement127,2514
-void ExpressionStatement::print() constprint131,2609
-void ExpressionStatement::printxml() constprintxml134,2653
-void ExpressionStatement::printasm() constprintasm137,2700
-void ExpressionStatement::count_variables(int32_t& var_count) constcount_variables140,2747
-JumpStatement::JumpStatement(Expression* expr)JumpStatement149,2930
-void JumpStatement::print() constprint153,3000
-void JumpStatement::printxml() constprintxml156,3038
-void JumpStatement::printasm() constprintasm162,3143
-void JumpStatement::count_variables(int32_t& var_count) constcount_variables167,3209
-IterationStatement::IterationStatement(Statement* statement)IterationStatement176,3391
-void IterationStatement::print() constprint180,3485
-void IterationStatement::printxml() constprintxml183,3528
-void IterationStatement::printasm() constprintasm191,3695
-void IterationStatement::count_variables(int32_t& var_count) constcount_variables194,3741
+void CompoundStatement::make_variables(VariableStack var_stack, int32_t& var_count) constmake_variables87,1715
+SelectionStatement::SelectionStatement(Statement* _if, Statement* _else)SelectionStatement95,1851
+void SelectionStatement::print() constprint98,1972
+void SelectionStatement::printxml() constprintxml104,2056
+void SelectionStatement::printasm() constprintasm114,2256
+void SelectionStatement::count_variables(int32_t& var_count) constcount_variables117,2302
+ExpressionStatement::ExpressionStatement(Expression* expr)ExpressionStatement132,2614
+void ExpressionStatement::print() constprint136,2709
+void ExpressionStatement::printxml() constprintxml139,2753
+void ExpressionStatement::printasm() constprintasm142,2800
+void ExpressionStatement::count_variables(int32_t& var_count) constcount_variables145,2847
+JumpStatement::JumpStatement(Expression* expr)JumpStatement154,3030
+void JumpStatement::print() constprint158,3100
+void JumpStatement::printxml() constprintxml161,3138
+void JumpStatement::printasm() constprintasm167,3243
+void JumpStatement::count_variables(int32_t& var_count) constcount_variables172,3309
+IterationStatement::IterationStatement(Statement* statement)IterationStatement181,3491
+void IterationStatement::print() constprint185,3585
+void IterationStatement::printxml() constprintxml188,3628
+void IterationStatement::printasm() constprintasm196,3795
+void IterationStatement::count_variables(int32_t& var_count) constcount_variables199,3841
 
 src/c_parser.tab.hpp,2446
 # define YY_YY_C_COMPILER_SRC_C_PARSER_TAB_HPP_INCLUDEDYY_YY_C_COMPILER_SRC_C_PARSER_TAB_HPP_INCLUDED34,1569
@@ -561,18 +562,18 @@ typedef union YYSTYPE YYSTYPE;YYSTYPE135,3582
 src/compiler_main.cpp,43
 int main(int argc, char *argv[])main5,41
 
-src/declaration.cpp,651
+src/declaration.cpp,654
 Declaration::Declaration(const std::string& _id)Declaration6,48
 void Declaration::print() constprint10,115
 void Declaration::printxml() constprintxml19,255
 void Declaration::printasm() constprintasm32,504
-void Declaration::addDeclaration(Declaration* _next_decl)addDeclaration35,543
-void Declaration::addList(Declaration* _next_decl)addList40,634
-void Declaration::setType(Type* _type)setType45,723
-Declaration* Declaration::getNext() constgetNext50,785
-Declaration* Declaration::getNextListItem() constgetNextListItem55,854
-std::string Declaration::getId() constgetId60,936
-std::string Declaration::getType() constgetType65,995
+void Declaration::addDeclaration(Declaration* _next_decl)addDeclaration42,746
+void Declaration::addList(Declaration* _next_decl)addList47,837
+void Declaration::setType(Type* _type)setType52,926
+Declaration* Declaration::getNext() constgetNext57,988
+Declaration* Declaration::getNextListItem() constgetNextListItem62,1057
+std::string Declaration::getId() constgetId67,1139
+std::string Declaration::getType() constgetType72,1198
 
 src/translation_unit.cpp,276
 TranslationUnit::TranslationUnit(Node* decl)TranslationUnit6,53
@@ -653,11 +654,17 @@ test/out/04.s,28
 main:main3,20
 f:f14,153
 
+test/out/05.s,0
+
 test/out/02.s,16
 main:main3,20
 
 test/in/02.c,22
 int main() {main1,0
+
+test/in/05.c,44
+char *glob;glob1,0
+int main() {main3,13
 
 test/in/01.c,22
 int main() {main1,0
@@ -678,6 +685,10 @@ main:main15,207
 test/ref/04.s,30
 main:main15,207
 f:f47,695
+
+test/ref/05.s,36
+$LC0:$LC012,145
+main:main21,267
 
 test/ref/02.s,18
 main:main15,207

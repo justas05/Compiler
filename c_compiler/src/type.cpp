@@ -11,7 +11,7 @@ void Type::print() const
 void Type::printxml() const
 {}
 
-void Type::printasm() const
+void Type::printasm(VariableStackBindings bindings, int32_t& var_count) const
 {}
 
 

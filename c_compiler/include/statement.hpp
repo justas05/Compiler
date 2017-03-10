@@ -1,7 +1,10 @@
 #ifndef AST_STATEMENT_HPP
 #define AST_STATEMENT_HPP
 
-#include "ast.hpp"
+#include "node.hpp"
+
+class Declaration;
+class Expression;
 
 
 class Statement : public Node {
@@ -13,7 +16,7 @@ public:
 
     virtual void print() const = 0;
     virtual void printxml() const = 0;
-    virtual void printasm() const = 0;
+    virtual VariableStackBindings printasm(VariableStackBindings bindings) const = 0;
 
     virtual void count_variables(int32_t& var_count) const = 0;
 
@@ -32,7 +35,7 @@ public:
 
     virtual void print() const;
     virtual void printxml() const;
-    virtual void printasm() const;
+    virtual VariableStackBindings printasm(VariableStackBindings bindings) const;
 
     virtual void count_variables(int32_t& var_count) const;
 };
@@ -47,7 +50,7 @@ public:
 
     virtual void print() const;
     virtual void printxml() const;
-    virtual void printasm() const;
+    virtual VariableStackBindings printasm(VariableStackBindings bindings) const;
 
     virtual void count_variables(int32_t& var_count) const;
 };
@@ -61,7 +64,7 @@ public:
 
     virtual void print() const;
     virtual void printxml() const;
-    virtual void printasm() const;
+    virtual VariableStackBindings printasm(VariableStackBindings bindings) const;
 
     virtual void count_variables(int32_t& var_count) const;
 };
@@ -75,7 +78,7 @@ public:
 
     virtual void print() const;
     virtual void printxml() const;
-    virtual void printasm() const;
+    virtual VariableStackBindings printasm(VariableStackBindings bindings) const;
 
     virtual void count_variables(int32_t& var_count) const;
 };
@@ -89,7 +92,7 @@ public:
 
     virtual void print() const;
     virtual void printxml() const;
-    virtual void printasm() const;
+    virtual VariableStackBindings printasm(VariableStackBindings bindings) const;
 
     virtual void count_variables(int32_t& var_count) const;
 };

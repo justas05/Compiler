@@ -1,14 +1,14 @@
 #ifndef TYPE_HPP
 #define TYPE_HPP
 
-#include "ast.hpp"
+#include "node.hpp"
 
 
 class Type : public Node {
 public:
     virtual void print() const;
     virtual void printxml() const;
-    virtual void printasm() const;
+    virtual VariableStackBindings printasm(VariableStackBindings bindings) const;
 
     virtual std::string getType() const = 0;
 };

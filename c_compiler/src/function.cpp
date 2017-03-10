@@ -1,4 +1,9 @@
-#include "ast.hpp"
+#include "function.hpp"
+#include "statement.hpp"
+#include "declaration.hpp"
+
+#include <iostream>
+#include <vector>
 
 
 // Function definition
@@ -43,7 +48,7 @@ void Function::printxml() const
     std::cout << "</Function>" << std::endl;
 }
 
-void Function::printasm() const
+VariableStackBindings Function::printasm(VariableStackBindings bindings) const
 {
     // Counting all the variables being declared in the function
     int32_t count = 0;
@@ -60,7 +65,7 @@ void Function::printasm() const
     // TODO print asm for parameters
 
     // Prints the asm for the compound statement in the function
-    statement->printasm();
+    statement->printasm(bindings);
 
     std::cout << "\tmove\t$sp,$fp\n\tlw\t$fp," << memory_needed-4 << "($sp)\n\taddiu\t$sp,$sp,"
 	      << memory_needed << "\n\tjr\t$31\n\tnop" << std::endl;

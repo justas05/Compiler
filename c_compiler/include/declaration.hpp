@@ -1,12 +1,13 @@
 #ifndef AST_DECLARATION_HPP
 #define AST_DECLARATION_HPP
 
-#include "ast.hpp"
+#include "node.hpp"
 
-// Declaration that holds a list of declarations
+class Expression;
+
 
 class Declaration : public Node {
-protected:
+private:
     Type* type;
     std::string id;
     Expression* init;
@@ -18,7 +19,7 @@ public:
 
     virtual void print() const;
     virtual void printxml() const;
-    virtual void printasm() const;
+    virtual VariableStackBindings printasm(VariableStackBindings bindings) const;
 
     void addDeclaration(Declaration* _next_decl);
     void addList(Declaration* _next_decl);

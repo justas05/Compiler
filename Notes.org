@@ -3,6 +3,7 @@
 #+AUTHOR: Yann Herklotz
 #+EMAIL: ymherklotz@gmail.com
 #+DESCRIPTION: These are notes about the Compiler project.
+#+DATE: <2017-03-09 Thu>
 
 * Lexer
 
@@ -89,11 +90,43 @@
     - move :: Pseudo instruction interpreted as (add $rt, $rs, $zero)
     - nop :: No Operation
     - sw :: Store Word
-
-
 *** TODOs
 
-    - Analyse tree with map including "name", and struct with "type" and "stack 
-      position", and a counter passed by reference.
-    - This function will be called by printasm() in the base class and will only be
-      implemented by function.
+**** Expression
+
+***** void evaluate(VariableStackBindings binding) 
+
+     Statements evaluate the expression by writing it out and printing the resulting asm
+     onto the command line. I will also have to pass the bindings to the evaluate function
+       
+     examples:
+     
+     z = a + b + c, will be calculated as $2 = b + c, and then $2 = a + $2
+     
+     This should happen automatically because of recursion.
+     Have to be careful because of the way the expressions are parsed.
+     Constant expressions will just output li    $2, 6 for example
+
+**** Function class
+
+**** Statement class
+
+     - Need function that prints declaration bits and expression bits, as well as connected 
+       statements
+
+**** Definition class 
+
+     - need function that will print the code for declaration. Basic code should be:
+       
+       li    $2, 6
+       sw    $2, 4($fp)
+
+     - Before that is executed it should evaluate the expression.
+
+     - The expression should be the thing doing: li    $2, 6
+       That is if we want a 6 stored in the variable.
+
+     - The declaration class should only be in charge of storing it in the right location in
+       the stack.
+       
+       

@@ -9,7 +9,7 @@
 
 struct VarLocation;
 
-typedef std::map<std::string, VarLocation> VariableStack;
+typedef std::map<std::string, VarLocation> VariableStackBindings;
 
 #include "node.hpp"
 #include "type.hpp"
@@ -19,6 +19,6 @@ typedef std::map<std::string, VarLocation> VariableStack;
 #include "function.hpp"
 #include "translation_unit.hpp"
 
-TranslationUnit* parseAST();
+Node* parseAST();
 
 #endif

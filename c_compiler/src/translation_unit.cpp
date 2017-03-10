@@ -24,10 +24,10 @@ void TranslationUnit::printxml() const
     std::cout << "</Program>" << std::endl;
 }
 
-void TranslationUnit::printasm() const
+void TranslationUnit::printasm(VariableStackBindings bindings, int32_t& var_count) const
 {
     for(auto& node : translation_unit) {
-	node->printasm();
+	node->printasm(bindings, var_count);
     }
 }
 

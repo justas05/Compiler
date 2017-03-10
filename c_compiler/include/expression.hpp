@@ -1,14 +1,14 @@
 #ifndef AST_EXPRESSION_HPP
 #define AST_EXPRESSION_HPP
 
-#include "ast.hpp"
+#include "node.hpp"
+
 
 class Expression : public Node {
 public:
-    virtual void printasm() const = 0;
-    
     virtual void print() const;
     virtual void printxml() const;
+    virtual VariableStackBindings printasm(VariableStackBindings bindings) const = 0;
 };
 
 
@@ -18,7 +18,7 @@ private:
 public:
     Identifier(const std::string& id);
 
-    virtual void printasm() const;
+    virtual VariableStackBindings printasm(VariableStackBindings bindings) const;
 };
 
 
@@ -28,7 +28,7 @@ private:
 public:
     Constant(const int32_t& constant);
 
-    virtual void printasm() const;
+    virtual VariableStackBindings printasm(VariableStackBindings bindings) const;
 };
 
 

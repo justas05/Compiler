@@ -1,5 +1,6 @@
-#include "ast.hpp"
+#include "expression.hpp"
 
+#include <iostream>
 
 // Expression definition
 
@@ -16,7 +17,7 @@ Identifier::Identifier(const std::string& id)
     : m_id(id)
 {}
 
-void Identifier::printasm() const
+void Identifier::printasm(VariableStackBindings bindings) const
 {}
 
 
@@ -26,7 +27,8 @@ Constant::Constant(const int32_t& constant)
     : m_constant(constant)
 {}
 
-void Constant::printasm() const
+void Constant::printasm(VariableStackBindings bindings) const
 {
     std::cout << "\tli\t$2," << m_constant << std::endl;
 }
+

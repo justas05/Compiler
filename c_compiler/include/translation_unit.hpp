@@ -1,7 +1,9 @@
-#ifndef EXTERNAL_HPP
-#define EXTERNAL_HPP
+#ifndef TRANSLATION_UNIT_HPP
+#define TRANSLATION_UNIT_HPP
 
-#include "ast.hpp"
+#include "node.hpp"
+
+#include <vector>
 
 
 class TranslationUnit : public Node {
@@ -13,7 +15,7 @@ public:
 
     virtual void print() const;
     virtual void printxml() const;
-    virtual void printasm() const;
+    virtual VariableStackBindings printasm(VariableStackBindings bindings) const;
 
     void push(Node* decl);
 };

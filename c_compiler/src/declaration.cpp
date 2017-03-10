@@ -29,7 +29,7 @@ void Declaration::printxml() const
 	std::cout << "<Variable id=\""<< id << "\" />" << std::endl;
 }
 
-void Declaration::printasm() const
+void Declaration::printasm(VariableStackBindings bindings, int32_t& var_count) const
 {
     if(init == nullptr)
 	std::cout << "\t.comm\t" << id << ",4,4" << std::endl;

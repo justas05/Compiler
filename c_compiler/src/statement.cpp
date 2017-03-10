@@ -1,4 +1,8 @@
-#include "ast.hpp"
+#include "statement.hpp"
+#include "declaration.hpp"
+#include "expression.hpp"
+
+#include <iostream>
 
 
 // General base Statement definition
@@ -48,15 +52,15 @@ void CompoundStatement::printxml() const
     std::cout << "</Scope>" << std::endl;
 }
 
-void CompoundStatement::printasm() const
+VariableStackBindings CompoundStatement::printasm(VariableStackBindings bindings, int32_t& var_count) const
 {
     if(next_statement != nullptr)
-	next_statement->printasm();
+	next_statement->printasm(bindings, var_count);
 
     // TODO printasm for the declaration
 
     if(m_statement != nullptr)
-	m_statement->printasm();
+	m_statement->printasm(bindings, var_count);
 }
 
 void CompoundStatement::count_variables(int32_t& var_count) const
@@ -106,7 +110,7 @@ void SelectionStatement::printxml() const
 	m_else->printxml();
 }
 
-void SelectionStatement::printasm() const
+VariableStackBindings SelectionStatement::printasm(VariableStackBindings bindings, int32_t& var_count) const
 {}
 
 void SelectionStatement::count_variables(int32_t& var_count) const
@@ -134,7 +138,7 @@ void ExpressionStatement::print() const
 void ExpressionStatement::printxml() const
 {}
 
-void ExpressionStatement::printasm() const
+VariableStackBindings ExpressionStatement::printasm(VariableStackBindings bindings, int32_t& var_count) const
 {}
 
 void ExpressionStatement::count_variables(int32_t& var_count) const
@@ -159,9 +163,9 @@ void JumpStatement::printxml() const
 	next_statement->printxml();
 }
 
-void JumpStatement::printasm() const
+VariableStackBindings JumpStatement::printasm(VariableStackBindings bindings, int32_t& var_count) const
 {
-    m_expr->printasm();
+    m_expr->printasm(bindings, var_count);
 }
 
 void JumpStatement::count_variables(int32_t& var_count) const
@@ -188,7 +192,7 @@ void IterationStatement::printxml() const
 	m_statement->printxml();
 }
 
-void IterationStatement::printasm() const
+VariableStackBindings IterationStatement::printasm(VariableStackBindings bindings, int32_t& var_count) const
 {}
 
 void IterationStatement::count_variables(int32_t& var_count) const

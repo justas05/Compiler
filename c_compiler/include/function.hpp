@@ -1,13 +1,10 @@
 #ifndef AST_FUNCTION_HPP
 #define AST_FUNCTION_HPP
 
-#include "ast.hpp"
+#include "node.hpp"
 
-
-struct VarLocation {
-    Type* type;
-    int32_t stack_position;
-};
+class Declaration;
+class Statement;
 
 
 class Function : public Node {
@@ -22,7 +19,7 @@ public:
 
     virtual void print() const;
     virtual void printxml() const;
-    virtual void printasm() const;
+    virtual VariableStackBindings printasm(VariableStackBindings bindings) const;
 };
 
 

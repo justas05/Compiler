@@ -1,8 +1,15 @@
 %code requires{
 
-#include "ast.hpp"
+#include "node.hpp"
+#include "translation_unit.hpp"
+#include "function.hpp"
+#include "declaration.hpp"
+#include "statement.hpp"
+#include "expression.hpp"
+#include "type.hpp"
     
-extern TranslationUnit* g_root; // A way of getting the AST out
+    
+extern Node* g_root; // A way of getting the AST out
 
 //! This is to fix problems when generating C++
 // We are declaring the functions provided by Flex, so
@@ -338,9 +345,9 @@ Constant:
 
 %%
 
-TranslationUnit* g_root; // Definition of variable (to match declaration earlier)
+Node* g_root; // Definition of variable (to match declaration earlier)
 
-TranslationUnit* parseAST() {
+Node* parseAST() {
     g_root = 0;
     yyparse();
     return g_root;
