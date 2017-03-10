@@ -1,4 +1,7 @@
-#include "ast.hpp"
+#include "translation_unit.hpp"
+#include "bindings.hpp"
+
+#include <iostream>
 
 
 // Translation Unit definition
@@ -24,11 +27,13 @@ void TranslationUnit::printxml() const
     std::cout << "</Program>" << std::endl;
 }
 
-void TranslationUnit::printasm(VariableStackBindings bindings, int32_t& var_count) const
+VariableStackBindings TranslationUnit::printasm(VariableStackBindings bindings) const
 {
     for(auto& node : translation_unit) {
-	node->printasm(bindings, var_count);
+	node->printasm(bindings);
     }
+
+    return bindings;
 }
 
 void TranslationUnit::push(Node* decl)

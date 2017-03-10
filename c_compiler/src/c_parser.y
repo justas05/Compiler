@@ -126,8 +126,7 @@ Declaration:
 			tmp_decl->setType($1);
 			tmp_decl = tmp_decl->getNextListItem();
 		    }
-			}
-		;
+		};
 
 DeclarationSpec:
 		T_VOID { $$ = new Void; }
@@ -149,7 +148,7 @@ InitDeclaratorList:
 
 InitDeclarator:
 		Declarator { $$ = new Declaration(*$1); }
-	|	Declarator T_EQ AssignmentExpression { $$ = new Declaration(*$1); }
+|	Declarator T_EQ AssignmentExpression { $$ = new Declaration(*$1, $3); }
 		;
 
 Declarator:

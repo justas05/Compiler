@@ -1,6 +1,7 @@
 #include "statement.hpp"
 #include "declaration.hpp"
 #include "expression.hpp"
+#include "bindings.hpp"
 
 #include <iostream>
 
@@ -52,15 +53,20 @@ void CompoundStatement::printxml() const
     std::cout << "</Scope>" << std::endl;
 }
 
-VariableStackBindings CompoundStatement::printasm(VariableStackBindings bindings, int32_t& var_count) const
+VariableStackBindings CompoundStatement::printasm(VariableStackBindings bindings) const
 {
+    VariableStackBindings outer_scope_bindings = bindings;
+    
     if(next_statement != nullptr)
-	next_statement->printasm(bindings, var_count);
+	next_statement->printasm(bindings);
 
-    // TODO printasm for the declaration
+    if(m_decl != nullptr)
+	bindings = m_decl->printasm(bindings);
 
     if(m_statement != nullptr)
-	m_statement->printasm(bindings, var_count);
+	m_statement->printasm(bindings);
+
+    return outer_scope_bindings;
 }
 
 void CompoundStatement::count_variables(int32_t& var_count) const
@@ -110,8 +116,10 @@ void SelectionStatement::printxml() const
 	m_else->printxml();
 }
 
-VariableStackBindings SelectionStatement::printasm(VariableStackBindings bindings, int32_t& var_count) const
-{}
+VariableStackBindings SelectionStatement::printasm(VariableStackBindings bindings) const
+{
+    return bindings;
+}
 
 void SelectionStatement::count_variables(int32_t& var_count) const
 {
@@ -138,8 +146,18 @@ void ExpressionStatement::print() const
 void ExpressionStatement::printxml() const
 {}
 
-VariableStackBindings ExpressionStatement::printasm(VariableStackBindings bindings, int32_t& var_count) const
-{}
+VariableStackBindings ExpressionStatement::printasm(VariableStackBindings bindings) const
+{
+    if(next_statement != nullptr)
+	next_statement->printasm(bindings);
+    
+    if(m_expr != nullptr) {
+	std::cout << "SHould print" << std::endl;
+	m_expr->printasm(bindings);
+    }
+    
+    return bindings;
+}
 
 void ExpressionStatement::count_variables(int32_t& var_count) const
 {
@@ -163,9 +181,15 @@ void JumpStatement::printxml() const
 	next_statement->printxml();
 }
 
-VariableStackBindings JumpStatement::printasm(VariableStackBindings bindings, int32_t& var_count) const
+VariableStackBindings JumpStatement::printasm(VariableStackBindings bindings) const
 {
-    m_expr->printasm(bindings, var_count);
+    if(next_statement != nullptr)
+	next_statement->printasm(bindings);
+    
+    if(m_expr != nullptr)
+	m_expr->printasm(bindings);
+
+    return bindings;
 }
 
 void JumpStatement::count_variables(int32_t& var_count) const
@@ -192,8 +216,10 @@ void IterationStatement::printxml() const
 	m_statement->printxml();
 }
 
-VariableStackBindings IterationStatement::printasm(VariableStackBindings bindings, int32_t& var_count) const
-{}
+VariableStackBindings IterationStatement::printasm(VariableStackBindings bindings) const
+{
+    return bindings;
+}
 
 void IterationStatement::count_variables(int32_t& var_count) const
 {

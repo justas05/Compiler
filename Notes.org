@@ -71,7 +71,6 @@
     specified in the lab. The AST was already built for us and the language was already
     parsed using C++ instead of bison.
 
-
 ** TODO Coursework (c compiler)
    DEADLINE: <2017-03-28 Tue>
 
@@ -92,9 +91,20 @@
     - sw :: Store Word
 *** TODOs
 
-**** Expression
+**** TODO Current
 
-***** void evaluate(VariableStackBindings binding) 
+***** DONE VariableStackBindings class
+
+      The class will contain map of strings containing the variable name as the _key_ and the stack 
+      position as the stack position and type as the attributes, which will be combined using a struct.
+
+***** TODO Work on statements and declaration
+
+      Implement the adding to the bindings part that has to be added in the statements and declarations.
+
+**** TODO Expression
+
+***** printasm(VSB binding)
 
      Statements evaluate the expression by writing it out and printing the resulting asm
      onto the command line. I will also have to pass the bindings to the evaluate function
@@ -107,14 +117,16 @@
      Have to be careful because of the way the expressions are parsed.
      Constant expressions will just output li    $2, 6 for example
 
-**** Function class
+**** TODO Function class
 
-**** Statement class
+**** TODO Statement class
 
      - Need function that prints declaration bits and expression bits, as well as connected 
        statements
 
-**** Definition class 
+     - need to add labels so that it jumps to the exit of the function once it gets a return
+
+**** TODO Definition class 
 
      - need function that will print the code for declaration. Basic code should be:
        
@@ -127,6 +139,6 @@
        That is if we want a 6 stored in the variable.
 
      - The declaration class should only be in charge of storing it in the right location in
-       the stack.
+       the stack and adding that to the bindings.
        
        

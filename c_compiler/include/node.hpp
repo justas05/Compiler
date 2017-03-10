@@ -5,19 +5,13 @@
 #include <map>
 #include <string>
 
-struct VarLocation;
 class Type;
-
-typedef std::map<std::string, VarLocation> VariableStackBindings;
-
-
-struct VarLocation {
-    Type* type;
-    int32_t stack_position;
-};
+class VariableStackBindings; 
 
 
-class Node {
+// base node class
+class Node
+{
 public:
     virtual ~Node() {}
 

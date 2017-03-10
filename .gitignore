@@ -12,3 +12,4 @@ c_compiler/build/
 *.log
 .vagrant
 test/
+*~

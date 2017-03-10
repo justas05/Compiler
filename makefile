@@ -69,7 +69,7 @@ $(PARSRCDIR)/c_parser.tab.cpp $(PARSRCDIR)/c_parser.tab.hpp : $(PARSRCDIR)/c_par
 # Make the c_parser
 bin/c_compiler:	$(COMPBUILDDIR)/compiler_main.o $(COMPBUILDDIR)/statement.o \
 		$(COMPBUILDDIR)/function.o $(COMPBUILDDIR)/expression.o \
-		$(COMPBUILDDIR)/translation_unit.o \
+		$(COMPBUILDDIR)/translation_unit.o $(COMPBUILDDIR)/bindings.o \
 		$(COMPBUILDDIR)/declaration.o $(COMPBUILDDIR)/type.o \
 		$(COMPBUILDDIR)/c_parser.tab.o $(COMPBUILDDIR)/c_lexer.yy.o
 	@echo "Linking..."

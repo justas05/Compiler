@@ -1,6 +1,7 @@
 #include "function.hpp"
 #include "statement.hpp"
 #include "declaration.hpp"
+#include "bindings.hpp"
 
 #include <iostream>
 #include <vector>
@@ -69,4 +70,6 @@ VariableStackBindings Function::printasm(VariableStackBindings bindings) const
 
     std::cout << "\tmove\t$sp,$fp\n\tlw\t$fp," << memory_needed-4 << "($sp)\n\taddiu\t$sp,$sp,"
 	      << memory_needed << "\n\tjr\t$31\n\tnop" << std::endl;
+
+    return bindings;
 }

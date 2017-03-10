@@ -1,4 +1,7 @@
-#include "ast.hpp"
+#include "type.hpp"
+#include "bindings.hpp"
+
+#include <iostream>
 
 
 // Type definition
@@ -11,8 +14,10 @@ void Type::print() const
 void Type::printxml() const
 {}
 
-void Type::printasm(VariableStackBindings bindings, int32_t& var_count) const
-{}
+VariableStackBindings Type::printasm(VariableStackBindings bindings) const
+{
+    return bindings;
+}
 
 
 // Pointer definition

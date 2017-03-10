@@ -5,7 +5,6 @@
 
 #include <vector>
 
-
 class TranslationUnit : public Node {
 protected:
     std::vector<Node* > translation_unit;

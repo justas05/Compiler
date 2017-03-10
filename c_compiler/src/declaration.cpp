@@ -1,10 +1,15 @@
-#include "ast.hpp"
+#include "declaration.hpp"
+#include "bindings.hpp"
+#include "type.hpp"
+#include "expression.hpp"
+
+#include <iostream>
 
 
 // Declaration definition
 
-Declaration::Declaration(const std::string& _id)
-    : id(_id)
+Declaration::Declaration(const std::string& _id, Expression* _init)
+    : id(_id), init(_init)
 {}
 
 void Declaration::print() const
@@ -29,14 +34,39 @@ void Declaration::printxml() const
 	std::cout << "<Variable id=\""<< id << "\" />" << std::endl;
 }
 
-void Declaration::printasm(VariableStackBindings bindings, int32_t& var_count) const
+VariableStackBindings Declaration::printasm(VariableStackBindings bindings) const
 {
-    if(init == nullptr)
-	std::cout << "\t.comm\t" << id << ",4,4" << std::endl;
-    else {
-	std::cout << "\t.data\n\t.globl\t" << id << std::endl;
-	std::cout << id << ":\n\t.word\t" << std::endl;
+    // if(init == nullptr)
+    // 	std::cout << "\t.comm\t" << id << ",4,4" << std::endl;
+    // else {
+    // 	std::cout << "\t.data\n\t.globl\t" << id << std::endl;
+    // 	std::cout << id << ":\n\t.word\t" << std::endl;
+    // }
+
+    // return bindings;
+
+    if(next_decl != nullptr)
+	bindings = next_decl->printasm(bindings);
+
+    if(list_next_decl != nullptr)
+	bindings = list_next_decl->printasm(bindings);
+    
+    if(id != "") {
+	if(init != nullptr)
+	    init->printasm(bindings);
+	else
+	    std::cout << "\tmove\t$2,$0" << std::endl;
+
+	int32_t stack_position = bindings.getCurrentStackPosition();
+
+	std::cout << "\tsw\t$2," << stack_position << "($fp)" << std::endl;
+
+	bindings.insertBinding(id, type, stack_position);
+
+	bindings.increaseStackPosition();
     }
+    
+    return bindings;
 }
 
 void Declaration::addDeclaration(Declaration* _next_decl)

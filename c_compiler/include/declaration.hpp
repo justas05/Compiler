@@ -15,7 +15,7 @@ private:
     Declaration* list_next_decl;
     
 public:
-    Declaration(const std::string& _id = "");
+    Declaration(const std::string& _id = "", Expression* _init = nullptr);
 
     virtual void print() const;
     virtual void printxml() const;
