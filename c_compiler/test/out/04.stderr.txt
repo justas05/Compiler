@@ -1,1 +1,0 @@
-Can't find identifier 'v' in current scope binding
