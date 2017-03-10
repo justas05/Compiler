@@ -67,7 +67,7 @@ ALL .
 [.]		{ return T_DOT; }
 [-][>]		{ return T_ARROW; }
 [+-][+-]	{ return T_INCDEC; }
-[+-]		{ return T_ADDSUB_OP; }
+[+-]		{ yylval.string = new std::string(yytext); return T_ADDSUB_OP; }
 [=]		{ yylval.string = new std::string(yytext); return T_EQ; }
 
 {ASSIGNMENT_OPERATOR} { yylval.string = new std::string(yytext); return T_ASSIGN_OPER; }

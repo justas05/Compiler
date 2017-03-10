@@ -98,9 +98,22 @@
       The class will contain map of strings containing the variable name as the _key_ and the stack 
       position as the stack position and type as the attributes, which will be combined using a struct.
 
-***** TODO Work on statements and declaration
+***** DONE Work on statements and declaration
 
       Implement the adding to the bindings part that has to be added in the statements and declarations.
+
+***** TODO Work on expressions
+
+***** TODO Comment code
+
+      comment code to know where we are at and what we still have to do.
+
+****** TODO Implement add and sub
+       still have to work on the subtraction
+
+       work on different types to implement the correct add
+
+****** TODO Implement multiplication
 
 **** TODO Expression
 

@@ -42,10 +42,10 @@ public:
 class AdditiveExpression : public OperationExpression
 {
 private:
-    std::string operand;
+    std::string operation;
 
 public:
-    AdditiveExpression(Expression* _lhs, const std::string& _operand, Expression* _rhs);
+    AdditiveExpression(Expression* _lhs, const std::string& _operation, Expression* _rhs);
 
     virtual VariableStackBindings printasm(VariableStackBindings bindings) const;
 };
