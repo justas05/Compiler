@@ -1,22 +1,25 @@
-# ignored folders
+# specific ignored folders
 
 ./bin/
-./c_lexer/build/
-./c_parser/build/
-./c_compiler/build/
 ./working/
 ./test/
-./c_compiler/test/ref/
-./c_compiler/test/out/
+
+# ignored all called
+
+build/
+
+# ignore all files with these extensions
 
 *.yy.cpp
 *.tab.cpp
 *.tab.hpp
 *.o
 *.output
-\#*
-.#*
 *.log
 .vagrant
 *~
 *.s
+
+# emacs temp files
+
+.#*
