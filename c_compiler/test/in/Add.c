@@ -5,7 +5,7 @@ int main() {
 
 	{
 		{
-			z = x + y;
+			z = x + y + x + y - x;
 		}
 	}
 	

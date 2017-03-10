@@ -68,12 +68,12 @@ AdditiveExpression::AdditiveExpression(Expression* _lhs, const std::string& _ope
 
 VariableStackBindings AdditiveExpression::printasm(VariableStackBindings bindings) const
 {
-    rhs->printasm(bindings);
+    lhs->printasm(bindings);
 
     // move the rhs out of the way to be able to evaluate the lhs
     std::cout << "\tmove\t$3,$2" << std::endl;
 
-    lhs->printasm(bindings);
+    rhs->printasm(bindings);
 
     // then perform the right operation
     
@@ -82,7 +82,7 @@ VariableStackBindings AdditiveExpression::printasm(VariableStackBindings binding
     if(operation == "+")
 	std::cout << "\tadd\t$2,$2,$3" << std::endl;
     else if(operation == "-")
-	std::cout << "\tsub\t$2,$2,$3" << std::endl;
+	std::cout << "\tsub\t$2,$3,$2" << std::endl;
     else
 	std::cerr << "Don't recognize symbol: '" << operation << "'" << std::endl;
 
