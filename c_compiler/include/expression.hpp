@@ -3,12 +3,16 @@
 
 #include "node.hpp"
 
+#include <memory>
+
+class Expression;
+
+typedef std::shared_ptr<Expression> ExpressionPtr;
+
 
 class Expression : public Node
 {
 public:
-    virtual ~Expression();
-    
     virtual VariableStackBindings printasm(VariableStackBindings bindings) const = 0;
     
     virtual void print() const;
@@ -20,11 +24,10 @@ public:
 class OperationExpression : public Expression
 {
 protected:
-    Expression* lhs;
-    Expression* rhs;
+    ExpressionPtr lhs;
+    ExpressionPtr rhs;
 public:
     OperationExpression(Expression* _lhs, Expression* _rhs);
-    virtual ~OperationExpression();
 
     virtual VariableStackBindings printasm(VariableStackBindings bindings) const = 0;
 };

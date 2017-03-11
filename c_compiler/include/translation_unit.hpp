@@ -3,11 +3,15 @@
 
 #include "node.hpp"
 
+#include <memory>
 #include <vector>
+
+typedef std::shared_ptr<Node> NodePtr;
+
 
 class TranslationUnit : public Node {
 protected:
-    std::vector<Node* > translation_unit;
+    std::vector<NodePtr> translation_unit;
     
 public:
     TranslationUnit(Node* decl);

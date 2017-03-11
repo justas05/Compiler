@@ -3,6 +3,11 @@
 
 #include "node.hpp"
 
+#include <memory>
+
+class Type;
+
+typedef std::shared_ptr<Type> TypePtr;
 
 class Type : public Node {
 public:
@@ -22,7 +27,7 @@ public:
 
 class Pointer : public Type {
 protected:
-    Type* pointer_type;
+    TypePtr pointer_type;
 
 public:
     Pointer(Type* _pointer_type);
@@ -34,7 +39,7 @@ public:
 class Array : public Type {
 protected:
     int32_t size;
-    Type* array_type;
+    TypePtr array_type;
 
 public:
     Array(Type* _array_type, int32_t _size = 0);

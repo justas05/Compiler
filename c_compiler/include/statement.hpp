@@ -3,13 +3,20 @@
 
 #include "node.hpp"
 
+#include <memory>
+
 class Declaration;
 class Expression;
+class Statement;
+
+typedef std::shared_ptr<Declaration> DeclarationPtr;
+typedef std::shared_ptr<Expression> ExpressionPtr;
+typedef std::shared_ptr<Statement> StatementPtr;
 
 
 class Statement : public Node {
 protected:
-    Statement* next_statement;
+    StatementPtr next_statement;
     
 public:
     Statement(Statement* statement = nullptr);
@@ -26,8 +33,8 @@ public:
 
 class CompoundStatement : public Statement {
 protected:
-    Declaration* m_decl;
-    Statement* m_statement;
+    DeclarationPtr m_decl;
+    StatementPtr m_statement;
     
 public:
     CompoundStatement(Declaration* decl = nullptr, Statement* statement = nullptr);
@@ -43,8 +50,8 @@ public:
 
 class SelectionStatement : public Statement {
 protected:
-    Statement* m_if;
-    Statement* m_else;
+    StatementPtr m_if;
+    StatementPtr m_else;
 public:
     SelectionStatement(Statement* _if = nullptr, Statement* _else = nullptr);
 
@@ -58,7 +65,7 @@ public:
 
 class ExpressionStatement : public Statement {
 protected:
-    Expression* m_expr;
+    ExpressionPtr m_expr;
 public:
     ExpressionStatement(Expression* expr = nullptr);
 
@@ -72,7 +79,7 @@ public:
 
 class JumpStatement : public Statement {
 protected:
-    Expression* m_expr;
+    ExpressionPtr m_expr;
 public:
     JumpStatement(Expression* expr = nullptr);
 
@@ -86,7 +93,7 @@ public:
 
 class IterationStatement : public Statement {
 protected:
-    Statement* m_statement;
+    StatementPtr m_statement;
 public:
     IterationStatement(Statement* statement);
 

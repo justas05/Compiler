@@ -3,7 +3,6 @@
 
 #include <iostream>
 
-
 // Translation Unit definition
 
 TranslationUnit::TranslationUnit(Node* decl)
@@ -38,5 +37,6 @@ VariableStackBindings TranslationUnit::printasm(VariableStackBindings bindings) 
 
 void TranslationUnit::push(Node* decl)
 {
-    translation_unit.push_back(decl);
+    NodePtr node_ptr(decl);
+    translation_unit.push_back(node_ptr);
 }

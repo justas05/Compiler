@@ -71,25 +71,28 @@ VariableStackBindings Declaration::printasm(VariableStackBindings bindings) cons
 
 void Declaration::addDeclaration(Declaration* _next_decl)
 {
-    next_decl = _next_decl;
+    DeclarationPtr decl_ptr(_next_decl);
+    next_decl = decl_ptr;
 }
 
 void Declaration::addList(Declaration* _next_decl)
 {
-    list_next_decl = _next_decl;
+    DeclarationPtr decl_ptr(_next_decl);
+    list_next_decl = decl_ptr;
 }
 
 void Declaration::setType(Type* _type)
 {
-    type = _type;
+    TypePtr type_ptr(_type);
+    type = type_ptr;
 }
 
-Declaration* Declaration::getNext() const
+DeclarationPtr Declaration::getNext() const
 {
     return next_decl;
 }
 
-Declaration* Declaration::getNextListItem() const
+DeclarationPtr Declaration::getNextListItem() const
 {
     return list_next_decl;
 }

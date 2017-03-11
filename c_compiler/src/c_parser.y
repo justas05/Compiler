@@ -124,7 +124,7 @@ Declaration:
 		    
 		    while(tmp_decl != nullptr) {
 			tmp_decl->setType($1);
-			tmp_decl = tmp_decl->getNextListItem();
+			tmp_decl = tmp_decl->getNextListItem().get();
 		    }
 		};
 

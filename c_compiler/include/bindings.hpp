@@ -3,15 +3,18 @@
 
 #include <cstdint>
 #include <map>
+#include <memory>
 #include <string>
 
 class Type;
+
+typedef std::shared_ptr<Type> TypePtr;
 
 
 // struct containing information on the variable declaration
 struct DeclarationData
 {
-    Type* type;
+    TypePtr type;
     int32_t stack_position;
 };
 
@@ -26,7 +29,7 @@ private:
 public:
     VariableStackBindings();
 
-    void insertBinding(std::string id, Type* type, int32_t stack_position);
+    void insertBinding(std::string id, TypePtr type, int32_t stack_position);
     void increaseStackPosition();
 
     int32_t getCurrentStackPosition() const;

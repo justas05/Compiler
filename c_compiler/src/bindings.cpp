@@ -7,7 +7,7 @@ VariableStackBindings::VariableStackBindings()
     : stack_counter(4)
 {}
 
-void VariableStackBindings::insertBinding(std::string id, Type* type, int32_t stack_position)
+void VariableStackBindings::insertBinding(std::string id, TypePtr type, int32_t stack_position)
 {
     DeclarationData decl_data;
     decl_data.type = type;

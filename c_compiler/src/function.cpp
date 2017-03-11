@@ -28,7 +28,7 @@ void Function::printxml() const
 {
     std::cout << "<Function id=\"" << id << "\">" << std::endl;
 
-    Declaration* parameter = parameter_list;
+    DeclarationPtr parameter = parameter_list;
     std::vector<std::string> parameter_vec;
     
     while(parameter != nullptr) {

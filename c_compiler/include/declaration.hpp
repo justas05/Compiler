@@ -3,16 +3,24 @@
 
 #include "node.hpp"
 
+#include <memory>
+
 class Expression;
+class Type;
+class Declaration;
+
+typedef std::shared_ptr<Expression> ExpressionPtr;
+typedef std::shared_ptr<Type> TypePtr;
+typedef std::shared_ptr<Declaration> DeclarationPtr;
 
 
 class Declaration : public Node {
 private:
-    Type* type;
+    TypePtr type;
     std::string id;
-    Expression* init;
-    Declaration* next_decl;
-    Declaration* list_next_decl;
+    ExpressionPtr init;
+    DeclarationPtr next_decl;
+    DeclarationPtr list_next_decl;
     
 public:
     Declaration(const std::string& _id = "", Expression* _init = nullptr);
@@ -26,8 +34,8 @@ public:
 
     void setType(Type* _type);
 
-    Declaration* getNext() const;
-    Declaration* getNextListItem() const;
+    DeclarationPtr getNext() const;
+    DeclarationPtr getNextListItem() const;
     std::string getId() const;
     std::string getType() const;
 };

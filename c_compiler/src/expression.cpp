@@ -5,10 +5,6 @@
 
 // Expression definition
 
-// There are no values to delete so it is just empty
-Expression::~Expression()
-{}
-
 void Expression::print() const
 {
     std::cerr << "This expression has not been implemented yet" << std::endl;
@@ -33,13 +29,6 @@ int32_t Expression::getPostfixStackPosition(VariableStackBindings bindings) cons
 OperationExpression::OperationExpression(Expression* _lhs, Expression* _rhs)
     : lhs(_lhs), rhs(_rhs)
 {}
-
-// deletes the two member variables that have been initialized
-OperationExpression::~OperationExpression()
-{
-    delete lhs;
-    delete rhs;
-}
 
 
 // Assignment Expression definition

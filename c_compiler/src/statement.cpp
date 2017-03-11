@@ -14,7 +14,8 @@ Statement::Statement(Statement* statement)
 
 void Statement::addStatement(Statement* _next)
 {
-    next_statement = _next;
+    StatementPtr statement_ptr(_next);
+    next_statement = statement_ptr;
 }
 
 
@@ -71,7 +72,7 @@ VariableStackBindings CompoundStatement::printasm(VariableStackBindings bindings
 
 void CompoundStatement::count_variables(int32_t& var_count) const
 {
-    Declaration* declaration = m_decl;
+    DeclarationPtr declaration = m_decl;
 
     if(next_statement != nullptr)
 	next_statement->count_variables(var_count);
@@ -80,7 +81,7 @@ void CompoundStatement::count_variables(int32_t& var_count) const
 	m_statement->count_variables(var_count);
     
     while(declaration != nullptr) {
-        Declaration* declaration_list = declaration->getNextListItem();
+        DeclarationPtr declaration_list = declaration->getNextListItem();
 
 	while(declaration_list != nullptr) {
 	    var_count++;
@@ -110,8 +111,10 @@ void SelectionStatement::printxml() const
 {
     if(next_statement != nullptr)
 	next_statement->printxml();
+    
     if(m_if != nullptr)
 	m_if->printxml();
+    
     if(m_else != nullptr)
 	m_else->printxml();
 }
@@ -210,6 +213,7 @@ void IterationStatement::printxml() const
 {
     if(next_statement != nullptr)
 	next_statement->printxml();
+    
     if(m_statement != nullptr)
 	m_statement->printxml();
 }

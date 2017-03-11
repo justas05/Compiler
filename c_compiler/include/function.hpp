@@ -3,16 +3,25 @@
 
 #include "node.hpp"
 
+#include <memory>
+
 class Declaration;
 class Statement;
+class Type;
+class Function;
+
+typedef std::shared_ptr<Declaration> DeclarationPtr;
+typedef std::shared_ptr<Statement> StatementPtr;
+typedef std::shared_ptr<Type> TypePtr;
+typedef std::shared_ptr<Function> FunctionPtr;
 
 
 class Function : public Node {
 protected:
-    Type* type;
+    TypePtr type;
     std::string id;
-    Declaration* parameter_list;
-    Statement* statement;
+    DeclarationPtr parameter_list;
+    StatementPtr statement;
     
 public:
     Function(const std::string& _id, Declaration* _parameter_list, Statement* _statement);
