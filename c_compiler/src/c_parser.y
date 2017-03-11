@@ -97,7 +97,7 @@ ExternalDeclaration:
 // FUNCTION DEFINITION
 
 FunctionDefinition:
-		DeclarationSpec T_IDENTIFIER T_LRB ParameterList T_RRB CompoundStatement { $$ = new Function(*$2, $4, $6); }
+DeclarationSpec T_IDENTIFIER T_LRB ParameterList T_RRB CompoundStatement { $$ = new Function(*$2, $4, $6); delete $2; }
 		;
 
 ParameterList:
@@ -107,7 +107,7 @@ ParameterList:
 		;
 
 Parameter:
-		DeclarationSpec T_IDENTIFIER { $$ = new Declaration(*$2); }
+DeclarationSpec T_IDENTIFIER { $$ = new Declaration(*$2); delete $2; }
 		;
 
 // Declaration
@@ -142,13 +142,13 @@ DeclarationSpec:
 		;
 
 InitDeclaratorList:
-		InitDeclarator { $$ = new Declaration(*$1); }
+InitDeclarator { $$ = new Declaration(*$1); delete $1;}
 	|       InitDeclaratorList T_CMA InitDeclarator { $3->addList($$); $$ = $3; }
 		;
 
 InitDeclarator:
-		Declarator { $$ = new Declaration(*$1); }
-|	Declarator T_EQ AssignmentExpression { $$ = new Declaration(*$1, $3); }
+Declarator { $$ = new Declaration(*$1); delete $1; }
+|	Declarator T_EQ AssignmentExpression { $$ = new Declaration(*$1, $3); delete $1; }
 		;
 
 Declarator:
@@ -278,7 +278,7 @@ ShiftExpression:
 
 AdditiveExpression:
 		MultiplicativeExpression { $$ = $1; }
-|	AdditiveExpression T_ADDSUB_OP MultiplicativeExpression { $$ = new AdditiveExpression($1, *$2, $3); }
+|	AdditiveExpression T_ADDSUB_OP MultiplicativeExpression { $$ = new AdditiveExpression($1, *$2, $3); delete $2; }
 		;
 
 MultiplicativeExpression:
@@ -333,7 +333,7 @@ ArgumentExpressionList:
 		;
 
 PrimaryExpression:
-		T_IDENTIFIER { $$ = new Identifier(*$1); }
+T_IDENTIFIER { $$ = new Identifier(*$1); delete $1; }
 	|       Constant { $$ = $1; }
 	|	T_LRB Expression T_RRB { $$ = $2; }
 		;
