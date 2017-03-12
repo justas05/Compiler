@@ -25,15 +25,20 @@ class VariableStackBindings
 private:
     std::map<std::string, DeclarationData> bindings;
     int32_t stack_counter;
+    int8_t current_register;
 	     
 public:
     VariableStackBindings();
 
     void insertBinding(std::string id, TypePtr type, int32_t stack_position);
     void increaseStackPosition();
+    void resetRegister();
+    void increaseRegister();
 
     int32_t getCurrentStackPosition() const;
     int32_t getStackPosition(const std::string& id) const;
+
+    int8_t getCurrentRegister() const;
 
     bool bindingExists(const std::string& id) const;
 };

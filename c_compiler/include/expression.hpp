@@ -54,6 +54,18 @@ public:
 };
 
 
+class MultiplicativeExpression : public OperationExpression
+{
+private:
+    std::string operation;
+
+public:
+    MultiplicativeExpression(Expression* _lhs, const std::string& _operation, Expression* _rhs);
+
+    virtual VariableStackBindings printasm(VariableStackBindings bindings) const;
+};
+
+
 class Identifier : public Expression
 {
 private:

@@ -69,11 +69,42 @@ VariableStackBindings AdditiveExpression::printasm(VariableStackBindings binding
     // currently using signed and sub because I only have signed numbers implemented
     // must update this as I add more types
     if(operation == "+")
-	std::cout << "\tadd\t$2,$2,$3" << std::endl;
+	std::cout << "\tadd\t$2,$3,$2" << std::endl;
     else if(operation == "-")
 	std::cout << "\tsub\t$2,$3,$2" << std::endl;
     else
 	std::cerr << "Don't recognize symbol: '" << operation << "'" << std::endl;
+
+    return bindings;
+}
+
+
+// Multiplicative Expression definition
+
+
+MultiplicativeExpression::MultiplicativeExpression(Expression* _lhs, const std::string& _operation, Expression* _rhs)
+    : OperationExpression(_lhs, _rhs), operation(_operation)
+{}
+
+VariableStackBindings MultiplicativeExpression::printasm(VariableStackBindings bindings) const
+{
+    lhs->printasm(bindings);
+
+    std::cout << "\tmove\t$3,$2" << std::endl;
+
+    rhs->printasm(bindings);
+
+    // then perform the right operation
+    if(operation == "*")
+	std::cout << "\tmul\t$2,$3,$2" << std::endl;
+    else if(operation == "/" || operation == "%") {
+	std::cout << "\tdiv\t$3,$2" << std::endl;
+	if(operation == "/")
+	    std::cout << "\tmflo\t$2" << std::endl;
+	else
+	    std::cout << "\tmfhi\t$2" << std::endl;
+    } else
+	std::cerr << "Don't recognize symbol '" << operation << "'" << std::endl;
 
     return bindings;
 }

@@ -283,7 +283,7 @@ AdditiveExpression:
 
 MultiplicativeExpression:
 		CastExpression { $$ = $1; }
-	|	MultiplicativeExpression MultDivRemOP CastExpression { $$ = $3; }
+|	MultiplicativeExpression MultDivRemOP CastExpression { $$ = new MultiplicativeExpression($1, *$2, $3); delete $2; }
 		;
 
 MultDivRemOP:

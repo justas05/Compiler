@@ -8,6 +8,8 @@ int main() {
 			z = x + y + x + y - x;
 		}
 	}
+
+	z = 2 + z - 2;
 	
 	return z;
 }

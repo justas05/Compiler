@@ -153,9 +153,12 @@ VariableStackBindings ExpressionStatement::printasm(VariableStackBindings bindin
 {
     if(next_statement != nullptr)
 	next_statement->printasm(bindings);
-
+    
     if(m_expr != nullptr)
+    {
+	bindings.resetRegister();
 	m_expr->printasm(bindings);
+    }
     
     return bindings;
 }
@@ -188,8 +191,11 @@ VariableStackBindings JumpStatement::printasm(VariableStackBindings bindings) co
 	next_statement->printasm(bindings);
     
     if(m_expr != nullptr)
+    {
+	bindings.resetRegister();
 	m_expr->printasm(bindings);
-
+    }
+    
     return bindings;
 }
 
