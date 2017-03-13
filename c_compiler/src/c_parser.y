@@ -100,7 +100,8 @@ FunctionDefinition:
 		DeclarationSpec T_IDENTIFIER T_LRB ParameterList T_RRB CompoundStatement { $$ = new Function(*$2, $4, $6); delete $2; }
 		;
 
-ParameterList:%	empty { $$ = new Declaration(); }
+ParameterList:
+		%empty { $$ = new Declaration(); }
 	| 	Parameter { $$ = $1; }
 	|       ParameterList T_CMA Parameter { $3->linkDeclaration($$); $$ = $3;}
 		;

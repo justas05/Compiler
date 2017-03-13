@@ -40,17 +40,17 @@ VariableStackBindings AssignmentExpression::printAsm(VariableStackBindings bindi
 {
     // TODO
     // the lhs is forced to have a stack position due to it being a function, array or other type of variable
-    /*unsigned current_stack = bindings.currentRegister();
+    // unsigned current_stack = bindings.currentRegister();
     // std::cout << "Current Register: " << current_reg << std::endl;
-    bindings.increaseRegister();
+    // bindings.increaseRegister();
     
-    int store_stack_position = lhs->getPostfixStackPosition(bindings);
+    int store_stack_position = lhs_->postfixStackPosition(bindings);
     
-    rhs->printAsm(bindings);
+    rhs_->printAsm(bindings);
 
     // we are assigning so we don't have to evaluate the lhs as it will be overwritten anyways
-    std::cout << "\tsw\t$" << current_reg << "," << store_stack_position
-    << "($fp)" << std::endl; */
+    std::cout << "\tsw\t$" << 2 << "," << store_stack_position
+    << "($fp)" << std::endl;
     return bindings;
 }
 
@@ -145,13 +145,13 @@ int Identifier::postfixStackPosition(VariableStackBindings bindings) const
 // Constant definition
 
 Constant::Constant(const int32_t& constant)
-    : m_constant(constant)
+    : constant_(constant)
 {}
 
 VariableStackBindings Constant::printAsm(VariableStackBindings bindings) const
 {
     // constant only has to load to $2 because the other expression will take care of the rest
-    std::cout << "\tli\t$2," << m_constant << std::endl;
+    std::cout << "\tli\t$2," << constant_ << std::endl;
 
     return bindings;
 }
