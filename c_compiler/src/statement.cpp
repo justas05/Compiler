@@ -1,7 +1,4 @@
 #include "statement.hpp"
-#include "declaration.hpp"
-#include "expression.hpp"
-#include "bindings.hpp"
 
 #include <iostream>
 
@@ -9,76 +6,76 @@
 // General base Statement definition
 
 Statement::Statement(Statement* statement)
-    : next_statement(statement)
+    : next_statement_(statement)
 {}
 
-void Statement::addStatement(Statement* _next)
+void Statement::linkStatement(Statement* next)
 {
-    StatementPtr statement_ptr(_next);
-    next_statement = statement_ptr;
+    StatementPtr statement_ptr(next);
+    next_statement_ = statement_ptr;
 }
 
 
 // Compound Statement definition
 
-CompoundStatement::CompoundStatement(Declaration* decl, Statement* statement)
-    : Statement(), m_decl(decl), m_statement(statement)
+CompoundStatement::CompoundStatement(Declaration* declaration, Statement* statement)
+    : Statement(), declaration_(declaration), statement_(statement)
 {}
 
 CompoundStatement::CompoundStatement(Statement* statement)
-    : m_statement(statement)
+    : statement_(statement)
 {}
 
 void CompoundStatement::print() const
 {
-    if(m_decl != nullptr)
-	m_decl->print();
+    if(declaration_ != nullptr)
+	declaration_->print();
     
-    if(m_statement != nullptr)
-	m_statement->print();
+    if(statement_ != nullptr)
+	statement_->print();
 }
 
-void CompoundStatement::printxml() const
+void CompoundStatement::printXml() const
 {
-    if(next_statement != nullptr)
-	next_statement->printxml();
+    if(next_statement_ != nullptr)
+	next_statement_->printXml();
     
     std::cout << "<Scope>" << std::endl;
     
-    if(m_decl != nullptr)
-	m_decl->printxml();
+    if(declaration_ != nullptr)
+	declaration_->printXml();
     
-    if(m_statement != nullptr)
-	m_statement->printxml();
+    if(statement_ != nullptr)
+	statement_->printXml();
     
     std::cout << "</Scope>" << std::endl;
 }
 
-VariableStackBindings CompoundStatement::printasm(VariableStackBindings bindings) const
+VariableStackBindings CompoundStatement::printAsm(VariableStackBindings bindings) const
 {
     VariableStackBindings outer_scope_bindings = bindings;
     
-    if(next_statement != nullptr)
-	next_statement->printasm(bindings);
+    if(next_statement_ != nullptr)
+	next_statement_->printAsm(bindings);
 
-    if(m_decl != nullptr)
-	bindings = m_decl->printasm(bindings);
+    if(declaration_ != nullptr)
+	bindings = declaration_->printAsm(bindings);
 
-    if(m_statement != nullptr)
-	m_statement->printasm(bindings);
+    if(statement_ != nullptr)
+	statement_->printAsm(bindings);
 
     return outer_scope_bindings;
 }
 
-void CompoundStatement::count_variables(int32_t& var_count) const
+void CompoundStatement::countVariables(unsigned& var_count) const
 {
-    DeclarationPtr declaration = m_decl;
+    DeclarationPtr declaration = declaration_;
 
-    if(next_statement != nullptr)
-	next_statement->count_variables(var_count);
+    if(next_statement_ != nullptr)
+	next_statement_->countVariables(var_count);
 
-    if(m_statement != nullptr)
-	m_statement->count_variables(var_count);
+    if(statement_ != nullptr)
+	statement_->countVariables(var_count);
     
     while(declaration != nullptr) {
         DeclarationPtr declaration_list = declaration->getNextListItem();
@@ -99,141 +96,140 @@ void CompoundStatement::count_variables(int32_t& var_count) const
 // Selection Statement definition
 
 SelectionStatement::SelectionStatement(Statement* _if, Statement* _else)
-    : Statement(), m_if(_if), m_else(_else) {}
+    : Statement(), if_(_if), else_(_else) {}
 
 void SelectionStatement::print() const
 {
-    m_if->print();
-    m_else->print();
+    if_->print();
+    else_->print();
 }
 
-void SelectionStatement::printxml() const
+void SelectionStatement::printXml() const
 {
-    if(next_statement != nullptr)
-	next_statement->printxml();
+    if(next_statement_ != nullptr)
+	next_statement_->printXml();
     
-    if(m_if != nullptr)
-	m_if->printxml();
+    if(if_ != nullptr)
+	if_->printXml();
     
-    if(m_else != nullptr)
-	m_else->printxml();
+    if(else_ != nullptr)
+	else_->printXml();
 }
 
-VariableStackBindings SelectionStatement::printasm(VariableStackBindings bindings) const
+VariableStackBindings SelectionStatement::printAsm(VariableStackBindings bindings) const
 {
     return bindings;
 }
 
-void SelectionStatement::count_variables(int32_t& var_count) const
+void SelectionStatement::countVariables(unsigned& var_count) const
 {
-    if(next_statement != nullptr)
-	next_statement->count_variables(var_count);
+    if(next_statement_ != nullptr)
+	next_statement_->countVariables(var_count);
 
-    if(m_if != nullptr)
-	m_if->count_variables(var_count);
+    if(if_ != nullptr)
+	if_->countVariables(var_count);
 
-    if(m_else != nullptr)
-	m_else->count_variables(var_count);
+    if(else_ != nullptr)
+	else_->countVariables(var_count);
 }
 
 
 // Expression Statement definition
 
 ExpressionStatement::ExpressionStatement(Expression* expr)
-    : Statement(), m_expr(expr)
+    : Statement(), expr_(expr)
 {}
 
 void ExpressionStatement::print() const
 {}
 
-void ExpressionStatement::printxml() const
+void ExpressionStatement::printXml() const
 {}
 
-VariableStackBindings ExpressionStatement::printasm(VariableStackBindings bindings) const
+VariableStackBindings ExpressionStatement::printAsm(VariableStackBindings bindings) const
 {
-    if(next_statement != nullptr)
-	next_statement->printasm(bindings);
+    if(next_statement_ != nullptr)
+	next_statement_->printAsm(bindings);
     
-    if(m_expr != nullptr)
+    if(expr_ != nullptr)
     {
-	bindings.resetRegister();
-	m_expr->printasm(bindings);
+	bindings.resetExpressionStack();
+	expr_->printAsm(bindings);
     }
     
     return bindings;
 }
 
-void ExpressionStatement::count_variables(int32_t& var_count) const
+void ExpressionStatement::countVariables(unsigned& var_count) const
 {
-    if(next_statement != nullptr)
-	next_statement->count_variables(var_count);
+    if(next_statement_ != nullptr)
+	next_statement_->countVariables(var_count);
 }
 
 
 // Jump Statement definition
 
 JumpStatement::JumpStatement(Expression* expr)
-    : m_expr(expr)
+    : expr_(expr)
 {}
 
 void JumpStatement::print() const
 {}
 
-void JumpStatement::printxml() const
+void JumpStatement::printXml() const
 {
-    if(next_statement != nullptr)
-	next_statement->printxml();
+    if(next_statement_ != nullptr)
+	next_statement_->printXml();
 }
 
-VariableStackBindings JumpStatement::printasm(VariableStackBindings bindings) const
+VariableStackBindings JumpStatement::printAsm(VariableStackBindings bindings) const
 {
-    if(next_statement != nullptr)
-	next_statement->printasm(bindings);
+    if(next_statement_ != nullptr)
+	next_statement_->printAsm(bindings);
     
-    if(m_expr != nullptr)
-    {
-	bindings.resetRegister();
-	m_expr->printasm(bindings);
+    if(expr_ != nullptr) {
+	bindings.resetExpressionStack();
+	expr_->printAsm(bindings);
     }
     
     return bindings;
 }
 
-void JumpStatement::count_variables(int32_t& var_count) const
+void JumpStatement::countVariables(unsigned& var_count) const
 {
-    if(next_statement != nullptr)
-	next_statement->count_variables(var_count);
+    if(next_statement_ != nullptr)
+	next_statement_->countVariables(var_count);
 }
 
 
 // Iteration Statement definition
 
 IterationStatement::IterationStatement(Statement* statement)
-    : m_statement(statement)
+    : statement_(statement)
 {}
 
 void IterationStatement::print() const
 {}
 
-void IterationStatement::printxml() const
+void IterationStatement::printXml() const
 {
-    if(next_statement != nullptr)
-	next_statement->printxml();
+    if(next_statement_ != nullptr)
+	next_statement_->printXml();
     
-    if(m_statement != nullptr)
-	m_statement->printxml();
+    if(statement_ != nullptr)
+	statement_->printXml();
 }
 
-VariableStackBindings IterationStatement::printasm(VariableStackBindings bindings) const
+VariableStackBindings IterationStatement::printAsm(VariableStackBindings bindings) const
 {
     return bindings;
 }
 
-void IterationStatement::count_variables(int32_t& var_count) const
+void IterationStatement::countVariables(unsigned& var_count) const
 {
-    if(next_statement != nullptr)
-	next_statement->count_variables(var_count);
+    if(next_statement_ != nullptr)
+	next_statement_->countVariables(var_count);
 
-    if(m_statement != nullptr)
-	m_statement->count_variables(var_count);
+    if(statement_ != nullptr)
+	statement_->countVariables(var_count);
 }

@@ -1,12 +1,13 @@
 #ifndef AST_STATEMENT_HPP
 #define AST_STATEMENT_HPP
 
+#include "bindings.hpp"
+#include "declaration.hpp"
+#include "expression.hpp"
 #include "node.hpp"
 
 #include <memory>
 
-class Declaration;
-class Expression;
 class Statement;
 
 typedef std::shared_ptr<Declaration> DeclarationPtr;
@@ -16,92 +17,92 @@ typedef std::shared_ptr<Statement> StatementPtr;
 
 class Statement : public Node {
 protected:
-    StatementPtr next_statement;
+    StatementPtr next_statement_;
     
 public:
     Statement(Statement* statement = nullptr);
 
     virtual void print() const = 0;
-    virtual void printxml() const = 0;
-    virtual VariableStackBindings printasm(VariableStackBindings bindings) const = 0;
+    virtual void printXml() const = 0;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const = 0;
 
-    virtual void count_variables(int32_t& var_count) const = 0;
+    virtual void countVariables(unsigned& var_count) const = 0;
 
-    void addStatement(Statement* _next);
+    void linkStatement(Statement* next);
 };
 
 
 class CompoundStatement : public Statement {
 protected:
-    DeclarationPtr m_decl;
-    StatementPtr m_statement;
+    DeclarationPtr declaration_;
+    StatementPtr statement_;
     
 public:
-    CompoundStatement(Declaration* decl = nullptr, Statement* statement = nullptr);
+    CompoundStatement(Declaration* declaration = nullptr, Statement* statement = nullptr);
     CompoundStatement(Statement* statement);
 
     virtual void print() const;
-    virtual void printxml() const;
-    virtual VariableStackBindings printasm(VariableStackBindings bindings) const;
+    virtual void printXml() const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
 
-    virtual void count_variables(int32_t& var_count) const;
+    virtual void countVariables(unsigned& var_count) const;
 };
 
 
 class SelectionStatement : public Statement {
 protected:
-    StatementPtr m_if;
-    StatementPtr m_else;
+    StatementPtr if_;
+    StatementPtr else_;
 public:
     SelectionStatement(Statement* _if = nullptr, Statement* _else = nullptr);
 
     virtual void print() const;
-    virtual void printxml() const;
-    virtual VariableStackBindings printasm(VariableStackBindings bindings) const;
+    virtual void printXml() const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
 
-    virtual void count_variables(int32_t& var_count) const;
+    virtual void countVariables(unsigned& var_count) const;
 };
 
 
 class ExpressionStatement : public Statement {
 protected:
-    ExpressionPtr m_expr;
+    ExpressionPtr expr_;
 public:
     ExpressionStatement(Expression* expr = nullptr);
 
     virtual void print() const;
-    virtual void printxml() const;
-    virtual VariableStackBindings printasm(VariableStackBindings bindings) const;
+    virtual void printXml() const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
 
-    virtual void count_variables(int32_t& var_count) const;
+    virtual void countVariables(unsigned& var_count) const;
 };
 
 
 class JumpStatement : public Statement {
 protected:
-    ExpressionPtr m_expr;
+    ExpressionPtr expr_;
 public:
     JumpStatement(Expression* expr = nullptr);
 
     virtual void print() const;
-    virtual void printxml() const;
-    virtual VariableStackBindings printasm(VariableStackBindings bindings) const;
+    virtual void printXml() const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
 
-    virtual void count_variables(int32_t& var_count) const;
+    virtual void countVariables(unsigned& var_count) const;
 };
 
 
 class IterationStatement : public Statement {
 protected:
-    StatementPtr m_statement;
+    StatementPtr statement_;
 public:
     IterationStatement(Statement* statement);
 
     virtual void print() const;
-    virtual void printxml() const;
-    virtual VariableStackBindings printasm(VariableStackBindings bindings) const;
+    virtual void printXml() const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
 
-    virtual void count_variables(int32_t& var_count) const;
+    virtual void countVariables(unsigned& var_count) const;
 };
 
 

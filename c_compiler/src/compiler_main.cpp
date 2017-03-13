@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 
     VariableStackBindings bindings;
      
-    ast->printasm(bindings);
+    ast->printAsm(bindings);
     
     return 0;
 }

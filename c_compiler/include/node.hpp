@@ -16,8 +16,8 @@ public:
     virtual ~Node() {}
 
     virtual void print() const = 0;
-    virtual void printxml() const = 0;
-    virtual VariableStackBindings printasm(VariableStackBindings bindings) const = 0;
+    virtual void printXml() const = 0;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const = 0;
 };
 
     

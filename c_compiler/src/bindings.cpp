@@ -6,63 +6,58 @@
 // VariableStackBindings definition
 
 VariableStackBindings::VariableStackBindings()
-    : stack_counter(4), current_register(2)
+    : stack_counter_(4), expression_stack_(-4)
 {}
 
-void VariableStackBindings::insertBinding(std::string id, TypePtr type, int32_t stack_position)
+void VariableStackBindings::insertBinding(std::string id, TypePtr type, int stack_position)
 {
     DeclarationData decl_data;
     decl_data.type = type;
     decl_data.stack_position = stack_position;
 
-    bindings.insert(std::pair<std::string, DeclarationData>(id, decl_data));
+    bindings_.insert(std::pair<std::string, DeclarationData>(id, decl_data));
 }
 
 void VariableStackBindings::increaseStackPosition()
 {
-    stack_counter += 4;
+    stack_counter_ += 4;
 }
 
-void VariableStackBindings::resetRegister()
+void VariableStackBindings::resetExpressionStack()
 {
-    current_register = 2;
+    expression_stack_ = -4;
 }
 
-void VariableStackBindings::increaseRegister()
+void VariableStackBindings::nextExpressionStackPosition()
 {
-    if(current_register == 15)
-	current_register = 24;
-    else if(current_register == 25)
-	std::cerr << "Error : cannot allocate more registers" << std::endl;
-    else
-	current_register++;
+    expression_stack_ -= 4;
 }
 
-int32_t VariableStackBindings::getCurrentStackPosition() const
+int VariableStackBindings::currentStackPosition() const
 {
-    return stack_counter;
+    return stack_counter_;
 }
 
-int32_t VariableStackBindings::getStackPosition(const std::string &id) const
+int VariableStackBindings::stackPosition(const std::string &id) const
 {
-    auto binding = bindings.find(id);
+    auto binding = bindings_.find(id);
 
-    if(binding != bindings.end())
+    if(binding != bindings_.end())
 	return (*binding).second.stack_position;
 
     else return 0;
 }
 
-int8_t VariableStackBindings::getCurrentRegister() const
+unsigned VariableStackBindings::currentExpressionStackPosition() const
 {
-    return current_register;
+    return expression_stack_;
 }
 
 bool VariableStackBindings::bindingExists(const std::string &id) const
 {
-    auto binding = bindings.find(id);
+    auto binding = bindings_.find(id);
 
-    if(binding == bindings.end())
+    if(binding == bindings_.end())
 	return false;
 
     else

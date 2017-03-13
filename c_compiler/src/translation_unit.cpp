@@ -1,42 +1,41 @@
 #include "translation_unit.hpp"
-#include "bindings.hpp"
 
 #include <iostream>
 
 // Translation Unit definition
 
-TranslationUnit::TranslationUnit(Node* decl)
+TranslationUnit::TranslationUnit(Node* external_declaration)
 {
-    push(decl);
+    push(external_declaration);
 }
 
 void TranslationUnit::print() const
 {
-    for(auto& node : translation_unit) {
+    for(auto& node : translation_unit_) {
 	node->print();
     }
 }
 
-void TranslationUnit::printxml() const
+void TranslationUnit::printXml() const
 {
     std::cout << "<?xml version=\"1.0\"?>\n<Program>" << std::endl;
-    for(auto& node : translation_unit) {
-	node->printxml();
+    for(auto& node : translation_unit_) {
+	node->printXml();
     }
     std::cout << "</Program>" << std::endl;
 }
 
-VariableStackBindings TranslationUnit::printasm(VariableStackBindings bindings) const
+VariableStackBindings TranslationUnit::printAsm(VariableStackBindings bindings) const
 {
-    for(auto& node : translation_unit) {
-	node->printasm(bindings);
+    for(auto& node : translation_unit_) {
+	node->printAsm(bindings);
     }
 
     return bindings;
 }
 
-void TranslationUnit::push(Node* decl)
+void TranslationUnit::push(Node* external_declaration)
 {
-    NodePtr node_ptr(decl);
-    translation_unit.push_back(node_ptr);
+    NodePtr node_ptr(external_declaration);
+    translation_unit_.push_back(node_ptr);
 }

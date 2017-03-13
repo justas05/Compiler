@@ -102,6 +102,11 @@
 
       Implement the adding to the bindings part that has to be added in the statements and declarations.
 
+***** TODO Store expression results on the stack
+
+      To do this I created a function in my VariableStackBindings that will store the 
+      position of the stack that will be used for the next expression. 
+
 ***** TODO Work on expressions
 
 ***** TODO Comment code
@@ -114,6 +119,7 @@
        work on different types to implement the correct add
 
 ****** TODO Implement multiplication
+
 
 **** TODO Expression
 

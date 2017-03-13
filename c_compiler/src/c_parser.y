@@ -37,12 +37,12 @@ void yyerror(const char *);
 			T_LOG_AND T_OR T_XOR T_AND T_EQUALITY_OP T_REL_OP T_SHIFT_OP T_MULT T_DIV
 			T_REM T_TILDE T_NOT T_DOT T_ARROW T_INCDEC T_ADDSUB_OP T_ASSIGN_OPER T_EQ
 			T_SIZEOF T_INT_CONST T_IF T_WHILE T_DO T_FOR T_RETURN
-
+			
 			T_VOID T_CHAR T_SCHAR T_UCHAR T_SSINT T_USINT T_LINT T_ULINT T_UINT T_SINT
 			
 %nonassoc		T_RRB
 %nonassoc		T_ELSE
-
+			
 			
 %type	<node>		ExternalDeclaration
 			
@@ -97,28 +97,25 @@ ExternalDeclaration:
 // FUNCTION DEFINITION
 
 FunctionDefinition:
-DeclarationSpec T_IDENTIFIER T_LRB ParameterList T_RRB CompoundStatement { $$ = new Function(*$2, $4, $6); delete $2; }
+		DeclarationSpec T_IDENTIFIER T_LRB ParameterList T_RRB CompoundStatement { $$ = new Function(*$2, $4, $6); delete $2; }
 		;
 
-ParameterList:
-		%empty { $$ = new Declaration(); }
+ParameterList:%	empty { $$ = new Declaration(); }
 	| 	Parameter { $$ = $1; }
-	|       ParameterList T_CMA Parameter { $3->addDeclaration($$); $$ = $3;}
+	|       ParameterList T_CMA Parameter { $3->linkDeclaration($$); $$ = $3;}
 		;
 
-Parameter:
-DeclarationSpec T_IDENTIFIER { $$ = new Declaration(*$2); delete $2; }
+Parameter:	DeclarationSpec T_IDENTIFIER { $$ = new Declaration(*$2); delete $2; }
 		;
 
 // Declaration
 
 DeclarationList:
 		Declaration { $$ = $1; }
-	|	DeclarationList Declaration { $2->addDeclaration($$); $$ = $2; }
+	|	DeclarationList Declaration { $2->linkDeclaration($$); $$ = $2; }
 		;
 
-Declaration:
-		DeclarationSpec InitDeclaratorList T_SC {
+Declaration:	DeclarationSpec InitDeclaratorList T_SC {
 		    $$ = $2;
 		    Declaration* tmp_decl = $2;
 		    
@@ -142,17 +139,15 @@ DeclarationSpec:
 		;
 
 InitDeclaratorList:
-InitDeclarator { $$ = new Declaration(*$1); delete $1;}
-	|       InitDeclaratorList T_CMA InitDeclarator { $3->addList($$); $$ = $3; }
+		InitDeclarator { $$ = new Declaration(*$1); delete $1;}
+	|       InitDeclaratorList T_CMA InitDeclarator { $3->linkListDeclaration($$); $$ = $3; }
 		;
 
-InitDeclarator:
-Declarator { $$ = new Declaration(*$1); delete $1; }
-|	Declarator T_EQ AssignmentExpression { $$ = new Declaration(*$1, $3); delete $1; }
+InitDeclarator:	Declarator { $$ = new Declaration(*$1); delete $1; }
+	|	Declarator T_EQ AssignmentExpression { $$ = new Declaration(*$1, $3); delete $1; }
 		;
 
-Declarator:
-		DirectDeclarator { $$ = $1; }
+Declarator:	DirectDeclarator { $$ = $1; }
 	|	T_MULT DirectDeclarator { $$ = $2; }
 		;
 
@@ -165,19 +160,17 @@ DirectDeclarator:
 	|	DirectDeclarator T_LRB IdentifierList T_RRB { $$ = $1; }
 		;
 
-IdentifierList:
-		T_IDENTIFIER { $$ = new Declaration(); }
+IdentifierList:	T_IDENTIFIER { $$ = new Declaration(); }
 	|	IdentifierList T_CMA T_IDENTIFIER { $$ = new Declaration(); }
 
 // Statement
 
 StatementList:
 		Statement { $$ = $1; }
-	|	StatementList Statement { $2->addStatement($$); $$ = $2; }
+	|	StatementList Statement { $2->linkStatement($$); $$ = $2; }
 		;
 
-Statement:
-		CompoundStatement { $$ = $1; }
+Statement:	CompoundStatement { $$ = $1; }
 	|	SelectionStatement { $$ = $1; }
 	|	ExpressionStatement { $$ = $1; }
 	|       JumpStatement { $$ = $1; }
@@ -202,11 +195,10 @@ SelectionStatement:
 
 ExpressionStatement:
 		T_SC { $$ = new ExpressionStatement(); }
-|	Expression T_SC { $$ = new ExpressionStatement($1); }
+	|	Expression T_SC { $$ = new ExpressionStatement($1); }
 		;
 
-JumpStatement:
-		  T_RETURN Expression T_SC { $$ = new JumpStatement($2); }
+JumpStatement:	T_RETURN Expression T_SC { $$ = new JumpStatement($2); }
 		;
 
 IterationStatement:
@@ -217,17 +209,15 @@ IterationStatement:
 
 // Expressions
 
-Expression:
-		AssignmentExpression { $$ = $1; }
+Expression:	AssignmentExpression { $$ = $1; }
 		;
 
 AssignmentExpression:
 		ConditionalExpression { $$ = $1; }
-|	UnaryExpression ASSIGN_OPER AssignmentExpression { $$ = new AssignmentExpression($1, $3); }
+	|	UnaryExpression ASSIGN_OPER AssignmentExpression { $$ = new AssignmentExpression($1, $3); }
 		;
 
-ASSIGN_OPER:
-		T_ASSIGN_OPER { ; }
+ASSIGN_OPER:	T_ASSIGN_OPER { ; }
 	|	T_EQ { ; }
 	;
 
@@ -256,8 +246,7 @@ ExclusiveOrExpression:
 	|	ExclusiveOrExpression T_XOR AndExpression { $$ = $3; }
 		;
 
-AndExpression:
-		EqualityExpression { $$ = $1; }
+AndExpression:	EqualityExpression { $$ = $1; }
 	|	AndExpression T_AND EqualityExpression { $$ = $3; }
 		;
 
@@ -278,22 +267,20 @@ ShiftExpression:
 
 AdditiveExpression:
 		MultiplicativeExpression { $$ = $1; }
-|	AdditiveExpression T_ADDSUB_OP MultiplicativeExpression { $$ = new AdditiveExpression($1, *$2, $3); delete $2; }
+	|	AdditiveExpression T_ADDSUB_OP MultiplicativeExpression { $$ = new AdditiveExpression($1, *$2, $3); delete $2; }
 		;
 
 MultiplicativeExpression:
 		CastExpression { $$ = $1; }
-|	MultiplicativeExpression MultDivRemOP CastExpression { $$ = new MultiplicativeExpression($1, *$2, $3); delete $2; }
+	|	MultiplicativeExpression MultDivRemOP CastExpression { $$ = new MultiplicativeExpression($1, *$2, $3); delete $2; }
 		;
 
-MultDivRemOP:
-		T_MULT { $$ = $1; }
+MultDivRemOP:	T_MULT { $$ = $1; }
 	|	T_DIV { $$ = $1; }
 	|	T_REM { $$ = $1; }
 		;
 
-CastExpression:
-		UnaryExpression { $$ = $1; }
+CastExpression:	UnaryExpression { $$ = $1; }
 	|	T_LRB DeclarationSpec T_RRB CastExpression { $$ = $4; }
 		;
 
@@ -305,8 +292,7 @@ UnaryExpression:
 	|	T_SIZEOF T_LRB DeclarationSpec T_RRB { $$ = new Constant(0); }
 		;
 
-UnaryOperator:
-		T_AND { $$ = $1; }
+UnaryOperator:	T_AND { $$ = $1; }
 	|	T_ADDSUB_OP { $$ = $1; }
 	|	T_MULT { $$ = $1; }
 	|	T_TILDE { $$ = $1; }
@@ -333,13 +319,12 @@ ArgumentExpressionList:
 		;
 
 PrimaryExpression:
-T_IDENTIFIER { $$ = new Identifier(*$1); delete $1; }
+		T_IDENTIFIER { $$ = new Identifier(*$1); delete $1; }
 	|       Constant { $$ = $1; }
 	|	T_LRB Expression T_RRB { $$ = $2; }
 		;
 
-Constant:
-		T_INT_CONST { $$ = new Constant($1); }
+Constant:	T_INT_CONST { $$ = new Constant($1); }
 		;
 
 %%

@@ -8,33 +8,33 @@
 
 // Declaration definition
 
-Declaration::Declaration(const std::string& _id, Expression* _init)
-    : id(_id), init(_init)
+Declaration::Declaration(const std::string& id, Expression* initializer)
+    : id_(id), initializer_(initializer)
 {}
 
 void Declaration::print() const
 {
-    if(next_decl != nullptr)
-	next_decl->print();
+    if(next_declaration_ != nullptr)
+	next_declaration_->print();
     
-    if(id != "")
-	std::cout << id << std::endl;
+    if(id_ != "")
+	std::cout << id_ << std::endl;
 }
 
-void Declaration::printxml() const
+void Declaration::printXml() const
 {    
-    if(next_decl != nullptr)
-	next_decl->printxml();
+    if(next_declaration_ != nullptr)
+	next_declaration_->printXml();
 
-    if(list_next_decl != nullptr) {
-	list_next_decl->printxml();
+    if(next_list_declaration_ != nullptr) {
+	next_list_declaration_->printXml();
     }
 
-    if(id != "")
-	std::cout << "<Variable id=\""<< id << "\" />" << std::endl;
+    if(id_ != "")
+	std::cout << "<Variable id=\""<< id_ << "\" />" << std::endl;
 }
 
-VariableStackBindings Declaration::printasm(VariableStackBindings bindings) const
+VariableStackBindings Declaration::printAsm(VariableStackBindings bindings) const
 {
     // if(init == nullptr)
     // 	std::cout << "\t.comm\t" << id << ",4,4" << std::endl;
@@ -45,23 +45,23 @@ VariableStackBindings Declaration::printasm(VariableStackBindings bindings) cons
 
     // return bindings;
 
-    if(next_decl != nullptr)
-	bindings = next_decl->printasm(bindings);
+    if(next_declaration_ != nullptr)
+	bindings = next_declaration_->printAsm(bindings);
 
-    if(list_next_decl != nullptr)
-	bindings = list_next_decl->printasm(bindings);
+    if(next_list_declaration_ != nullptr)
+	bindings = next_list_declaration_->printAsm(bindings);
     
-    if(id != "") {
-	if(init != nullptr)
-	    init->printasm(bindings);
+    if(id_ != "") {
+	if(initializer_ != nullptr)
+	    initializer_->printAsm(bindings);
 	else
 	    std::cout << "\tmove\t$2,$0" << std::endl;
 
-	int32_t stack_position = bindings.getCurrentStackPosition();
+	int32_t stack_position = bindings.currentStackPosition();
 
 	std::cout << "\tsw\t$2," << stack_position << "($fp)" << std::endl;
 
-	bindings.insertBinding(id, type, stack_position);
+	bindings.insertBinding(id_, type_, stack_position);
 
 	bindings.increaseStackPosition();
     }
@@ -69,40 +69,40 @@ VariableStackBindings Declaration::printasm(VariableStackBindings bindings) cons
     return bindings;
 }
 
-void Declaration::addDeclaration(Declaration* _next_decl)
+void Declaration::linkDeclaration(Declaration* next_declaration)
 {
-    DeclarationPtr decl_ptr(_next_decl);
-    next_decl = decl_ptr;
+    DeclarationPtr decl_ptr(next_declaration);
+    next_declaration_ = decl_ptr;
 }
 
-void Declaration::addList(Declaration* _next_decl)
+void Declaration::linkListDeclaration(Declaration* next_declaration)
 {
-    DeclarationPtr decl_ptr(_next_decl);
-    list_next_decl = decl_ptr;
+    DeclarationPtr decl_ptr(next_declaration);
+    next_list_declaration_ = decl_ptr;
 }
 
-void Declaration::setType(Type* _type)
+void Declaration::setType(Type* type)
 {
-    TypePtr type_ptr(_type);
-    type = type_ptr;
+    TypePtr type_ptr(type);
+    type_ = type_ptr;
 }
 
 DeclarationPtr Declaration::getNext() const
 {
-    return next_decl;
+    return next_declaration_;
 }
 
 DeclarationPtr Declaration::getNextListItem() const
 {
-    return list_next_decl;
+    return next_list_declaration_;
 }
 
 std::string Declaration::getId() const
 {
-    return id;
+    return id_;
 }
 
 std::string Declaration::getType() const
 {
-    return type->getType();
+    return type_->getType();
 }

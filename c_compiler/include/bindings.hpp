@@ -1,7 +1,6 @@
 #ifndef BINDINGS_HPP
 #define BINDINGS_HPP
 
-#include <cstdint>
 #include <map>
 #include <memory>
 #include <string>
@@ -15,7 +14,7 @@ typedef std::shared_ptr<Type> TypePtr;
 struct DeclarationData
 {
     TypePtr type;
-    int32_t stack_position;
+    int stack_position;
 };
 
 
@@ -23,22 +22,22 @@ struct DeclarationData
 class VariableStackBindings
 {
 private:
-    std::map<std::string, DeclarationData> bindings;
-    int32_t stack_counter;
-    int8_t current_register;
+    std::map<std::string, DeclarationData> bindings_;
+    int stack_counter_;
+    unsigned expression_stack_;
 	     
 public:
     VariableStackBindings();
 
     void insertBinding(std::string id, TypePtr type, int32_t stack_position);
     void increaseStackPosition();
-    void resetRegister();
-    void increaseRegister();
+    void resetExpressionStack();
+    void nextExpressionStackPosition();
 
-    int32_t getCurrentStackPosition() const;
-    int32_t getStackPosition(const std::string& id) const;
+    int currentStackPosition() const;
+    int stackPosition(const std::string& id) const;
 
-    int8_t getCurrentRegister() const;
+    unsigned currentExpressionStackPosition() const;
 
     bool bindingExists(const std::string& id) const;
 };

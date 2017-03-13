@@ -16,23 +16,23 @@ typedef std::shared_ptr<Declaration> DeclarationPtr;
 
 class Declaration : public Node {
 private:
-    TypePtr type;
-    std::string id;
-    ExpressionPtr init;
-    DeclarationPtr next_decl;
-    DeclarationPtr list_next_decl;
+    TypePtr type_;
+    std::string id_;
+    ExpressionPtr initializer_;
+    DeclarationPtr next_declaration_;
+    DeclarationPtr next_list_declaration_;
     
 public:
-    Declaration(const std::string& _id = "", Expression* _init = nullptr);
+    Declaration(const std::string& id = "", Expression* initializer = nullptr);
 
     virtual void print() const;
-    virtual void printxml() const;
-    virtual VariableStackBindings printasm(VariableStackBindings bindings) const;
+    virtual void printXml() const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
 
-    void addDeclaration(Declaration* _next_decl);
-    void addList(Declaration* _next_decl);
+    void linkDeclaration(Declaration* next_declaration);
+    void linkListDeclaration(Declaration* next_list_declaration);
 
-    void setType(Type* _type);
+    void setType(Type* type);
 
     DeclarationPtr getNext() const;
     DeclarationPtr getNextListItem() const;

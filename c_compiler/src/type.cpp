@@ -1,5 +1,4 @@
 #include "type.hpp"
-#include "bindings.hpp"
 
 #include <iostream>
 
@@ -11,10 +10,10 @@ void Type::print() const
     std::cout << getType() << " " << std::endl;
 }
 
-void Type::printxml() const
+void Type::printXml() const
 {}
 
-VariableStackBindings Type::printasm(VariableStackBindings bindings) const
+VariableStackBindings Type::printAsm(VariableStackBindings bindings) const
 {
     return bindings;
 }
@@ -22,23 +21,24 @@ VariableStackBindings Type::printasm(VariableStackBindings bindings) const
 
 // Pointer definition
 
-Pointer::Pointer(Type* _pointer_type) : pointer_type(_pointer_type)
+Pointer::Pointer(Type* pointer_type) : pointer_type_(pointer_type)
 {}
 
 std::string Pointer::getType() const
 {
-    return "pointer " + pointer_type->getType();
+    return "pointer " + pointer_type_->getType();
 }
 
 
 // Array definition
 
-Array::Array(Type* _array_type, int32_t _size) : size(_size), array_type(_array_type)
+Array::Array(Type* array_type, unsigned size)
+    : array_type_(array_type), size_(size)
 {}
 
 std::string Array::getType() const
 {
-    return "array " + array_type->getType();
+    return "array " + array_type_->getType();
 }
 
 

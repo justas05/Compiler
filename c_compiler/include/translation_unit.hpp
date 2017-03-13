@@ -1,6 +1,7 @@
 #ifndef TRANSLATION_UNIT_HPP
 #define TRANSLATION_UNIT_HPP
 
+#include "bindings.hpp"
 #include "node.hpp"
 
 #include <memory>
@@ -11,16 +12,16 @@ typedef std::shared_ptr<Node> NodePtr;
 
 class TranslationUnit : public Node {
 protected:
-    std::vector<NodePtr> translation_unit;
+    std::vector<NodePtr> translation_unit_;
     
 public:
-    TranslationUnit(Node* decl);
+    TranslationUnit(Node* external_declaration);
 
     virtual void print() const;
-    virtual void printxml() const;
-    virtual VariableStackBindings printasm(VariableStackBindings bindings) const;
+    virtual void printXml() const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
 
-    void push(Node* decl);
+    void push(Node* external_declaration);
 };
 
 
