@@ -48,7 +48,7 @@ int VariableStackBindings::stackPosition(const std::string &id) const
     else return 0;
 }
 
-unsigned VariableStackBindings::currentExpressionStackPosition() const
+int VariableStackBindings::currentExpressionStackPosition() const
 {
     return expression_stack_;
 }

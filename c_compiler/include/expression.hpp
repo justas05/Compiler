@@ -1,5 +1,5 @@
-#ifndef AST_EXPRESSION_HPP
-#define AST_EXPRESSION_HPP
+#ifndef EXPRESSION_HPP
+#define EXPRESSION_HPP
 
 #include "node.hpp"
 #include "bindings.hpp"
