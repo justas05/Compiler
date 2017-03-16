@@ -10,8 +10,6 @@
 
 class Statement;
 
-typedef std::shared_ptr<Declaration> DeclarationPtr;
-typedef std::shared_ptr<Expression> ExpressionPtr;
 typedef std::shared_ptr<Statement> StatementPtr;
 
 
@@ -27,6 +25,7 @@ public:
     virtual VariableStackBindings printAsm(VariableStackBindings bindings) const = 0;
 
     virtual void countVariables(unsigned& var_count) const = 0;
+    virtual void countArguments(unsigned& argument_count) const = 0;
 
     void linkStatement(Statement* next);
 };
@@ -46,6 +45,7 @@ public:
     virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
 
     virtual void countVariables(unsigned& var_count) const;
+    virtual void countArguments(unsigned& argument_count) const;    
 };
 
 
@@ -61,34 +61,37 @@ public:
     virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
 
     virtual void countVariables(unsigned& var_count) const;
+    virtual void countArguments(unsigned& argument_count) const;    
 };
 
 
 class ExpressionStatement : public Statement {
 protected:
-    ExpressionPtr expr_;
+    ExpressionPtr expression_;
 public:
-    ExpressionStatement(Expression* expr = nullptr);
+    ExpressionStatement(Expression* expression = nullptr);
 
     virtual void print() const;
     virtual void printXml() const;
     virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
 
     virtual void countVariables(unsigned& var_count) const;
+    virtual void countArguments(unsigned& argument_count) const;    
 };
 
 
 class JumpStatement : public Statement {
 protected:
-    ExpressionPtr expr_;
+    ExpressionPtr expression_;
 public:
-    JumpStatement(Expression* expr = nullptr);
+    JumpStatement(Expression* expression = nullptr);
 
     virtual void print() const;
     virtual void printXml() const;
     virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
 
     virtual void countVariables(unsigned& var_count) const;
+    virtual void countArguments(unsigned& argument_count) const;
 };
 
 
@@ -103,6 +106,7 @@ public:
     virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
 
     virtual void countVariables(unsigned& var_count) const;
+    virtual void countArguments(unsigned& argument_count) const;    
 };
 
 

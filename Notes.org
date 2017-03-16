@@ -102,12 +102,20 @@
 
       Implement the adding to the bindings part that has to be added in the statements and declarations.
 
-***** TODO Store expression results on the stack
+***** DONE Store expression results on the stack
 
       To do this I created a function in my VariableStackBindings that will store the 
-      position of the stack that will be used for the next expression. 
+      position of the stack that will be used for the next expression.
+***** DONE Reformat code
+***** DONE Work on expression
+      CLOCK: [2017-03-15 Wed 21:00]--[2017-03-16 Thu 00:39] =>  3:39
 
-***** TODO Work on expressions
+       Add more expression.
+
+***** TODO Make functions work
+      CLOCK: [2017-03-16 Thu 11:44]
+
+      
 
 ***** TODO Comment code
 
@@ -118,7 +126,7 @@
 
        work on different types to implement the correct add
 
-****** TODO Implement multiplication
+****** TODO Implement 
 
 
 **** TODO Expression
@@ -163,5 +171,3 @@
 
      - The declaration class should only be in charge of storing it in the right location in
        the stack and adding that to the bindings.
-       
-       

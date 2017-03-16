@@ -2,15 +2,13 @@
 #define AST_DECLARATION_HPP
 
 #include "node.hpp"
+#include "type.hpp"
+#include "expression.hpp"
 
 #include <memory>
 
-class Expression;
-class Type;
 class Declaration;
 
-typedef std::shared_ptr<Expression> ExpressionPtr;
-typedef std::shared_ptr<Type> TypePtr;
 typedef std::shared_ptr<Declaration> DeclarationPtr;
 
 

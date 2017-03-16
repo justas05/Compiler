@@ -92,6 +92,15 @@ void CompoundStatement::countVariables(unsigned& var_count) const
     }
 }
 
+void CompoundStatement::countArguments(unsigned& argument_count) const
+{
+    if(next_statement_ != nullptr)
+	next_statement_->countArguments(argument_count);
+
+    if(statement_ != nullptr)
+	statement_->countArguments(argument_count);
+}
+
 
 // Selection Statement definition
 
@@ -133,11 +142,23 @@ void SelectionStatement::countVariables(unsigned& var_count) const
 	else_->countVariables(var_count);
 }
 
+void SelectionStatement::countArguments(unsigned& argument_count) const
+{
+    if(next_statement_ != nullptr)
+	next_statement_->countArguments(argument_count);
+
+    if(if_ != nullptr)
+	if_->countArguments(argument_count);
+
+    if(else_ != nullptr)
+	else_->countArguments(argument_count);
+}
+
 
 // Expression Statement definition
 
 ExpressionStatement::ExpressionStatement(Expression* expr)
-    : Statement(), expr_(expr)
+    : Statement(), expression_(expr)
 {}
 
 void ExpressionStatement::print() const
@@ -151,10 +172,10 @@ VariableStackBindings ExpressionStatement::printAsm(VariableStackBindings bindin
     if(next_statement_ != nullptr)
 	next_statement_->printAsm(bindings);
     
-    if(expr_ != nullptr)
+    if(expression_ != nullptr)
     {
 	bindings.resetExpressionStack();
-	expr_->printAsm(bindings);
+	expression_->printAsm(bindings);
     }
     
     return bindings;
@@ -166,11 +187,25 @@ void ExpressionStatement::countVariables(unsigned& var_count) const
 	next_statement_->countVariables(var_count);
 }
 
+void ExpressionStatement::countArguments(unsigned& argument_count) const
+{
+    if(next_statement_ != nullptr)
+	next_statement_->countArguments(argument_count);
+
+    unsigned tmp_argument_count = argument_count;
+
+    if(expression_ != nullptr)
+	expression_->countArguments(argument_count);
+
+    if(tmp_argument_count > argument_count)
+	argument_count = tmp_argument_count;
+}
+
 
 // Jump Statement definition
 
-JumpStatement::JumpStatement(Expression* expr)
-    : expr_(expr)
+JumpStatement::JumpStatement(Expression* expression)
+    : expression_(expression)
 {}
 
 void JumpStatement::print() const
@@ -187,9 +222,9 @@ VariableStackBindings JumpStatement::printAsm(VariableStackBindings bindings) co
     if(next_statement_ != nullptr)
 	next_statement_->printAsm(bindings);
     
-    if(expr_ != nullptr) {
+    if(expression_ != nullptr) {
 	bindings.resetExpressionStack();
-	expr_->printAsm(bindings);
+	expression_->printAsm(bindings);
     }
     
     return bindings;
@@ -199,6 +234,20 @@ void JumpStatement::countVariables(unsigned& var_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->countVariables(var_count);
+}
+
+void JumpStatement::countArguments(unsigned& argument_count) const
+{
+    if(next_statement_ != nullptr)
+	next_statement_->countArguments(argument_count);
+
+    unsigned tmp_argument_count = argument_count;
+
+    if(expression_ != nullptr)
+	expression_->countArguments(argument_count);
+
+    if(tmp_argument_count > argument_count)
+	argument_count = tmp_argument_count;
 }
 
 
@@ -232,4 +281,13 @@ void IterationStatement::countVariables(unsigned& var_count) const
 
     if(statement_ != nullptr)
 	statement_->countVariables(var_count);
+}
+
+void IterationStatement::countArguments(unsigned int &argument_count) const
+{
+    if(next_statement_ != nullptr)
+	next_statement_->countArguments(argument_count);
+
+    if(statement_ != nullptr)
+	statement_->countArguments(argument_count);
 }

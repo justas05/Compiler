@@ -302,21 +302,21 @@ UnaryOperator:	T_AND { $$ = $1; }
 
 PostfixExpression:
 		PrimaryExpression { $$ = $1; }
-	|	PostfixExpression T_LSB Expression T_RSB { $$ = $3; }
-	|	PostfixExpression T_LRB PostfixExpression2 { $$ = $3; }
+	|	PostfixExpression T_LSB Expression T_RSB { $$ = new PostfixArrayElement(); }
+	|	PostfixExpression T_LRB PostfixExpression2 { $$ = $3; $$->setPostfixExpression($1); }
 	|	PostfixExpression T_DOT T_IDENTIFIER { $$ = $1; }
 	|	PostfixExpression T_ARROW T_IDENTIFIER { $$ = $1; }
 	|	PostfixExpression T_INCDEC { $$ = $1; }
 		;
 
 PostfixExpression2:
-		T_RRB { $$ = new Constant(0); }
-	|	ArgumentExpressionList T_RRB { $$ = new Constant(0); }
+		T_RRB { $$ = new PostfixFunctionCall(); }
+	|	ArgumentExpressionList T_RRB { $$ = new PostfixFunctionCall($1); }
 		;
 
 ArgumentExpressionList:
 		AssignmentExpression { $$ = $1; }
-	|	ArgumentExpressionList T_CMA AssignmentExpression { $$ = $1; }
+	|	ArgumentExpressionList T_CMA AssignmentExpression { $3->linkExpression($$);$$ = $3; }
 		;
 
 PrimaryExpression:

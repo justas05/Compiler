@@ -1,8 +1,9 @@
 #ifndef EXPRESSION_HPP
 #define EXPRESSION_HPP
 
-#include "node.hpp"
 #include "bindings.hpp"
+#include "node.hpp"
+#include "type.hpp"
 
 #include <cstdint>
 #include <memory>
@@ -15,12 +16,21 @@ typedef std::shared_ptr<Expression> ExpressionPtr;
 
 class Expression : public Node
 {
+private:
+    ExpressionPtr next_expression_;
+    
 public:
     virtual VariableStackBindings printAsm(VariableStackBindings bindings) const = 0;
     
     virtual void print() const;
     virtual void printXml() const;
+    virtual void countArguments(unsigned& argument_count) const;
+    
     virtual int postfixStackPosition(VariableStackBindings bindings) const;
+    virtual void setPostfixExpression(Expression* postfix_expression);
+
+    void linkExpression(Expression* next_expression);
+    ExpressionPtr nextExpression() const;
 };
 
 
@@ -36,10 +46,57 @@ public:
 };
 
 
-class AssignmentExpression : public OperationExpression
+class PostfixExpression : public Expression
 {
 public:
-    AssignmentExpression(Expression* lhs, Expression* rhs);
+    PostfixExpression();
+
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
+};
+
+
+class PostfixArrayElement : public Expression
+{
+public:
+    PostfixArrayElement();
+
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
+};
+
+
+class PostfixFunctionCall : public Expression
+{
+private:
+    ExpressionPtr postfix_expression_;
+    ExpressionPtr argument_expression_list_;
+    
+public:
+    PostfixFunctionCall(Expression* argument_expression_list = nullptr);
+
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
+    virtual void countArguments(unsigned& argument_count) const;
+    
+    void setPostfixExpression(Expression* postfix_expression);
+};
+
+
+class UnaryExpression : public Expression
+{
+public:
+    UnaryExpression();
+
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
+};
+
+
+class CastExpression : public Expression
+{
+private:
+    TypePtr type_;
+    ExpressionPtr expression_;
+
+public:
+    CastExpression(Type* type, Expression* expression);
 
     virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
 };
@@ -64,6 +121,102 @@ private:
 
 public:
     MultiplicativeExpression(Expression* lhs, const std::string& operation, Expression* rhs);
+
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
+};
+
+
+class ShiftExpression : public OperationExpression
+{
+public:
+    ShiftExpression(Expression* lhs, Expression* rhs);
+
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
+};
+
+
+class RelationalExpression : public OperationExpression
+{
+public:
+    RelationalExpression(Expression* lhs, Expression* rhs);
+
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
+};
+
+
+class EqualityExpression : public OperationExpression
+{
+public:
+    EqualityExpression(Expression* lhs, Expression* rhs);
+
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
+};
+
+
+class AndExpression : public OperationExpression
+{
+public:
+    AndExpression(Expression* lhs, Expression* rhs);
+
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
+};
+
+
+class ExclusiveOrExpression : public OperationExpression
+{
+public:
+    ExclusiveOrExpression(Expression* lhs, Expression* rhs);
+
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
+};
+
+
+class InclusiveOrExpression : public OperationExpression
+{
+public:
+    InclusiveOrExpression(Expression* lhs, Expression* rhs);
+
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
+};
+
+
+class LogicalAndExpression : public OperationExpression
+{
+public:
+    LogicalAndExpression(Expression* lhs, Expression* rhs);
+
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
+};
+
+
+class LogicalOrExpression : public OperationExpression
+{
+public:
+    LogicalOrExpression(Expression* lhs, Expression* rhs);
+
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
+};
+
+
+class ConditionalExpression : public Expression
+{
+private:
+    ExpressionPtr logical_or_;
+    ExpressionPtr expression_;
+    ExpressionPtr conditional_expression_;
+
+public:
+    ConditionalExpression(Expression* logical_or, Expression* expression,
+			  Expression* conditional_expression);
+    
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
+};
+
+
+class AssignmentExpression : public OperationExpression
+{
+public:
+    AssignmentExpression(Expression* lhs, Expression* rhs);
 
     virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
 };

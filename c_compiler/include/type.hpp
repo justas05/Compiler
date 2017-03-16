@@ -11,6 +11,7 @@ class Type;
 
 typedef std::shared_ptr<Type> TypePtr;
 
+
 class Type : public Node {
 public:
     virtual void print() const;

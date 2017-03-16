@@ -10,14 +10,8 @@
 #include <memory>
 #include <string>
 
-class Declaration;
-class Statement;
-class Type;
 class Function;
 
-typedef std::shared_ptr<Declaration> DeclarationPtr;
-typedef std::shared_ptr<Statement> StatementPtr;
-typedef std::shared_ptr<Type> TypePtr;
 typedef std::shared_ptr<Function> FunctionPtr;
 
 

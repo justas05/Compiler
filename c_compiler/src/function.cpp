@@ -49,16 +49,23 @@ void Function::printXml() const
 VariableStackBindings Function::printAsm(VariableStackBindings bindings) const
 {
     // Counting all the variables being declared in the function
-    unsigned count = 0;
+    unsigned variable_count = 0;
     if(statement_ != nullptr)
-	statement_->countVariables(count);
-    
-    // This includes the space for the old frame counter and (return address)?
-    unsigned memory_needed = 4*count+8;
+	statement_->countVariables(variable_count);
 
-    std::cout << "\t.text\n\t.globl\t" << id_ << std::endl << id_ << ":\n\taddiu\t$sp,$sp,-"
-	      << memory_needed << "\n\tsw\t$fp," << memory_needed-4 << "($sp)\n\tmove\t$fp,$sp"
-	      << std::endl;
+    unsigned max_argument_count = 0;
+    // Count the maximum number of arguments
+    statement_->countArguments(max_argument_count);
+
+    if(max_argument_count < 4)
+	max_argument_count = 4;
+    
+    // This adds 2 to store the frame pointer and the return address
+    unsigned memory_needed = 4*(variable_count + max_argument_count + 2);
+
+    std::cout << "\t.text\n\t.globl\t" << id_ << "\n" << id_ << ":\n\taddiu\t$sp,$sp,-"
+	      << memory_needed << "\n\tsw\t$31," << memory_needed-4 << "($sp)\n" << "\tsw\t$fp,"
+	      << memory_needed-8 << "($sp)\n\tmove\t$fp,$sp\n";
 
     // TODO print asm for parameters
 
@@ -66,7 +73,7 @@ VariableStackBindings Function::printAsm(VariableStackBindings bindings) const
     statement_->printAsm(bindings);
 
     std::cout << "\tmove\t$sp,$fp\n\tlw\t$fp," << memory_needed-4 << "($sp)\n\taddiu\t$sp,$sp,"
-	      << memory_needed << "\n\tjr\t$31\n\tnop" << std::endl;
+	      << memory_needed << "\n\tjr\t$31\n\tnop\n";
 
     return bindings;
 }
