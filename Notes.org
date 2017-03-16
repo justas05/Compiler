@@ -24,7 +24,6 @@
     Design a C lexer that could lex C and output the important information 
     about the C code. This made us read the C spec for the first time.
 
-
 * Parser
 
 ** DONE Lab (parse maths)
@@ -58,10 +57,7 @@
     The grammar is not completely done yet as I dont support all of the declartions 
     that are possible, and as I add more constructs in the AST I will also have to add 
     declarations in the bison file. This I will only continue in the Compiler section.
-
-
 * Compiler
-
 ** DONE Lab (codegen)
    DEADLINE: <2017-02-28 Tue>
 
@@ -74,8 +70,7 @@
 ** TODO Coursework (c compiler)
    DEADLINE: <2017-03-28 Tue>
 
-*** Task
-    
+*** Task    
 *** Mips Assembly
 
     - %hi(id) :: loads the upper address of the global variable id
@@ -91,78 +86,34 @@
     - sw :: Store Word
 *** TODOs
 
-**** TODO Current
+**** DONE VariableStackBindings class
 
-***** DONE VariableStackBindings class
+     The class will contain map of strings containing the variable name as the _key_ and the stack 
+     position as the stack position and type as the attributes, which will be combined using a struct.
 
-      The class will contain map of strings containing the variable name as the _key_ and the stack 
-      position as the stack position and type as the attributes, which will be combined using a struct.
+**** DONE Work on statements and declaration
 
-***** DONE Work on statements and declaration
+     Implement the adding to the bindings part that has to be added in the statements and declarations.
 
-      Implement the adding to the bindings part that has to be added in the statements and declarations.
+**** DONE Store expression results on the stack
 
-***** DONE Store expression results on the stack
+     To do this I created a function in my VariableStackBindings that will store the 
+     position of the stack that will be used for the next expression.
+**** DONE Reformat code
+**** DONE Work on expression
+     CLOCK: [2017-03-15 Wed 21:00]--[2017-03-16 Thu 00:39] =>  3:39
 
-      To do this I created a function in my VariableStackBindings that will store the 
-      position of the stack that will be used for the next expression.
-***** DONE Reformat code
-***** DONE Work on expression
-      CLOCK: [2017-03-15 Wed 21:00]--[2017-03-16 Thu 00:39] =>  3:39
+      Add more expression.
 
-       Add more expression.
+**** DONE Make functions work
+***** DONE Make function calls work from expressions
+***** DONE Make functions receive arguments
+      - Work on bison file to get the parameters correctly
+      - Work on storing them correctly in the binding
+**** TODO Comment code
 
-***** TODO Make functions work
-****** DONE Make function calls work from expressions
-       CLOCK: [2017-03-16 Thu 16:51]--[2017-03-16 Thu 17:29] =>  0:38
-
-****** TODO Make functions receive arguments
-       CLOCK: [2017-03-16 Thu 17:31]
-
-       - Work on bison file to get the parameters correctly
-       - Work on storing them correctly in the binding
-
-***** TODO Comment code
-
-      comment code to know where we are at and what we still have to do.
-
-****** TODO Implement add and sub
-       still have to work on the subtraction
-
-       work on different types to implement the correct add
-
-****** TODO Implement 
-
-
-**** TODO Expression
-
-***** printasm(VSB binding)
-
-     Statements evaluate the expression by writing it out and printing the resulting asm
-     onto the command line. I will also have to pass the bindings to the evaluate function
-       
-     examples:
-     
-     z = a + b + c, will be calculated as $2 = b + c, and then $2 = a + $2
-     
-     This should happen automatically because of recursion.
-     Have to be careful because of the way the expressions are parsed.
-     Constant expressions will just output li    $2, 6 for example
-
-***** Assignment
-
-      I'm assuming that the right hand side of an assigment is always a variable.
-
-**** TODO Function class
-
-**** TODO Statement class
-
-     - Need function that prints declaration bits and expression bits, as well as connected 
-       statements
-
-     - need to add labels so that it jumps to the exit of the function once it gets a return
-
-**** TODO Definition class 
+     comment code to know where I am at and what I still have to do.
+**** DONE Definition class 
 
      - need function that will print the code for declaration. Basic code should be:
        
@@ -176,3 +127,4 @@
 
      - The declaration class should only be in charge of storing it in the right location in
        the stack and adding that to the bindings.
+
