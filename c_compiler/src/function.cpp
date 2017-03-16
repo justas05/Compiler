@@ -6,8 +6,8 @@
 
 // Function definition
 
-Function::Function(const std::string& id, Declaration* parameter_list, Statement* statement)
-    : id_(id), parameter_list_(parameter_list), statement_(statement)
+Function::Function(const std::string& id, Statement* statement, Declaration* parameter_list)
+    : id_(id), statement_(statement), parameter_list_(parameter_list)
 {}
 
 void Function::print() const
@@ -59,9 +59,14 @@ VariableStackBindings Function::printAsm(VariableStackBindings bindings) const
 
     if(max_argument_count < 4)
 	max_argument_count = 4;
+
+    unsigned parameter_count = 0;
+    countParameters(parameter_count);
     
     // This adds 2 to store the frame pointer and the return address
-    unsigned memory_needed = 4*(variable_count + max_argument_count + 2);
+    unsigned memory_needed = 4*(variable_count + max_argument_count + parameter_count + 2);
+    
+    // make frame double word aligned
     if(memory_needed % 8 != 0)
 	memory_needed += 4;
 
@@ -70,12 +75,49 @@ VariableStackBindings Function::printAsm(VariableStackBindings bindings) const
 	      << memory_needed-8 << "($sp)\n\tmove\t$fp,$sp\n";
 
     // TODO print asm for parameters
+    printParameterAsm(bindings, max_argument_count, memory_needed);
 
+    // set the stack counter to the right value
+    bindings.setStackPosition((max_argument_count+parameter_count)*4);
+    
     // Prints the asm for the compound statement in the function
     statement_->printAsm(bindings);
 
-    std::cout << "\tmove\t$sp,$fp\n\tlw\t$fp," << memory_needed-4 << "($sp)\n\taddiu\t$sp,$sp,"
-	      << memory_needed << "\n\tjr\t$31\n\tnop\n";
+    std::cout << "\tmove\t$sp,$fp\n\tlw\t$31," << memory_needed-4 << "($sp)\n\tlw\t$fp,"
+	      << memory_needed-8 << "($sp)\n\taddiu\t$sp,$sp," << memory_needed
+	      << "\n\tjr\t$31\n\tnop\n";
 
     return bindings;
+}
+
+void Function::printParameterAsm(VariableStackBindings& bindings, unsigned& stack_offset,
+				 unsigned& frame_offset) const
+{
+    std::vector<DeclarationPtr> parameter_vector;
+    DeclarationPtr parameter_list = parameter_list_;
+
+    while(parameter_list != nullptr) {
+	parameter_vector.push_back(parameter_list);
+	parameter_list = parameter_list->getNext();
+    }
+
+    for(auto itr = parameter_vector.rbegin(); itr != parameter_vector.rend(); ++itr) {
+	unsigned i = parameter_vector.rbegin() - itr;
+	bindings.insertBinding((*itr)->getId(), (*itr)->getType(), (i+stack_offset)*4);
+	if(i < 4)
+	    std::cout << "\tsw\t$" << 4+i << "," << (i+stack_offset)*4 << "($fp)\n";
+	else
+	    std::cout << "\tlw\t$2," << frame_offset + 4*i << "($fp)\n\tsw\t$2," << (i+stack_offset)*4
+		      << "($fp)\n";
+    }
+}
+
+void Function::countParameters(unsigned& parameter_count) const
+{
+    DeclarationPtr parameter_list = parameter_list_;
+
+    while(parameter_list != nullptr) {
+	parameter_count++;
+	parameter_list = parameter_list->getNext();
+    }
 }

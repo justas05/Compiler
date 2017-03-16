@@ -35,7 +35,7 @@ public:
     DeclarationPtr getNext() const;
     DeclarationPtr getNextListItem() const;
     std::string getId() const;
-    std::string getType() const;
+    TypePtr getType() const;
 };
 
 #endif

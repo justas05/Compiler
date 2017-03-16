@@ -29,8 +29,9 @@ private:
 public:
     VariableStackBindings();
 
-    void insertBinding(std::string id, TypePtr type, int32_t stack_position);
+    void insertBinding(std::string id, TypePtr type, int stack_position);
     void increaseStackPosition();
+    void setStackPosition(int stack_counter);
     void resetExpressionStack();
     void nextExpressionStackPosition();
 

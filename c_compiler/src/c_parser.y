@@ -97,7 +97,13 @@ ExternalDeclaration:
 // FUNCTION DEFINITION
 
 FunctionDefinition:
-		DeclarationSpec T_IDENTIFIER T_LRB ParameterList T_RRB CompoundStatement { $$ = new Function(*$2, $4, $6); delete $2; }
+		DeclarationSpec T_IDENTIFIER T_LRB ParameterList T_RRB CompoundStatement {
+		    if($4->getId() == "")
+			$$ = new Function(*$2, $6);
+		    else
+			$$ = new Function(*$2, $6, $4);
+		    delete $2;
+		}
 		;
 
 ParameterList:

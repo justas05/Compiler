@@ -102,7 +102,7 @@ std::string Declaration::getId() const
     return id_;
 }
 
-std::string Declaration::getType() const
+TypePtr Declaration::getType() const
 {
-    return type_->getType();
+    return type_;
 }

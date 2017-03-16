@@ -19,15 +19,19 @@ class Function : public Node {
 protected:
     TypePtr type_;
     std::string id_;
-    DeclarationPtr parameter_list_;
     StatementPtr statement_;
+    DeclarationPtr parameter_list_;
     
 public:
-    Function(const std::string& id, Declaration* parameter_list, Statement* statement);
+    Function(const std::string& id, Statement* statement, Declaration* parameter_list = nullptr);
 
     virtual void print() const;
     virtual void printXml() const;
     virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
+
+    void printParameterAsm(VariableStackBindings& bindings, unsigned& stack_offset,
+			   unsigned& frame_offset) const;
+    void countParameters(unsigned& parameter_count) const;
 };
 
 

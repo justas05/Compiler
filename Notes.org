@@ -113,9 +113,14 @@
        Add more expression.
 
 ***** TODO Make functions work
-      CLOCK: [2017-03-16 Thu 11:44]
+****** DONE Make function calls work from expressions
+       CLOCK: [2017-03-16 Thu 16:51]--[2017-03-16 Thu 17:29] =>  0:38
 
-      
+****** TODO Make functions receive arguments
+       CLOCK: [2017-03-16 Thu 17:31]
+
+       - Work on bison file to get the parameters correctly
+       - Work on storing them correctly in the binding
 
 ***** TODO Comment code
 
