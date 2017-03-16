@@ -29,6 +29,8 @@ public:
     virtual int postfixStackPosition(VariableStackBindings bindings) const;
     virtual void setPostfixExpression(Expression* postfix_expression);
 
+    virtual std::string id() const;
+
     void linkExpression(Expression* next_expression);
     ExpressionPtr nextExpression() const;
 };
@@ -231,6 +233,7 @@ public:
 
     virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
     virtual int postfixStackPosition(VariableStackBindings bindings) const;
+    virtual std::string id() const;
 };
 
 

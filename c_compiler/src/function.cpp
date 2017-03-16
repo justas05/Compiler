@@ -62,6 +62,8 @@ VariableStackBindings Function::printAsm(VariableStackBindings bindings) const
     
     // This adds 2 to store the frame pointer and the return address
     unsigned memory_needed = 4*(variable_count + max_argument_count + 2);
+    if(memory_needed % 8 != 0)
+	memory_needed += 4;
 
     std::cout << "\t.text\n\t.globl\t" << id_ << "\n" << id_ << ":\n\taddiu\t$sp,$sp,-"
 	      << memory_needed << "\n\tsw\t$31," << memory_needed-4 << "($sp)\n" << "\tsw\t$fp,"

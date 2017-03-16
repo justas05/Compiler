@@ -1,6 +1,7 @@
 #include "expression.hpp"
 
 #include <iostream>
+#include <vector>
 
 // Expression definition
 
@@ -30,6 +31,11 @@ int Expression::postfixStackPosition(VariableStackBindings bindings) const
 void Expression::setPostfixExpression(Expression *postfix_expression)
 {
     (void)postfix_expression;
+}
+
+std::string Expression::id() const
+{
+    return "";
 }
 
 void Expression::linkExpression(Expression *next_expression)
@@ -82,9 +88,27 @@ PostfixFunctionCall::PostfixFunctionCall(Expression* argument_expression_list)
 
 VariableStackBindings PostfixFunctionCall::printAsm(VariableStackBindings bindings) const
 {
-    if(argument_expression_list_ != nullptr) {
-	
+    std::vector<ExpressionPtr> argument_vector;
+    ExpressionPtr current_argument = argument_expression_list_;
+    unsigned argument_counter = 0;
+
+    while(current_argument != nullptr) {
+	argument_vector.push_back(current_argument);
+	current_argument = current_argument->nextExpression();
     }
+
+    for(auto itr = argument_vector.rbegin(); itr != argument_vector.rend(); ++itr) {
+	(*itr)->printAsm(bindings);
+
+	if(argument_counter < 4)
+	    std::cout << "\tmove\t$" << 4+argument_counter << ",$2\n";
+	else
+	    std::cout << "\tsw\t$2," << 4*argument_counter << "($fp)\n";
+
+	argument_counter++;
+    }
+
+    std::cout << "\tjal\t" << postfix_expression_->id() << "\n\tnop\n";
     
     return bindings;
 }
@@ -377,6 +401,11 @@ int Identifier::postfixStackPosition(VariableStackBindings bindings) const
     }
 
     return -1;
+}
+
+std::string Identifier::id() const
+{
+    return id_;
 }
 
 
