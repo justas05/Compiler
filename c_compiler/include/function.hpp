@@ -23,7 +23,7 @@ protected:
     DeclarationPtr parameter_list_;
     
 public:
-    Function(const std::string& id, Statement* statement, Declaration* parameter_list = nullptr);
+    Function(const std::string& id, Statement* statement, DeclarationPtr parameter_list = nullptr);
 
     virtual void print() const;
     virtual void printXml() const;

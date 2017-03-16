@@ -57,6 +57,7 @@ void yyerror(const char *);
 %type	<declaration>	ParameterList Parameter DeclarationList Declaration InitDeclaratorList
 			InitDeclarator
 			IdentifierList
+			Declarator DirectDeclarator
 
 %type	<expression>	Expression AssignmentExpression ConditionalExpression LogicalOrExpression
 			LogicalAndExpression InclusiveOrExpression ExclusiveOrExpression
@@ -66,8 +67,6 @@ void yyerror(const char *);
 			Constant
 
 %type	<type>		DeclarationSpec
-
-%type	<string>	Declarator DirectDeclarator
 
 %type	<number>        T_INT_CONST
 			
@@ -97,19 +96,14 @@ ExternalDeclaration:
 // FUNCTION DEFINITION
 
 FunctionDefinition:
-		DeclarationSpec T_IDENTIFIER T_LRB ParameterList T_RRB CompoundStatement {
-		    if($4->getId() == "")
-			$$ = new Function(*$2, $6);
-		    else
-			$$ = new Function(*$2, $6, $4);
-		    delete $2;
-		}
+		DeclarationSpec Declarator CompoundStatement {
+		    $$ = new Function($2->getId(), $3, $2->getNext()); }
 		;
 
 ParameterList:
 		%empty { $$ = new Declaration(); }
 	| 	Parameter { $$ = $1; }
-	|       ParameterList T_CMA Parameter { $3->linkDeclaration($$); $$ = $3;}
+	|       ParameterList T_CMA Parameter { $3->linkDeclaration($$); $$ = $3; }
 		;
 
 Parameter:	DeclarationSpec T_IDENTIFIER { $$ = new Declaration(*$2); delete $2; }
@@ -146,12 +140,12 @@ DeclarationSpec:
 		;
 
 InitDeclaratorList:
-		InitDeclarator { $$ = new Declaration(*$1); delete $1;}
+		InitDeclarator { $$ = $1; }
 	|       InitDeclaratorList T_CMA InitDeclarator { $3->linkListDeclaration($$); $$ = $3; }
 		;
 
-InitDeclarator:	Declarator { $$ = new Declaration(*$1); delete $1; }
-	|	Declarator T_EQ AssignmentExpression { $$ = new Declaration(*$1, $3); delete $1; }
+InitDeclarator:	Declarator { $$ = $1; }
+		    |	Declarator T_EQ AssignmentExpression { $$->setInitializer($3); }
 		;
 
 Declarator:	DirectDeclarator { $$ = $1; }
@@ -159,11 +153,12 @@ Declarator:	DirectDeclarator { $$ = $1; }
 		;
 
 DirectDeclarator:
-		T_IDENTIFIER { $$ = $1; }
+		T_IDENTIFIER { $$ = new Declaration(*$1); delete $1; }
 	|	T_LRB Declarator T_RRB { $$ = $2; }
 	|	DirectDeclarator T_LSB ConditionalExpression T_RSB { $$ = $1; }
 	|	DirectDeclarator T_LSB T_RSB { $$ = $1; }
-	|	DirectDeclarator T_LRB ParameterList T_RRB { $$ = $1; }
+	|	DirectDeclarator T_LRB T_RRB { $$ = $1; }
+	|	DirectDeclarator T_LRB ParameterList T_RRB { $1->linkDeclaration($3); $$ = $1; }
 	|	DirectDeclarator T_LRB IdentifierList T_RRB { $$ = $1; }
 		;
 

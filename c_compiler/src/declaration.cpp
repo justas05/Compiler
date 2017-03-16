@@ -87,6 +87,12 @@ void Declaration::setType(Type* type)
     type_ = type_ptr;
 }
 
+void Declaration::setInitializer(Expression* initializer)
+{
+    ExpressionPtr expression_ptr(initializer);
+    initializer_ = expression_ptr;
+}
+
 DeclarationPtr Declaration::getNext() const
 {
     return next_declaration_;

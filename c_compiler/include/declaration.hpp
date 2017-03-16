@@ -31,6 +31,7 @@ public:
     void linkListDeclaration(Declaration* next_list_declaration);
 
     void setType(Type* type);
+    void setInitializer(Expression* initializer); 
 
     DeclarationPtr getNext() const;
     DeclarationPtr getNextListItem() const;

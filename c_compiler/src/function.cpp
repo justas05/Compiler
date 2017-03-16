@@ -6,7 +6,7 @@
 
 // Function definition
 
-Function::Function(const std::string& id, Statement* statement, Declaration* parameter_list)
+Function::Function(const std::string& id, Statement* statement, DeclarationPtr parameter_list)
     : id_(id), statement_(statement), parameter_list_(parameter_list)
 {}
 
@@ -102,7 +102,7 @@ void Function::printParameterAsm(VariableStackBindings& bindings, unsigned& stac
     }
 
     for(auto itr = parameter_vector.rbegin(); itr != parameter_vector.rend(); ++itr) {
-	unsigned i = parameter_vector.rbegin() - itr;
+	unsigned i = itr-parameter_vector.rbegin();
 	bindings.insertBinding((*itr)->getId(), (*itr)->getType(), (i+stack_offset)*4);
 	if(i < 4)
 	    std::cout << "\tsw\t$" << 4+i << "," << (i+stack_offset)*4 << "($fp)\n";
