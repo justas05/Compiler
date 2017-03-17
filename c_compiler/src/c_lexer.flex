@@ -28,16 +28,16 @@ ALL .
 
 %%
 
-(void)								{ return T_VOID; }
-(char) 							      	{ return T_CHAR; }
-(signed[ ]char) 						{ return T_SCHAR; }
-(unsigned[ ]char) 					      	{ return T_UCHAR; }
+(void)			{ return T_VOID; }
+(char) 			{ return T_CHAR; }
+(signed[ ]char) 	{ return T_SCHAR; }
+(unsigned[ ]char) 	{ return T_UCHAR; }
 ((short[ ]int)|(signed[ ]short[ ]int)|short|(signed[ ]short))	{ return T_SSINT; }
-((unsigned[ ]short[ ]int)|(unsigned[ ]short))       		{ return T_USINT; }
-((signed[ ]long[ ]int)|(signed[ ]long)|(long[ ]int)|long)	{ return T_LINT; }
-((unsigned[ ]long[ ]int)|(unsigned[ ]long))  			{ return T_ULINT; }
-((unsigned[ ]int)|unsigned)				      	{ return T_UINT; }
-((signed[ ]int)|int|signed) 				      	{ return T_SINT; }
+((unsigned[ ]short[ ]int)|(unsigned[ ]short)) 	     		{ return T_USINT; }
+((signed[ ]long[ ]int)|(signed[ ]long)|(long[ ]int)|long)     	{ return T_LINT; }
+((unsigned[ ]long[ ]int)|(unsigned[ ]long))   		      	{ return T_ULINT; }
+((unsigned[ ]int)|unsigned) 	    { return T_UINT; }
+((signed[ ]int)|int|signed) 	    { return T_SINT; }
 
 
 [;]		{ return T_SC; }

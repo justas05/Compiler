@@ -66,12 +66,10 @@ void yyerror(const char *);
 			PostfixExpression PostfixExpression2 ArgumentExpressionList PrimaryExpression
 			Constant
 
-%type	<type>		DeclarationSpec
-
 %type	<number>        T_INT_CONST
 			
 %type	<string>	T_IDENTIFIER ASSIGN_OPER T_ASSIGN_OPER T_EQ T_AND T_ADDSUB_OP T_TILDE T_NOT
-			T_MULT T_DIV T_REM T_EQUALITY_OP MultDivRemOP UnaryOperator
+			T_MULT T_DIV T_REM T_EQUALITY_OP MultDivRemOP UnaryOperator DeclarationSpec
                         
 %start ROOT
                         
@@ -116,27 +114,36 @@ DeclarationList:
 	|	DeclarationList Declaration { $2->linkDeclaration($$); $$ = $2; }
 		;
 
-Declaration:	DeclarationSpec InitDeclaratorList T_SC {
+Declaration:	DeclarationSpec InitDeclaratorList T_SC
+		{
 		    $$ = $2;
 		    Declaration* tmp_decl = $2;
-		    
+    
 		    while(tmp_decl != nullptr) {
-			tmp_decl->setType($1);
+			if(*$1 == "void") {
+			    tmp_decl->setType(new Void);
+			} else if(*$1 == "char") {
+			    tmp_decl->setType(new Char);
+			} else {
+			    tmp_decl->setType(new Int);
+			}
 			tmp_decl = tmp_decl->getNextListItem().get();
 		    }
+
+		    delete $1;
 		};
 
 DeclarationSpec:
-		T_VOID { $$ = new Void; }
-	|	T_CHAR { $$ = new Char; }
-	|	T_SCHAR { $$ = new Char; }
-	|	T_UCHAR { $$ = new Char; }
-	|	T_SSINT { $$ = new Int; }
-	|	T_USINT { $$ = new Int; }
-	|	T_LINT { $$ = new Int; }
-	|	T_ULINT { $$ = new Int; }
-	|	T_UINT { $$ = new Int; }
-	|	T_SINT { $$ = new Int; }
+		T_VOID { $$ = new std::string("void"); }
+	|	T_CHAR { $$ = new std::string("char"); }
+	|	T_SCHAR { $$ = new std::string("char"); }
+	|	T_UCHAR { $$ = new std::string("char"); }
+	|	T_SSINT { $$ = new std::string("int"); }
+	|	T_USINT { $$ = new std::string("int"); }
+	|	T_LINT { $$ = new std::string("int"); }
+	|	T_ULINT { $$ = new std::string("int"); }
+	|	T_UINT { $$ = new std::string("int"); }
+	|	T_SINT { $$ = new std::string("int"); }
 		;
 
 InitDeclaratorList:
@@ -287,7 +294,18 @@ MultDivRemOP:	T_MULT { $$ = $1; }
 		;
 
 CastExpression:	UnaryExpression { $$ = $1; }
-	|	T_LRB DeclarationSpec T_RRB CastExpression { $$ = new CastExpression($2, $4); }
+	|	T_LRB DeclarationSpec T_RRB CastExpression
+		{
+		    if(*$2 == "int") {
+			$$ = new CastExpression(new Int, $4);
+		    } else if(*$2 == "char") {
+			$$ = new CastExpression(new Char, $4);
+		    } else {
+			$$ = new CastExpression(new Void, $4);
+		    }
+
+		    delete $2;
+		}
 		;
 
 UnaryExpression:
