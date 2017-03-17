@@ -51,18 +51,18 @@ void CompoundStatement::printXml() const
     std::cout << "</Scope>" << std::endl;
 }
 
-VariableStackBindings CompoundStatement::printAsm(VariableStackBindings bindings) const
+VariableStackBindings CompoundStatement::printAsm(VariableStackBindings bindings, unsigned& label_count) const
 {
     VariableStackBindings outer_scope_bindings = bindings;
     
     if(next_statement_ != nullptr)
-	next_statement_->printAsm(bindings);
+	next_statement_->printAsm(bindings, label_count);
 
     if(declaration_ != nullptr)
-	bindings = declaration_->printAsm(bindings);
+	bindings = declaration_->printAsm(bindings, label_count);
 
     if(statement_ != nullptr)
-	statement_->printAsm(bindings);
+	statement_->printAsm(bindings, label_count);
 
     return outer_scope_bindings;
 }
@@ -125,7 +125,7 @@ void SelectionStatement::printXml() const
 	else_->printXml();
 }
 
-VariableStackBindings SelectionStatement::printAsm(VariableStackBindings bindings) const
+VariableStackBindings SelectionStatement::printAsm(VariableStackBindings bindings, unsigned& label_count) const
 {
     return bindings;
 }
@@ -167,13 +167,13 @@ void ExpressionStatement::print() const
 void ExpressionStatement::printXml() const
 {}
 
-VariableStackBindings ExpressionStatement::printAsm(VariableStackBindings bindings) const
+VariableStackBindings ExpressionStatement::printAsm(VariableStackBindings bindings, unsigned& label_count) const
 {
     if(next_statement_ != nullptr)
-	next_statement_->printAsm(bindings);
+	next_statement_->printAsm(bindings, label_count);
     
     if(expression_ != nullptr)
-	expression_->printAsm(bindings);
+	expression_->printAsm(bindings, label_count);
     
     return bindings;
 }
@@ -214,13 +214,13 @@ void JumpStatement::printXml() const
 	next_statement_->printXml();
 }
 
-VariableStackBindings JumpStatement::printAsm(VariableStackBindings bindings) const
+VariableStackBindings JumpStatement::printAsm(VariableStackBindings bindings, unsigned& label_count) const
 {
     if(next_statement_ != nullptr)
-	next_statement_->printAsm(bindings);
+	next_statement_->printAsm(bindings, label_count);
     
     if(expression_ != nullptr)
-	expression_->printAsm(bindings);
+	expression_->printAsm(bindings, label_count);
 
     std::cout << "\tj\t0f\n";
     
@@ -266,7 +266,7 @@ void IterationStatement::printXml() const
 	statement_->printXml();
 }
 
-VariableStackBindings IterationStatement::printAsm(VariableStackBindings bindings) const
+VariableStackBindings IterationStatement::printAsm(VariableStackBindings bindings, unsigned& label_count) const
 {
     return bindings;
 }

@@ -27,7 +27,7 @@ public:
 
     virtual void print() const;
     virtual void printXml() const;
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
 
     void printParameterAsm(VariableStackBindings& bindings, unsigned& stack_offset,
 			   unsigned& frame_offset) const;

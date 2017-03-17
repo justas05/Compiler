@@ -34,7 +34,7 @@ void Declaration::printXml() const
 	std::cout << "<Variable id=\""<< id_ << "\" />" << std::endl;
 }
 
-VariableStackBindings Declaration::printAsm(VariableStackBindings bindings) const
+VariableStackBindings Declaration::printAsm(VariableStackBindings bindings, unsigned& label_count) const
 {
     // if(init == nullptr)
     // 	std::cout << "\t.comm\t" << id << ",4,4" << std::endl;
@@ -46,14 +46,14 @@ VariableStackBindings Declaration::printAsm(VariableStackBindings bindings) cons
     // return bindings;
 
     if(next_declaration_ != nullptr)
-	bindings = next_declaration_->printAsm(bindings);
+	bindings = next_declaration_->printAsm(bindings, label_count);
 
     if(next_list_declaration_ != nullptr)
-	bindings = next_list_declaration_->printAsm(bindings);
+	bindings = next_list_declaration_->printAsm(bindings, label_count);
     
     if(id_ != "") {
 	if(initializer_ != nullptr)
-	    initializer_->printAsm(bindings);
+	    initializer_->printAsm(bindings, label_count);
 	else
 	    std::cout << "\tmove\t$2,$0" << std::endl;
 

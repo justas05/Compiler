@@ -3,13 +3,7 @@ int main() {
 	int y = 29;
 	int z = 84;
 
-	{
-		{
-			z = x + y + x + y - x;
-		}
-	}
+	z = (9 + 2 + 3) / 2 + 3 / (2 + 1);
 
-	z = 2 + z - 2;
-	
 	return z;
 }

@@ -127,4 +127,13 @@
 
      - The declaration class should only be in charge of storing it in the right location in
        the stack and adding that to the bindings.
+**** TODO Add more expressions
+     CLOCK: [2017-03-17 Fri 13:21]
+     
+     Expressions like > or < or == etc..
 
+**** TODO Add more statements
+
+***** If statement
+***** For statement
+***** While statement

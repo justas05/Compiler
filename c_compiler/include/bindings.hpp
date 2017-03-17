@@ -25,7 +25,6 @@ private:
     std::map<std::string, DeclarationData> bindings_;
     int stack_counter_;
     int expression_stack_;
-    unsigned label_count; 
 	     
 public:
     VariableStackBindings();
@@ -37,7 +36,6 @@ public:
 
     int currentStackPosition() const;
     int stackPosition(const std::string& id) const;
-
     int currentExpressionStackPosition() const;
 
     bool bindingExists(const std::string& id) const;

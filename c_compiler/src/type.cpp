@@ -13,7 +13,7 @@ void Type::print() const
 void Type::printXml() const
 {}
 
-VariableStackBindings Type::printAsm(VariableStackBindings bindings) const
+VariableStackBindings Type::printAsm(VariableStackBindings bindings, unsigned& label_count) const
 {
     return bindings;
 }

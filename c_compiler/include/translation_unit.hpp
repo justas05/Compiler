@@ -19,7 +19,7 @@ public:
 
     virtual void print() const;
     virtual void printXml() const;
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
 
     void push(Node* external_declaration);
 };

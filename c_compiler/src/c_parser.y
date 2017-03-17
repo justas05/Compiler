@@ -71,7 +71,7 @@ void yyerror(const char *);
 %type	<number>        T_INT_CONST
 			
 %type	<string>	T_IDENTIFIER ASSIGN_OPER T_ASSIGN_OPER T_EQ T_AND T_ADDSUB_OP T_TILDE T_NOT
-			T_MULT T_DIV T_REM MultDivRemOP UnaryOperator
+			T_MULT T_DIV T_REM T_EQUALITY_OP MultDivRemOP UnaryOperator
                         
 %start ROOT
                         
@@ -96,8 +96,8 @@ ExternalDeclaration:
 // FUNCTION DEFINITION
 
 FunctionDefinition:
-		DeclarationSpec Declarator CompoundStatement {
-		    $$ = new Function($2->getId(), $3, $2->getNext()); }
+		DeclarationSpec Declarator CompoundStatement
+		{ $$ = new Function($2->getId(), $3, $2->getNext()); }
 		;
 
 ParameterList:
@@ -225,56 +225,60 @@ ASSIGN_OPER:	T_ASSIGN_OPER { ; }
 
 ConditionalExpression:
 		LogicalOrExpression { $$ = $1; }
-	|	LogicalOrExpression T_QU Expression T_COL ConditionalExpression { $$ = $1; }
+	|	LogicalOrExpression T_QU Expression T_COL ConditionalExpression
+		{ $$ = new ConditionalExpression($1, $3, $5); }
 		;
 
 LogicalOrExpression:
 		LogicalAndExpression { $$ = $1; }
-	|	LogicalOrExpression T_LOG_OR LogicalAndExpression { $$ = $3; }
+	|	LogicalOrExpression T_LOG_OR LogicalAndExpression { $$ = new LogicalOrExpression($1, $3); }
 		;
 
 LogicalAndExpression:
 		InclusiveOrExpression { $$ = $1; }
-	|	LogicalAndExpression T_LOG_AND InclusiveOrExpression { $$ = $3; }
+	|	LogicalAndExpression T_LOG_AND InclusiveOrExpression { $$ = new LogicalAndExpression($1, $3); }
 		;
 
 InclusiveOrExpression:
 		ExclusiveOrExpression { $$ = $1; }
-	|	InclusiveOrExpression T_OR ExclusiveOrExpression { $$ = $3; }
+	|	InclusiveOrExpression T_OR ExclusiveOrExpression { $$ = new InclusiveOrExpression($1, $3); }
 		;
 
 ExclusiveOrExpression:
 		AndExpression { $$ = $1; }
-	|	ExclusiveOrExpression T_XOR AndExpression { $$ = $3; }
+	|	ExclusiveOrExpression T_XOR AndExpression { $$ = new ExclusiveOrExpression($1, $3); }
 		;
 
 AndExpression:	EqualityExpression { $$ = $1; }
-	|	AndExpression T_AND EqualityExpression { $$ = $3; }
+	|	AndExpression T_AND EqualityExpression { $$ = new AndExpression($1, $3); }
 		;
 
 EqualityExpression:
 	        RelationalExpression { $$ = $1; }
-	|	EqualityExpression T_EQUALITY_OP RelationalExpression { $$ = $3; }
+	|	EqualityExpression T_EQUALITY_OP RelationalExpression
+		{ $$ = new EqualityExpression($1, *$2, $3); delete $2; }
 		;
 
 RelationalExpression:
 		ShiftExpression { $$ = $1; }
-	|       RelationalExpression T_REL_OP ShiftExpression { $$ = $3; }
+	|       RelationalExpression T_REL_OP ShiftExpression { $$ = new RelationalExpression($1, $3); }
 		;
 
 ShiftExpression:
 		AdditiveExpression { $$ = $1; }
-	|	ShiftExpression T_SHIFT_OP AdditiveExpression { $$ = $3; }
+	|	ShiftExpression T_SHIFT_OP AdditiveExpression { $$ = new ShiftExpression($1, $3); }
 		;
 
 AdditiveExpression:
 		MultiplicativeExpression { $$ = $1; }
-	|	AdditiveExpression T_ADDSUB_OP MultiplicativeExpression { $$ = new AdditiveExpression($1, *$2, $3); delete $2; }
+	|	AdditiveExpression T_ADDSUB_OP MultiplicativeExpression
+		{ $$ = new AdditiveExpression($1, *$2, $3); delete $2; }
 		;
 
 MultiplicativeExpression:
 		CastExpression { $$ = $1; }
-	|	MultiplicativeExpression MultDivRemOP CastExpression { $$ = new MultiplicativeExpression($1, *$2, $3); delete $2; }
+	|	MultiplicativeExpression MultDivRemOP CastExpression
+		{ $$ = new MultiplicativeExpression($1, *$2, $3); delete $2; }
 		;
 
 MultDivRemOP:	T_MULT { $$ = $1; }
@@ -283,7 +287,7 @@ MultDivRemOP:	T_MULT { $$ = $1; }
 		;
 
 CastExpression:	UnaryExpression { $$ = $1; }
-	|	T_LRB DeclarationSpec T_RRB CastExpression { $$ = $4; }
+	|	T_LRB DeclarationSpec T_RRB CastExpression { $$ = new CastExpression($2, $4); }
 		;
 
 UnaryExpression:

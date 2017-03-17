@@ -22,7 +22,7 @@ public:
 
     virtual void print() const = 0;
     virtual void printXml() const = 0;
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const = 0;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const = 0;
 
     virtual void countVariables(unsigned& var_count) const = 0;
     virtual void countArguments(unsigned& argument_count) const = 0;
@@ -42,7 +42,7 @@ public:
 
     virtual void print() const;
     virtual void printXml() const;
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
 
     virtual void countVariables(unsigned& var_count) const;
     virtual void countArguments(unsigned& argument_count) const;    
@@ -58,7 +58,7 @@ public:
 
     virtual void print() const;
     virtual void printXml() const;
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
 
     virtual void countVariables(unsigned& var_count) const;
     virtual void countArguments(unsigned& argument_count) const;    
@@ -73,7 +73,7 @@ public:
 
     virtual void print() const;
     virtual void printXml() const;
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
 
     virtual void countVariables(unsigned& var_count) const;
     virtual void countArguments(unsigned& argument_count) const;    
@@ -88,7 +88,7 @@ public:
 
     virtual void print() const;
     virtual void printXml() const;
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
 
     virtual void countVariables(unsigned& var_count) const;
     virtual void countArguments(unsigned& argument_count) const;
@@ -103,7 +103,7 @@ public:
 
     virtual void print() const;
     virtual void printXml() const;
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
 
     virtual void countVariables(unsigned& var_count) const;
     virtual void countArguments(unsigned& argument_count) const;    

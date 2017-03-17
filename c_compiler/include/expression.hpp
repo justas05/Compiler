@@ -20,7 +20,7 @@ private:
     ExpressionPtr next_expression_;
     
 public:
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const = 0;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const = 0;
     
     virtual void print() const;
     virtual void printXml() const;
@@ -44,7 +44,7 @@ protected:
 public:
     OperationExpression(Expression* lhs, Expression* rhs);
 
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const = 0;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const = 0;
 };
 
 
@@ -53,7 +53,7 @@ class PostfixExpression : public Expression
 public:
     PostfixExpression();
 
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
 };
 
 
@@ -62,7 +62,7 @@ class PostfixArrayElement : public Expression
 public:
     PostfixArrayElement();
 
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
 };
 
 
@@ -75,7 +75,7 @@ private:
 public:
     PostfixFunctionCall(Expression* argument_expression_list = nullptr);
 
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
     virtual void countArguments(unsigned& argument_count) const;
     
     void setPostfixExpression(Expression* postfix_expression);
@@ -87,7 +87,7 @@ class UnaryExpression : public Expression
 public:
     UnaryExpression();
 
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
 };
 
 
@@ -100,31 +100,31 @@ private:
 public:
     CastExpression(Type* type, Expression* expression);
 
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
 };
 
 
 class AdditiveExpression : public OperationExpression
 {
 private:
-    std::string operation_;
+    std::string operator_;
 
 public:
-    AdditiveExpression(Expression* lhs, const std::string& operation, Expression* rhs);
+    AdditiveExpression(Expression* lhs, const std::string& _operator, Expression* rhs);
 
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
 };
 
 
 class MultiplicativeExpression : public OperationExpression
 {
 private:
-    std::string operation_;
+    std::string operator_;
 
 public:
-    MultiplicativeExpression(Expression* lhs, const std::string& operation, Expression* rhs);
+    MultiplicativeExpression(Expression* lhs, const std::string& _operator, Expression* rhs);
 
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
 };
 
 
@@ -133,7 +133,7 @@ class ShiftExpression : public OperationExpression
 public:
     ShiftExpression(Expression* lhs, Expression* rhs);
 
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
 };
 
 
@@ -142,16 +142,18 @@ class RelationalExpression : public OperationExpression
 public:
     RelationalExpression(Expression* lhs, Expression* rhs);
 
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
 };
 
 
 class EqualityExpression : public OperationExpression
 {
+private:
+    std::string operator_;
 public:
-    EqualityExpression(Expression* lhs, Expression* rhs);
+    EqualityExpression(Expression* lhs, const std::string& _operator, Expression* rhs);
 
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
 };
 
 
@@ -160,7 +162,7 @@ class AndExpression : public OperationExpression
 public:
     AndExpression(Expression* lhs, Expression* rhs);
 
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
 };
 
 
@@ -169,7 +171,7 @@ class ExclusiveOrExpression : public OperationExpression
 public:
     ExclusiveOrExpression(Expression* lhs, Expression* rhs);
 
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
 };
 
 
@@ -178,7 +180,7 @@ class InclusiveOrExpression : public OperationExpression
 public:
     InclusiveOrExpression(Expression* lhs, Expression* rhs);
 
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
 };
 
 
@@ -187,7 +189,7 @@ class LogicalAndExpression : public OperationExpression
 public:
     LogicalAndExpression(Expression* lhs, Expression* rhs);
 
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
 };
 
 
@@ -196,7 +198,7 @@ class LogicalOrExpression : public OperationExpression
 public:
     LogicalOrExpression(Expression* lhs, Expression* rhs);
 
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
 };
 
 
@@ -211,7 +213,7 @@ public:
     ConditionalExpression(Expression* logical_or, Expression* expression,
 			  Expression* conditional_expression);
     
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
 };
 
 
@@ -220,7 +222,7 @@ class AssignmentExpression : public OperationExpression
 public:
     AssignmentExpression(Expression* lhs, Expression* rhs);
 
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
 };
 
 
@@ -231,7 +233,7 @@ private:
 public:
     Identifier(const std::string& id);
 
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
     virtual int postfixStackPosition(VariableStackBindings bindings) const;
     virtual std::string id() const;
 };
@@ -244,7 +246,7 @@ private:
 public:
     Constant(const int32_t& constant);
 
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
 };
 
 

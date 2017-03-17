@@ -16,7 +16,7 @@ class Type : public Node {
 public:
     virtual void print() const;
     virtual void printXml() const;
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings) const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
 
     virtual std::string getType() const = 0;
 };

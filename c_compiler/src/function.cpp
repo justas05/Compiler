@@ -29,8 +29,7 @@ void Function::printXml() const
     std::vector<std::string> parameter_vec;
     
     while(parameter != nullptr) {
-	if(parameter->getId() != "")
-	    parameter_vec.push_back(parameter->getId());
+	parameter_vec.push_back(parameter->getId());
 	parameter = parameter->getNext();
     }
 
@@ -46,7 +45,7 @@ void Function::printXml() const
     std::cout << "</Function>" << std::endl;
 }
 
-VariableStackBindings Function::printAsm(VariableStackBindings bindings) const
+VariableStackBindings Function::printAsm(VariableStackBindings bindings, unsigned& label_count) const
 {
     // Counting all the variables being declared in the function
     unsigned variable_count = 0;
@@ -81,7 +80,7 @@ VariableStackBindings Function::printAsm(VariableStackBindings bindings) const
     bindings.setStackPosition((max_argument_count+parameter_count)*4);
     
     // Prints the asm for the compound statement in the function
-    statement_->printAsm(bindings);
+    statement_->printAsm(bindings, label_count);
 
     std::cout << "0:\n\tmove\t$sp,$fp\n\tlw\t$31," << memory_needed-4 << "($sp)\n\tlw\t$fp,"
 	      << memory_needed-8 << "($sp)\n\taddiu\t$sp,$sp," << memory_needed

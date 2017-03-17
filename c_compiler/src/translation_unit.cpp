@@ -25,10 +25,10 @@ void TranslationUnit::printXml() const
     std::cout << "</Program>" << std::endl;
 }
 
-VariableStackBindings TranslationUnit::printAsm(VariableStackBindings bindings) const
+VariableStackBindings TranslationUnit::printAsm(VariableStackBindings bindings, unsigned& label_count) const
 {
     for(auto& node : translation_unit_) {
-	node->printAsm(bindings);
+	node->printAsm(bindings, label_count);
     }
 
     return bindings;

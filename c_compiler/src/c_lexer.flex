@@ -55,8 +55,8 @@ ALL .
 [|]		{ return T_OR; }
 [\^]		{ return T_XOR; }
 [&]		{ return T_AND; }
-[=][=]		{ return T_EQUALITY_OP; }
-[!][=]		{ return T_EQUALITY_OP; }
+[=][=]		{ yylval.string = new std::string(yytext); return T_EQUALITY_OP; }
+[!][=]		{ yylval.string = new std::string(yytext); return T_EQUALITY_OP; }
 ([<>][=])|[<>]	{ return T_REL_OP; }
 [<>][<>]	{ return T_SHIFT_OP; }
 [*] 		{ yylval.string = new std::string(yytext); return T_MULT; }
