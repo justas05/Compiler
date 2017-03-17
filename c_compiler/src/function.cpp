@@ -83,7 +83,7 @@ VariableStackBindings Function::printAsm(VariableStackBindings bindings) const
     // Prints the asm for the compound statement in the function
     statement_->printAsm(bindings);
 
-    std::cout << "\tmove\t$sp,$fp\n\tlw\t$31," << memory_needed-4 << "($sp)\n\tlw\t$fp,"
+    std::cout << "0:\n\tmove\t$sp,$fp\n\tlw\t$31," << memory_needed-4 << "($sp)\n\tlw\t$fp,"
 	      << memory_needed-8 << "($sp)\n\taddiu\t$sp,$sp," << memory_needed
 	      << "\n\tjr\t$31\n\tnop\n";
 

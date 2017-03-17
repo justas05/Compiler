@@ -173,10 +173,7 @@ VariableStackBindings ExpressionStatement::printAsm(VariableStackBindings bindin
 	next_statement_->printAsm(bindings);
     
     if(expression_ != nullptr)
-    {
-	bindings.resetExpressionStack();
 	expression_->printAsm(bindings);
-    }
     
     return bindings;
 }
@@ -222,10 +219,10 @@ VariableStackBindings JumpStatement::printAsm(VariableStackBindings bindings) co
     if(next_statement_ != nullptr)
 	next_statement_->printAsm(bindings);
     
-    if(expression_ != nullptr) {
-	bindings.resetExpressionStack();
+    if(expression_ != nullptr)
 	expression_->printAsm(bindings);
-    }
+
+    std::cout << "\tj\t0f\n";
     
     return bindings;
 }

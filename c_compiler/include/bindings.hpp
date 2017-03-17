@@ -25,6 +25,7 @@ private:
     std::map<std::string, DeclarationData> bindings_;
     int stack_counter_;
     int expression_stack_;
+    unsigned label_count; 
 	     
 public:
     VariableStackBindings();
@@ -32,7 +33,6 @@ public:
     void insertBinding(std::string id, TypePtr type, int stack_position);
     void increaseStackPosition();
     void setStackPosition(int stack_counter);
-    void resetExpressionStack();
     void nextExpressionStackPosition();
 
     int currentStackPosition() const;

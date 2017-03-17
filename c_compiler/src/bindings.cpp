@@ -28,11 +28,6 @@ void VariableStackBindings::setStackPosition(int stack_counter)
     stack_counter_ = stack_counter;
 }
 
-void VariableStackBindings::resetExpressionStack()
-{
-    expression_stack_ = -4;
-}
-
 void VariableStackBindings::nextExpressionStackPosition()
 {
     expression_stack_ -= 4;
