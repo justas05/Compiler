@@ -51,10 +51,11 @@ public:
 
 class SelectionStatement : public Statement {
 protected:
+    ExpressionPtr condition_;
     StatementPtr if_;
     StatementPtr else_;
 public:
-    SelectionStatement(Statement* _if = nullptr, Statement* _else = nullptr);
+    SelectionStatement(Expression* condition, Statement* _if, Statement* _else = nullptr);
 
     virtual void print() const;
     virtual void printXml() const;

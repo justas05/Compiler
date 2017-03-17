@@ -45,6 +45,8 @@ public:
     OperationExpression(Expression* lhs, Expression* rhs);
 
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const = 0;
+
+    void evaluateExpression(VariableStackBindings bindings, unsigned& label_count) const;
 };
 
 
@@ -130,8 +132,10 @@ public:
 
 class ShiftExpression : public OperationExpression
 {
+private:
+    std::string operator_;
 public:
-    ShiftExpression(Expression* lhs, Expression* rhs);
+    ShiftExpression(Expression* lhs, const std::string& _operator, Expression* rhs);
 
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
 };
@@ -139,8 +143,10 @@ public:
 
 class RelationalExpression : public OperationExpression
 {
+private:
+    std::string operator_;
 public:
-    RelationalExpression(Expression* lhs, Expression* rhs);
+    RelationalExpression(Expression* lhs, const std::string& _operator, Expression* rhs);
 
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
 };

@@ -69,7 +69,8 @@ void yyerror(const char *);
 %type	<number>        T_INT_CONST
 			
 %type	<string>	T_IDENTIFIER ASSIGN_OPER T_ASSIGN_OPER T_EQ T_AND T_ADDSUB_OP T_TILDE T_NOT
-			T_MULT T_DIV T_REM T_EQUALITY_OP MultDivRemOP UnaryOperator DeclarationSpec
+			T_MULT T_DIV T_REM T_EQUALITY_OP T_REL_OP T_SHIFT_OP MultDivRemOP UnaryOperator
+			DeclarationSpec
                         
 %start ROOT
                         
@@ -198,8 +199,8 @@ CompoundStatement_2:
 		;
 
 SelectionStatement:
-		T_IF T_LRB Expression T_RRB Statement { $$ = new SelectionStatement($5); }
-	|	T_IF T_LRB Expression T_RRB Statement T_ELSE Statement { $$ = new SelectionStatement($5, $7); }
+		T_IF T_LRB Expression T_RRB Statement { $$ = new SelectionStatement($3, $5); }
+	|	T_IF T_LRB Expression T_RRB Statement T_ELSE Statement { $$ = new SelectionStatement($3, $5, $7); }
 		;
 
 ExpressionStatement:
@@ -268,12 +269,14 @@ EqualityExpression:
 
 RelationalExpression:
 		ShiftExpression { $$ = $1; }
-	|       RelationalExpression T_REL_OP ShiftExpression { $$ = new RelationalExpression($1, $3); }
+	|       RelationalExpression T_REL_OP ShiftExpression
+		{ $$ = new RelationalExpression($1, *$2, $3); delete $2; }
 		;
 
 ShiftExpression:
 		AdditiveExpression { $$ = $1; }
-	|	ShiftExpression T_SHIFT_OP AdditiveExpression { $$ = new ShiftExpression($1, $3); }
+	|	ShiftExpression T_SHIFT_OP AdditiveExpression
+		{ $$ = new ShiftExpression($1, *$2, $3); }
 		;
 
 AdditiveExpression:

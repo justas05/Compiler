@@ -104,8 +104,8 @@ void CompoundStatement::countArguments(unsigned& argument_count) const
 
 // Selection Statement definition
 
-SelectionStatement::SelectionStatement(Statement* _if, Statement* _else)
-    : Statement(), if_(_if), else_(_else) {}
+SelectionStatement::SelectionStatement(Expression* condition, Statement* _if, Statement* _else)
+    : Statement(), condition_(condition), if_(_if), else_(_else) {}
 
 void SelectionStatement::print() const
 {
@@ -127,6 +127,11 @@ void SelectionStatement::printXml() const
 
 VariableStackBindings SelectionStatement::printAsm(VariableStackBindings bindings, unsigned& label_count) const
 {
+    condition_->printAsm(bindings, label_count);
+    std::cout << "\tbeq\t$2,$0,$" << label_count++ << "_else\n";
+    if_->printAsm(bindings, label_count);
+
+    // TODO insert label for else and then end of statement
     return bindings;
 }
 
@@ -222,7 +227,7 @@ VariableStackBindings JumpStatement::printAsm(VariableStackBindings bindings, un
     if(expression_ != nullptr)
 	expression_->printAsm(bindings, label_count);
 
-    std::cout << "\tj\t0f\n";
+    std::cout << "\tj\t0f\n\tnop\n";
     
     return bindings;
 }
