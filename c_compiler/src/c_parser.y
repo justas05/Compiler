@@ -177,7 +177,7 @@ IdentifierList:	T_IDENTIFIER { $$ = new Declaration(); }
 
 StatementList:
 		Statement { $$ = $1; }
-	|	StatementList Statement { $2->linkStatement($$); $$ = $2; }
+|	StatementList Statement { $2->linkStatement($$); $$ = $2; printf("# Making statement list\n"); }
 		;
 
 Statement:	CompoundStatement { $$ = $1; }
@@ -205,7 +205,7 @@ SelectionStatement:
 
 ExpressionStatement:
 		T_SC { $$ = new ExpressionStatement(); }
-	|	Expression T_SC { $$ = new ExpressionStatement($1); }
+|	Expression T_SC { $$ = new ExpressionStatement($1); printf("# Adding Expression statement\n"); }
 		;
 
 JumpStatement:	T_RETURN Expression T_SC { $$ = new JumpStatement($2); }
@@ -214,7 +214,8 @@ JumpStatement:	T_RETURN Expression T_SC { $$ = new JumpStatement($2); }
 IterationStatement:
 		T_WHILE T_LRB Expression T_RRB Statement { $$ = new WhileLoop($3, $5); }
 	|	T_DO Statement T_WHILE T_LRB Expression T_RRB T_SC { $$ = $2; }
-	|	T_FOR T_LRB Expression T_SC Expression T_SC Expression T_RRB Statement { $$ = $9; }
+	|	T_FOR T_LRB Expression T_SC Expression T_SC Expression T_RRB Statement
+		{ $$ = new ForLoop($3, $5, $7, $9); }
 		;
 
 // Expressions

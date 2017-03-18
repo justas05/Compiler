@@ -414,6 +414,7 @@ AssignmentExpression::AssignmentExpression(Expression* lhs, Expression* rhs)
 
 VariableStackBindings AssignmentExpression::printAsm(VariableStackBindings bindings, unsigned& label_count) const
 {
+    std::cout << "# Assignment at stack position: " << lhs_->postfixStackPosition(bindings) << std::endl;
     // TODO add stack and store results in there, also for addition and multiplication.
 
     // get the current location of lhs in the stack so that I can store result there

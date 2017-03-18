@@ -51,13 +51,16 @@ void CompoundStatement::printXml() const
     std::cout << "</Scope>" << std::endl;
 }
 
-VariableStackBindings CompoundStatement::printAsm(VariableStackBindings bindings, unsigned& label_count) const
+VariableStackBindings CompoundStatement::printAsm(VariableStackBindings bindings,
+						  unsigned& label_count) const
 {
+    std::cout << "# printint compound statement" << std::endl;
     VariableStackBindings outer_scope_bindings = bindings;
     
     if(next_statement_ != nullptr)
 	next_statement_->printAsm(bindings, label_count);
-
+    else
+	std::cout << "# No statement\n";
     if(declaration_ != nullptr)
 	bindings = declaration_->printAsm(bindings, label_count);
 
@@ -130,6 +133,7 @@ void SelectionStatement::printXml() const
 VariableStackBindings SelectionStatement::printAsm(VariableStackBindings bindings,
 						   unsigned& label_count) const
 {
+    std::cout << "# If Statement\n";
     unsigned if_label = label_count++;
 	
     condition_->printAsm(bindings, label_count);
@@ -184,11 +188,10 @@ void ExpressionStatement::print() const
 void ExpressionStatement::printXml() const
 {}
 
-VariableStackBindings ExpressionStatement::printAsm(VariableStackBindings bindings, unsigned& label_count) const
+VariableStackBindings ExpressionStatement::printAsm(VariableStackBindings bindings,
+						    unsigned& label_count) const
 {
-    if(next_statement_ != nullptr)
-	next_statement_->printAsm(bindings, label_count);
-    
+    std::cout << "# Expression Statement\n";
     if(expression_ != nullptr)
 	expression_->printAsm(bindings, label_count);
     
@@ -231,7 +234,8 @@ void JumpStatement::printXml() const
 	next_statement_->printXml();
 }
 
-VariableStackBindings JumpStatement::printAsm(VariableStackBindings bindings, unsigned& label_count) const
+VariableStackBindings JumpStatement::printAsm(VariableStackBindings bindings,
+					      unsigned& label_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->printAsm(bindings, label_count);
@@ -308,19 +312,37 @@ WhileLoop::WhileLoop(Expression* condition, Statement* statement)
     : IterationStatement(condition, statement)
 {}
 
-VariableStackBindings WhileLoop::printAsm(VariableStackBindings bindings, unsigned& label_count) const
-{
+VariableStackBindings WhileLoop::printAsm(VariableStackBindings bindings,
+					  unsigned& label_count) const
+{   
     int while_label = label_count++;
+    
     std::cout << "\tb\t$" << while_label << "_while_cond\n\tnop\n$" << while_label
 	      << "_while_body:\n";
-
     statement_->printAsm(bindings, label_count);
-
     std::cout << "$" << while_label << "_while_cond:\n";
-
     condition_->printAsm(bindings, label_count);
-
     std::cout << "\tbne\t$2,$0,$" << while_label << "_while_body\n\tnop\n";
     
+    return bindings;
+}
+
+ForLoop::ForLoop(Expression* initializer, Expression* condition,
+		 Expression* incrementer, Statement* statement)
+    : IterationStatement(condition, statement), initializer_(initializer), incrementer_(incrementer)
+{}
+
+VariableStackBindings ForLoop::printAsm(VariableStackBindings bindings, unsigned& label_count) const
+{
+    int for_label = label_count++;
+    
+    initializer_->printAsm(bindings, label_count);
+    std::cout << "\tb\t$" << for_label << "_for_cond\n\tnop\n$" << for_label << "_for_body:\n";
+    statement_->printAsm(bindings, label_count);
+    incrementer_->printAsm(bindings, label_count);
+    std::cout << "$" << for_label << "_for_cond:\n";
+    condition_->printAsm(bindings, label_count);
+    std::cout << "\tbne\t$2,$0,$" << for_label << "_for_body\n\tnop\n";
+
     return bindings;
 }

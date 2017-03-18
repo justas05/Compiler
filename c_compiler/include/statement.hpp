@@ -131,7 +131,7 @@ private:
     ExpressionPtr initializer_;
     ExpressionPtr incrementer_;
 public:
-    ForLoop(Expression* intializer, Expression* condition, Expression* incrementer, Statement* statement);
+    ForLoop(Expression* initializer, Expression* condition, Expression* incrementer, Statement* statement);
 
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
 };
