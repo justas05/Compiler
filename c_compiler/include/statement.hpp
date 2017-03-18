@@ -1,5 +1,5 @@
-#ifndef AST_STATEMENT_HPP
-#define AST_STATEMENT_HPP
+#ifndef STATEMENT_HPP
+#define STATEMENT_HPP
 
 #include "bindings.hpp"
 #include "declaration.hpp"
@@ -13,7 +13,8 @@ class Statement;
 typedef std::shared_ptr<Statement> StatementPtr;
 
 
-class Statement : public Node {
+class Statement : public Node
+{
 protected:
     StatementPtr next_statement_;
     
@@ -31,7 +32,8 @@ public:
 };
 
 
-class CompoundStatement : public Statement {
+class CompoundStatement : public Statement
+{
 protected:
     DeclarationPtr declaration_;
     StatementPtr statement_;
@@ -49,7 +51,8 @@ public:
 };
 
 
-class SelectionStatement : public Statement {
+class SelectionStatement : public Statement
+{
 protected:
     ExpressionPtr condition_;
     StatementPtr if_;
@@ -66,7 +69,8 @@ public:
 };
 
 
-class ExpressionStatement : public Statement {
+class ExpressionStatement : public Statement
+{
 protected:
     ExpressionPtr expression_;
 public:
@@ -81,7 +85,8 @@ public:
 };
 
 
-class JumpStatement : public Statement {
+class JumpStatement : public Statement
+{
 protected:
     ExpressionPtr expression_;
 public:
@@ -96,18 +101,39 @@ public:
 };
 
 
-class IterationStatement : public Statement {
+class IterationStatement : public Statement
+{
 protected:
+    ExpressionPtr condition_;
     StatementPtr statement_;
 public:
-    IterationStatement(Statement* statement);
+    IterationStatement(Expression* condition, Statement* statement);
 
     virtual void print() const;
     virtual void printXml() const;
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const = 0;
 
     virtual void countVariables(unsigned& var_count) const;
     virtual void countArguments(unsigned& argument_count) const;    
+};
+
+class WhileLoop : public IterationStatement
+{
+public:
+    WhileLoop(Expression* condition, Statement* statement);
+
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_cout) const;
+};
+
+class ForLoop : public IterationStatement
+{
+private:
+    ExpressionPtr initializer_;
+    ExpressionPtr incrementer_;
+public:
+    ForLoop(Expression* intializer, Expression* condition, Expression* incrementer, Statement* statement);
+
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
 };
 
 
