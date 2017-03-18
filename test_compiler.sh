@@ -5,6 +5,7 @@
 echo "========================================"
 echo " Cleaning the temporaries and outputs"
 make clean
+rm -rf ./c_compiler/test/{out,ref}
 echo " Force building lexer"
 make -B bin/c_compiler
 

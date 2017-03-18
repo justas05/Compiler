@@ -2,11 +2,12 @@ int main()
 {
     int x, y, z;
 
-    x = 2 * 3;
-    y = 1 * 3;
-    z = 9;
+    y = 0;
+    for(x = 0; x < 50; x = x+1) {
+	y = y + 1;
+    }
 
-    y = x + y + z;
+    z = y + x - 5;
 
-    return y;
+    return z;
 }

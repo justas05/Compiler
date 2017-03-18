@@ -1,6 +1,6 @@
 int f(int a, int b, int c, int d, int f)
 {
-    return a + b + c+d+f;
+    return a + b + c + d + f;
 }
 
 int main()
