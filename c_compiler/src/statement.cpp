@@ -59,8 +59,7 @@ VariableStackBindings CompoundStatement::printAsm(VariableStackBindings bindings
     
     if(next_statement_ != nullptr)
 	next_statement_->printAsm(bindings, label_count);
-    else
-	std::cout << "# No statement\n";
+    
     if(declaration_ != nullptr)
 	bindings = declaration_->printAsm(bindings, label_count);
 
@@ -134,6 +133,9 @@ VariableStackBindings SelectionStatement::printAsm(VariableStackBindings binding
 						   unsigned& label_count) const
 {
     std::cout << "# If Statement\n";
+    if(next_statement_ != nullptr)
+	next_statement_->printAsm(bindings, label_count);
+    
     unsigned if_label = label_count++;
 	
     condition_->printAsm(bindings, label_count);
@@ -192,6 +194,9 @@ VariableStackBindings ExpressionStatement::printAsm(VariableStackBindings bindin
 						    unsigned& label_count) const
 {
     std::cout << "# Expression Statement\n";
+    if(next_statement_ != nullptr)
+	next_statement_->printAsm(bindings, label_count);
+    
     if(expression_ != nullptr)
 	expression_->printAsm(bindings, label_count);
     
@@ -314,7 +319,10 @@ WhileLoop::WhileLoop(Expression* condition, Statement* statement)
 
 VariableStackBindings WhileLoop::printAsm(VariableStackBindings bindings,
 					  unsigned& label_count) const
-{   
+{
+    if(next_statement_ != nullptr)
+	next_statement_->printAsm(bindings, label_count);
+    
     int while_label = label_count++;
     
     std::cout << "\tb\t$" << while_label << "_while_cond\n\tnop\n$" << while_label
@@ -334,6 +342,9 @@ ForLoop::ForLoop(Expression* initializer, Expression* condition,
 
 VariableStackBindings ForLoop::printAsm(VariableStackBindings bindings, unsigned& label_count) const
 {
+    if(next_statement_ != nullptr)
+	next_statement_->printAsm(bindings, label_count);
+    
     int for_label = label_count++;
     
     initializer_->printAsm(bindings, label_count);
