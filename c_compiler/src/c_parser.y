@@ -212,7 +212,7 @@ JumpStatement:	T_RETURN Expression T_SC { $$ = new JumpStatement($2); }
 		;
 
 IterationStatement:
-		T_WHILE T_LRB Expression T_RRB Statement { $$ = $5; }
+		T_WHILE T_LRB Expression T_RRB Statement { $$ = new WhileLoop($3, $5); }
 	|	T_DO Statement T_WHILE T_LRB Expression T_RRB T_SC { $$ = $2; }
 	|	T_FOR T_LRB Expression T_SC Expression T_SC Expression T_RRB Statement { $$ = $9; }
 		;
