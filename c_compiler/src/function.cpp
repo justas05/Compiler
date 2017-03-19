@@ -56,6 +56,11 @@ VariableStackBindings Function::printAsm(VariableStackBindings bindings, unsigne
     // Count the maximum number of arguments
     statement_->countArguments(max_argument_count);
 
+    unsigned max_depth = 0;
+    statement_->countExpressionDepth(max_depth);
+
+    std::cout << "# max depth: " << max_depth << "\n";
+
     if(max_argument_count < 4)
 	max_argument_count = 4;
 
@@ -63,7 +68,7 @@ VariableStackBindings Function::printAsm(VariableStackBindings bindings, unsigne
     countParameters(parameter_count);
     
     // This adds 2 to store the frame pointer and the return address
-    unsigned memory_needed = 4*(variable_count + max_argument_count + parameter_count + 2);
+    unsigned memory_needed = 4*(variable_count+max_argument_count+max_depth+parameter_count+2);
     
     // make frame double word aligned
     if(memory_needed % 8 != 0)
@@ -73,11 +78,12 @@ VariableStackBindings Function::printAsm(VariableStackBindings bindings, unsigne
 	      << memory_needed << "\n\tsw\t$31," << memory_needed-4 << "($sp)\n" << "\tsw\t$fp,"
 	      << memory_needed-8 << "($sp)\n\tmove\t$fp,$sp\n";
 
-    // TODO print asm for parameters
-    printParameterAsm(bindings, max_argument_count, memory_needed);
 
     // set the stack counter to the right value
     bindings.setStackPosition((max_argument_count+parameter_count)*4);
+    bindings.setExpressionStackPosition((max_argument_count+parameter_count+variable_count)*4);
+
+    printParameterAsm(bindings, max_argument_count, memory_needed);
     
     // Prints the asm for the compound statement in the function
     statement_->printAsm(bindings, label_count);

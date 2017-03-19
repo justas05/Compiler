@@ -51,10 +51,8 @@ void CompoundStatement::printXml() const
     std::cout << "</Scope>" << std::endl;
 }
 
-VariableStackBindings CompoundStatement::printAsm(VariableStackBindings bindings,
-						  unsigned& label_count) const
+VariableStackBindings CompoundStatement::printAsm(VariableStackBindings bindings, unsigned& label_count) const
 {
-    std::cout << "# printint compound statement" << std::endl;
     VariableStackBindings outer_scope_bindings = bindings;
     
     if(next_statement_ != nullptr)
@@ -103,6 +101,23 @@ void CompoundStatement::countArguments(unsigned& argument_count) const
 	statement_->countArguments(argument_count);
 }
 
+void CompoundStatement::countExpressionDepth(unsigned &depth_count) const
+{
+    unsigned previous_depth_count = depth_count;
+    if(next_statement_ != nullptr) {
+	next_statement_->countExpressionDepth(depth_count);
+	if(previous_depth_count > depth_count)
+	    depth_count = previous_depth_count;
+	previous_depth_count = depth_count;
+    }
+
+    if(statement_ != nullptr) {
+	statement_->countExpressionDepth(depth_count);
+	if(previous_depth_count > depth_count)
+	    depth_count = previous_depth_count;
+    }
+}
+
 
 // Selection Statement definition
 
@@ -129,10 +144,8 @@ void SelectionStatement::printXml() const
 	else_->printXml();
 }
 
-VariableStackBindings SelectionStatement::printAsm(VariableStackBindings bindings,
-						   unsigned& label_count) const
+VariableStackBindings SelectionStatement::printAsm(VariableStackBindings bindings, unsigned& label_count) const
 {
-    std::cout << "# If Statement\n";
     if(next_statement_ != nullptr)
 	next_statement_->printAsm(bindings, label_count);
     
@@ -177,6 +190,34 @@ void SelectionStatement::countArguments(unsigned& argument_count) const
 	else_->countArguments(argument_count);
 }
 
+void SelectionStatement::countExpressionDepth(unsigned& depth_count) const
+{
+    unsigned previous_depth_count = depth_count;
+
+    if(next_statement_ != nullptr) {
+	next_statement_->countExpressionDepth(depth_count);
+	if(previous_depth_count > depth_count)
+	    depth_count = previous_depth_count;
+	previous_depth_count = depth_count;
+    }
+
+    depth_count = 1;
+    condition_->expressionDepth(depth_count);
+    if(previous_depth_count > depth_count)
+	depth_count = previous_depth_count;
+    previous_depth_count = depth_count;
+    
+    if_->countExpressionDepth(depth_count);
+    if(previous_depth_count > depth_count)
+	depth_count = previous_depth_count;
+    previous_depth_count = depth_count;
+
+    if(else_ != nullptr) {
+	else_->countExpressionDepth(depth_count);
+	if(previous_depth_count > depth_count)
+	    depth_count = previous_depth_count;
+    }
+}
 
 // Expression Statement definition
 
@@ -190,10 +231,8 @@ void ExpressionStatement::print() const
 void ExpressionStatement::printXml() const
 {}
 
-VariableStackBindings ExpressionStatement::printAsm(VariableStackBindings bindings,
-						    unsigned& label_count) const
+VariableStackBindings ExpressionStatement::printAsm(VariableStackBindings bindings, unsigned& label_count) const
 {
-    std::cout << "# Expression Statement\n";
     if(next_statement_ != nullptr)
 	next_statement_->printAsm(bindings, label_count);
     
@@ -223,6 +262,25 @@ void ExpressionStatement::countArguments(unsigned& argument_count) const
 	argument_count = tmp_argument_count;
 }
 
+void ExpressionStatement::countExpressionDepth(unsigned& depth_count) const
+{
+    unsigned previous_depth_count = depth_count;
+
+    if(next_statement_ != nullptr) {
+	next_statement_->countExpressionDepth(depth_count);
+	if(previous_depth_count > depth_count)
+	    depth_count = previous_depth_count;
+	previous_depth_count = depth_count;
+    }
+
+    if(expression_ != nullptr) {
+	depth_count = 1;
+	expression_->expressionDepth(depth_count);
+	if(previous_depth_count > depth_count)
+	    depth_count = previous_depth_count;
+    }
+}
+
 
 // Jump Statement definition
 
@@ -239,8 +297,7 @@ void JumpStatement::printXml() const
 	next_statement_->printXml();
 }
 
-VariableStackBindings JumpStatement::printAsm(VariableStackBindings bindings,
-					      unsigned& label_count) const
+VariableStackBindings JumpStatement::printAsm(VariableStackBindings bindings, unsigned& label_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->printAsm(bindings, label_count);
@@ -273,6 +330,25 @@ void JumpStatement::countArguments(unsigned& argument_count) const
 	argument_count = tmp_argument_count;
 }
 
+void JumpStatement::countExpressionDepth(unsigned& depth_count) const
+{
+    unsigned previous_depth_count = depth_count;
+
+    if(next_statement_ != nullptr) {
+	next_statement_->countExpressionDepth(depth_count);
+	if(previous_depth_count > depth_count)
+	    depth_count = previous_depth_count;
+	previous_depth_count = depth_count;
+    }
+
+    if(expression_ != nullptr) {
+	depth_count = 1;
+	expression_->expressionDepth(depth_count);
+	if(previous_depth_count > depth_count)
+	    depth_count = previous_depth_count;
+    }
+}
+
 
 // Iteration Statement definition
 
@@ -301,13 +377,35 @@ void IterationStatement::countVariables(unsigned& var_count) const
 	statement_->countVariables(var_count);
 }
 
-void IterationStatement::countArguments(unsigned int &argument_count) const
+void IterationStatement::countArguments(unsigned& argument_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->countArguments(argument_count);
 
     if(statement_ != nullptr)
 	statement_->countArguments(argument_count);
+}
+
+void IterationStatement::countExpressionDepth(unsigned& depth_count) const
+{
+    unsigned previous_depth_count = depth_count;
+
+    if(next_statement_ != nullptr) {
+	next_statement_->countExpressionDepth(depth_count);
+	if(previous_depth_count > depth_count)
+	    depth_count = previous_depth_count;
+	previous_depth_count = depth_count;
+    }
+    
+    depth_count = 1;
+    condition_->expressionDepth(depth_count);
+    if(previous_depth_count > depth_count)
+	depth_count = previous_depth_count;
+    previous_depth_count = depth_count;
+
+    statement_->countExpressionDepth(depth_count);
+    if(previous_depth_count > depth_count)
+	depth_count = previous_depth_count;
 }
 
 

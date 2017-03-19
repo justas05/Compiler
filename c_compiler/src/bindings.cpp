@@ -6,7 +6,7 @@
 // VariableStackBindings definition
 
 VariableStackBindings::VariableStackBindings()
-    : stack_counter_(0), expression_stack_(-4)
+    : stack_counter_(0), expression_stack_(16)
 {}
 
 void VariableStackBindings::insertBinding(std::string id, TypePtr type, int stack_position)
@@ -30,7 +30,12 @@ void VariableStackBindings::setStackPosition(int stack_counter)
 
 void VariableStackBindings::nextExpressionStackPosition()
 {
-    expression_stack_ -= 4;
+    expression_stack_ += 4;
+}
+
+void VariableStackBindings::setExpressionStackPosition(const int& stack_counter)
+{
+    expression_stack_ = stack_counter;
 }
 
 int VariableStackBindings::currentStackPosition() const

@@ -177,7 +177,7 @@ IdentifierList:	T_IDENTIFIER { $$ = new Declaration(); }
 
 StatementList:
 		Statement { $$ = $1; }
-|	StatementList Statement { $2->linkStatement($$); $$ = $2; printf("# Making statement list\n"); }
+	|	StatementList Statement { $2->linkStatement($$); $$ = $2; }
 		;
 
 Statement:	CompoundStatement { $$ = $1; }
@@ -205,7 +205,7 @@ SelectionStatement:
 
 ExpressionStatement:
 		T_SC { $$ = new ExpressionStatement(); }
-|	Expression T_SC { $$ = new ExpressionStatement($1); printf("# Adding Expression statement\n"); }
+|	Expression T_SC { $$ = new ExpressionStatement($1); }
 		;
 
 JumpStatement:	T_RETURN Expression T_SC { $$ = new JumpStatement($2); }

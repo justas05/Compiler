@@ -6,22 +6,25 @@
 // Expression definition
 
 void Expression::print() const
-{
-    std::cerr << "This expression has not been implemented yet" << std::endl;
-}
+{}
 
 void Expression::printXml() const
+{}
+
+void Expression::countArguments(unsigned& argument_count) const
 {
-    // Does nothing as I do not want it to appear in the xml output
+    // by default don't do anything to the count
+    (void)argument_count;
 }
 
-void Expression::countArguments(unsigned int &argument_count) const
+void Expression::expressionDepth(unsigned& depth_count) const
 {
-    (void)argument_count;
+    (void)depth_count;
 }
 
 int Expression::postfixStackPosition(VariableStackBindings bindings) const
 {
+    // call this if the expression is not a postfix expression
     std::cerr << "Error : Can't call 'getPostfixStackPosition(VariableStackBindings " <<
 	"bindings)' on this type of expression" << std::endl;
     (void)bindings;
@@ -30,11 +33,13 @@ int Expression::postfixStackPosition(VariableStackBindings bindings) const
 
 void Expression::setPostfixExpression(Expression *postfix_expression)
 {
+    // do nothing if expression isn't a postfix expression
     (void)postfix_expression;
 }
 
 std::string Expression::id() const
 {
+    // by default return empty id, which cannot be valid.
     return "";
 }
 
@@ -55,6 +60,20 @@ ExpressionPtr Expression::nextExpression() const
 OperationExpression::OperationExpression(Expression* lhs, Expression* rhs)
     : lhs_(lhs), rhs_(rhs)
 {}
+
+void OperationExpression::expressionDepth(unsigned& depth_count) const
+{
+    unsigned lhs_depth_count = depth_count;
+    unsigned rhs_depth_count = depth_count+1;
+
+    lhs_->expressionDepth(lhs_depth_count);
+    rhs_->expressionDepth(rhs_depth_count);
+
+    if(lhs_depth_count > rhs_depth_count)
+	depth_count = lhs_depth_count;
+    else
+	depth_count = rhs_depth_count;
+}
 
 void OperationExpression::evaluateExpression(VariableStackBindings bindings, unsigned& label_count) const
 {
@@ -414,7 +433,6 @@ AssignmentExpression::AssignmentExpression(Expression* lhs, Expression* rhs)
 
 VariableStackBindings AssignmentExpression::printAsm(VariableStackBindings bindings, unsigned& label_count) const
 {
-    std::cout << "# Assignment at stack position: " << lhs_->postfixStackPosition(bindings) << std::endl;
     // TODO add stack and store results in there, also for addition and multiplication.
 
     // get the current location of lhs in the stack so that I can store result there
@@ -484,4 +502,3 @@ VariableStackBindings Constant::printAsm(VariableStackBindings bindings, unsigne
     std::cout << "\tsw\t$2," << bindings.currentExpressionStackPosition() << "($fp)" << std::endl;
     return bindings;
 }
-

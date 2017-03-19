@@ -27,6 +27,7 @@ public:
 
     virtual void countVariables(unsigned& var_count) const = 0;
     virtual void countArguments(unsigned& argument_count) const = 0;
+    virtual void countExpressionDepth(unsigned& depth_count) const = 0;
 
     void linkStatement(Statement* next);
 };
@@ -47,7 +48,8 @@ public:
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
 
     virtual void countVariables(unsigned& var_count) const;
-    virtual void countArguments(unsigned& argument_count) const;    
+    virtual void countArguments(unsigned& argument_count) const;
+    virtual void countExpressionDepth(unsigned& depth_count) const;
 };
 
 
@@ -65,7 +67,8 @@ public:
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
 
     virtual void countVariables(unsigned& var_count) const;
-    virtual void countArguments(unsigned& argument_count) const;    
+    virtual void countArguments(unsigned& argument_count) const;
+    virtual void countExpressionDepth(unsigned& depth_count) const;
 };
 
 
@@ -81,7 +84,8 @@ public:
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
 
     virtual void countVariables(unsigned& var_count) const;
-    virtual void countArguments(unsigned& argument_count) const;    
+    virtual void countArguments(unsigned& argument_count) const;
+    virtual void countExpressionDepth(unsigned& depth_count) const;    
 };
 
 
@@ -98,6 +102,7 @@ public:
 
     virtual void countVariables(unsigned& var_count) const;
     virtual void countArguments(unsigned& argument_count) const;
+    virtual void countExpressionDepth(unsigned& depth_count) const;    
 };
 
 
@@ -114,7 +119,8 @@ public:
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const = 0;
 
     virtual void countVariables(unsigned& var_count) const;
-    virtual void countArguments(unsigned& argument_count) const;    
+    virtual void countArguments(unsigned& argument_count) const;
+    virtual void countExpressionDepth(unsigned& depth_count) const;
 };
 
 class WhileLoop : public IterationStatement
@@ -122,7 +128,7 @@ class WhileLoop : public IterationStatement
 public:
     WhileLoop(Expression* condition, Statement* statement);
 
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_cout) const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
 };
 
 class ForLoop : public IterationStatement

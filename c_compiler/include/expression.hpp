@@ -25,6 +25,7 @@ public:
     virtual void print() const;
     virtual void printXml() const;
     virtual void countArguments(unsigned& argument_count) const;
+    virtual void expressionDepth(unsigned& depth_count) const;
     
     virtual int postfixStackPosition(VariableStackBindings bindings) const;
     virtual void setPostfixExpression(Expression* postfix_expression);
@@ -46,6 +47,7 @@ public:
 
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const = 0;
 
+    virtual void expressionDepth(unsigned& depth_count) const;
     void evaluateExpression(VariableStackBindings bindings, unsigned& label_count) const;
 };
 

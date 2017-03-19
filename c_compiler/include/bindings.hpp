@@ -33,6 +33,7 @@ public:
     void increaseStackPosition();
     void setStackPosition(int stack_counter);
     void nextExpressionStackPosition();
+    void setExpressionStackPosition(const int& stack_counter);
 
     int currentStackPosition() const;
     int stackPosition(const std::string& id) const;
