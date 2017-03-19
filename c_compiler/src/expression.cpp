@@ -146,6 +146,7 @@ VariableStackBindings PostfixFunctionCall::printAsm(VariableStackBindings bindin
     }
 
     std::cout << "\tjal\t" << postfix_expression_->id() << "\n\tnop\n";
+    std::cout << "\tsw\t$2," << bindings.currentExpressionStackPosition() << "($fp)\n";
     
     return bindings;
 }

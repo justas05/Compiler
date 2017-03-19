@@ -25,3 +25,6 @@ out/
 # emacs temp files
 
 .#*
+
+
+vgcore.*

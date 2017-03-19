@@ -59,8 +59,6 @@ VariableStackBindings Function::printAsm(VariableStackBindings bindings, unsigne
     unsigned max_depth = 0;
     statement_->countExpressionDepth(max_depth);
 
-    std::cout << "# max depth: " << max_depth << "\n";
-
     if(max_argument_count < 4)
 	max_argument_count = 4;
 
