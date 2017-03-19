@@ -96,7 +96,7 @@ ExternalDeclaration:
 
 FunctionDefinition:
 		DeclarationSpec Declarator CompoundStatement
-		{ $$ = new Function($2->getId(), $3, $2->getNext()); }
+		{ $$ = new Function($2->getId(), $3, $2->getNext()); delete $1; }
 		;
 
 ParameterList:
@@ -105,7 +105,7 @@ ParameterList:
 	|       ParameterList T_CMA Parameter { $3->linkDeclaration($$); $$ = $3; }
 		;
 
-Parameter:	DeclarationSpec T_IDENTIFIER { $$ = new Declaration(*$2); delete $2; }
+Parameter:	DeclarationSpec T_IDENTIFIER { $$ = new Declaration(*$2); delete $2; delete $1; }
 		;
 
 // Declaration
@@ -153,7 +153,7 @@ InitDeclaratorList:
 		;
 
 InitDeclarator:	Declarator { $$ = $1; }
-		    |	Declarator T_EQ AssignmentExpression { $$->setInitializer($3); }
+		    |	Declarator T_EQ AssignmentExpression { $$->setInitializer($3); delete $2; }
 		;
 
 Declarator:	DirectDeclarator { $$ = $1; }
@@ -225,7 +225,7 @@ Expression:	AssignmentExpression { $$ = $1; }
 
 AssignmentExpression:
 		ConditionalExpression { $$ = $1; }
-	|	UnaryExpression ASSIGN_OPER AssignmentExpression { $$ = new AssignmentExpression($1, $3); }
+	|	UnaryExpression ASSIGN_OPER AssignmentExpression { $$ = new AssignmentExpression($1, $3); delete $2; }
 		;
 
 ASSIGN_OPER:	T_ASSIGN_OPER { ; }
@@ -317,7 +317,7 @@ UnaryExpression:
 	|	T_INCDEC UnaryExpression { $$ = $2; }
 	|	UnaryOperator CastExpression { $$ = $2; }
 	|	T_SIZEOF UnaryExpression { $$ = $2; }
-	|	T_SIZEOF T_LRB DeclarationSpec T_RRB { $$ = new Constant(0); }
+	|	T_SIZEOF T_LRB DeclarationSpec T_RRB { $$ = new Constant(0); delete $3; }
 		;
 
 UnaryOperator:	T_AND { $$ = $1; }
