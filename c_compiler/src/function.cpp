@@ -47,6 +47,7 @@ void Function::printXml() const
 
 VariableStackBindings Function::printAsm(VariableStackBindings bindings, unsigned& label_count) const
 {
+    VariableStackBindings original_bindings = bindings;
     // Counting all the variables being declared in the function
     unsigned variable_count = 0;
     if(statement_ != nullptr)
@@ -90,7 +91,7 @@ VariableStackBindings Function::printAsm(VariableStackBindings bindings, unsigne
 	      << memory_needed-8 << "($sp)\n\taddiu\t$sp,$sp," << memory_needed
 	      << "\n\tjr\t$31\n\tnop\n";
 
-    return bindings;
+    return original_bindings;
 }
 
 void Function::printParameterAsm(VariableStackBindings& bindings, unsigned& stack_offset,

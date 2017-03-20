@@ -142,8 +142,18 @@
      CLOCK: [2017-03-17 Fri 15:44]--[2017-03-17 Fri 16:00] =>  0:16
 
      Have to fix type assigment for declaration lists, need to make new pointers of the right type.
-**** TODO Load more that 4 bytes into a variable.
-**** TODO Fix expressions and temporary variables
+**** DONE Load more that 4 bytes into a variable.
+**** DONE Fix expressions and temporary variables
 
      I have to store the temporary expression in normal registers.
 
+**** TODO Convert cout to printf
+
+     convert all cout to printf
+     
+**** TODO Add global variables
+
+     Change code so that it also prints global variables. This should be done with 
+     the globalAsm function.
+
+     I might have to change the print Asm and the global Asm function in the declarations.

@@ -22,6 +22,7 @@ private:
 public:
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const = 0;
     
+    virtual int constantFold() const;
     virtual void print() const;
     virtual void printXml() const;
     virtual void countArguments(unsigned& argument_count) const;
@@ -46,7 +47,7 @@ public:
     OperationExpression(Expression* lhs, Expression* rhs);
 
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const = 0;
-
+    virtual int constantFold() const;
     virtual void expressionDepth(unsigned& depth_count) const;
     void evaluateExpression(VariableStackBindings bindings, unsigned& label_count) const;
 };
@@ -117,6 +118,7 @@ public:
     AdditiveExpression(Expression* lhs, const std::string& _operator, Expression* rhs);
 
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
+    virtual int constantFold() const;
 };
 
 
@@ -129,6 +131,7 @@ public:
     MultiplicativeExpression(Expression* lhs, const std::string& _operator, Expression* rhs);
 
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
+    virtual int constantFold() const;
 };
 
 
@@ -140,6 +143,7 @@ public:
     ShiftExpression(Expression* lhs, const std::string& _operator, Expression* rhs);
 
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
+    virtual int constantFold() const;
 };
 
 
@@ -151,6 +155,7 @@ public:
     RelationalExpression(Expression* lhs, const std::string& _operator, Expression* rhs);
 
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
+    virtual int constantFold() const;
 };
 
 
@@ -162,6 +167,7 @@ public:
     EqualityExpression(Expression* lhs, const std::string& _operator, Expression* rhs);
 
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
+    virtual int constantFold() const;
 };
 
 
@@ -171,6 +177,7 @@ public:
     AndExpression(Expression* lhs, Expression* rhs);
 
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
+    virtual int constantFold() const;
 };
 
 
@@ -180,6 +187,7 @@ public:
     ExclusiveOrExpression(Expression* lhs, Expression* rhs);
 
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
+    virtual int constantFold() const;
 };
 
 
@@ -189,6 +197,7 @@ public:
     InclusiveOrExpression(Expression* lhs, Expression* rhs);
 
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
+    virtual int constantFold() const; 
 };
 
 
@@ -198,6 +207,7 @@ public:
     LogicalAndExpression(Expression* lhs, Expression* rhs);
 
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
+    virtual int constantFold() const;
 };
 
 
@@ -207,6 +217,7 @@ public:
     LogicalOrExpression(Expression* lhs, Expression* rhs);
 
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
+    virtual int constantFold() const;    
 };
 
 
@@ -255,6 +266,7 @@ public:
     Constant(const int32_t& constant);
 
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
+    virtual int constantFold() const;
 };
 
 

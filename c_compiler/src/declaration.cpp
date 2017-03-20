@@ -3,7 +3,7 @@
 #include "type.hpp"
 #include "expression.hpp"
 
-#include <iostream>
+#include <cstdio>
 
 
 // Declaration definition
@@ -18,7 +18,7 @@ void Declaration::print() const
 	next_declaration_->print();
     
     if(id_ != "")
-	std::cout << id_ << std::endl;
+	printf("%s\n", id_.c_str());
 }
 
 void Declaration::printXml() const
@@ -31,41 +31,43 @@ void Declaration::printXml() const
     }
 
     if(id_ != "")
-	std::cout << "<Variable id=\""<< id_ << "\" />" << std::endl;
+	printf("<Variable id=\"%s\" />", id_.c_str());
 }
 
 VariableStackBindings Declaration::printAsm(VariableStackBindings bindings, unsigned& label_count) const
 {
-    // if(init == nullptr)
-    // 	std::cout << "\t.comm\t" << id << ",4,4" << std::endl;
-    // else {
-    // 	std::cout << "\t.data\n\t.globl\t" << id << std::endl;
-    // 	std::cout << id << ":\n\t.word\t" << std::endl;
-    // }
+    (void)label_count;
+    
+    if(initializer_ == nullptr)
+	printf("\t.comm\t%s,4,4\n", id_.c_str());
+    else
+	printf("\t.data\n\t.globl\t%s\n%s:\n\t.word\t%d\n",
+	       id_.c_str(), id_.c_str(), initializer_->constantFold());
 
-    // return bindings;
+    bindings.insertBinding(id_, type_, -1);
+    return bindings;
+}
 
+VariableStackBindings Declaration::localAsm(VariableStackBindings bindings, unsigned& label_count) const
+{
     if(next_declaration_ != nullptr)
-	bindings = next_declaration_->printAsm(bindings, label_count);
+	bindings = next_declaration_->localAsm(bindings, label_count);
 
     if(next_list_declaration_ != nullptr)
-	bindings = next_list_declaration_->printAsm(bindings, label_count);
+	bindings = next_list_declaration_->localAsm(bindings, label_count);
     
     if(id_ != "") {
 	if(initializer_ != nullptr)
 	    initializer_->printAsm(bindings, label_count);
 	else
-	    std::cout << "\tmove\t$2,$0" << std::endl;
+	    printf("\tmove\t$2,$0\n");
 
-	int32_t stack_position = bindings.currentStackPosition();
-
-	std::cout << "\tsw\t$2," << stack_position << "($fp)" << std::endl;
-
+	int stack_position = bindings.currentStackPosition();
+	printf("\tsw\t$2,%d($fp)\n", stack_position);
 	bindings.insertBinding(id_, type_, stack_position);
-
 	bindings.increaseStackPosition();
     }
-    
+
     return bindings;
 }
 

@@ -28,7 +28,7 @@ void TranslationUnit::printXml() const
 VariableStackBindings TranslationUnit::printAsm(VariableStackBindings bindings, unsigned& label_count) const
 {
     for(auto& node : translation_unit_) {
-	node->printAsm(bindings, label_count);
+	bindings = node->printAsm(bindings, label_count);
     }
 
     return bindings;

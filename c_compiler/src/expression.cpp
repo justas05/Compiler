@@ -1,9 +1,16 @@
 #include "expression.hpp"
 
+#include <cstdio>
+#include <exception>
 #include <iostream>
 #include <vector>
 
 // Expression definition
+
+int Expression::constantFold() const
+{
+    throw std::runtime_error("Error : Cannot constant fold this expression");
+}
 
 void Expression::print() const
 {}
@@ -24,11 +31,8 @@ void Expression::expressionDepth(unsigned& depth_count) const
 
 int Expression::postfixStackPosition(VariableStackBindings bindings) const
 {
-    // call this if the expression is not a postfix expression
-    std::cerr << "Error : Can't call 'getPostfixStackPosition(VariableStackBindings " <<
-	"bindings)' on this type of expression" << std::endl;
     (void)bindings;
-    return -1;
+    throw std::runtime_error("Error : Can't call postfixStackExpression() on this type");
 }
 
 void Expression::setPostfixExpression(Expression *postfix_expression)
@@ -61,6 +65,11 @@ OperationExpression::OperationExpression(Expression* lhs, Expression* rhs)
     : lhs_(lhs), rhs_(rhs)
 {}
 
+int OperationExpression::constantFold() const
+{
+    throw std::runtime_error("Error : Cannot constant fold expression\n");
+}
+
 void OperationExpression::expressionDepth(unsigned& depth_count) const
 {
     unsigned lhs_depth_count = depth_count;
@@ -89,9 +98,8 @@ void OperationExpression::evaluateExpression(VariableStackBindings bindings, uns
 
     // now I have them evaluated at two positions in the stack and can load both into registers
     // $2 and $3
-
-    std::cout << "\tlw\t$2," << lhs_stack_position << "($fp)" << std::endl;
-    std::cout << "\tlw\t$3," << bindings.currentExpressionStackPosition() << "($fp)" << std::endl;
+    printf("\tlw\t$2,%d($fp)\n\tlw\t$3,%d($fp)\n",
+	   lhs_stack_position, bindings.currentExpressionStackPosition());
 }
 
 
@@ -138,16 +146,15 @@ VariableStackBindings PostfixFunctionCall::printAsm(VariableStackBindings bindin
 	(*itr)->printAsm(bindings, label_count);
 
 	if(argument_counter < 4)
-	    std::cout << "\tmove\t$" << 4+argument_counter << ",$2\n";
+	    printf("\tmove\t$%d,$2\n", 4+argument_counter);
 	else
-	    std::cout << "\tsw\t$2," << 4*argument_counter << "($fp)\n";
+	    printf("\tsw\t$2,%d($fp)\n", 4*argument_counter);
 
 	argument_counter++;
     }
 
-    std::cout << "\tjal\t" << postfix_expression_->id() << "\n\tnop\n";
-    std::cout << "\tsw\t$2," << bindings.currentExpressionStackPosition() << "($fp)\n";
-    
+    printf("\tjal\t%s\n\tnop\n\tsw\t$2,%d($fp)\n",
+	   postfix_expression_->id().c_str(), bindings.currentExpressionStackPosition());
     return bindings;
 }
 
@@ -206,16 +213,23 @@ VariableStackBindings AdditiveExpression::printAsm(VariableStackBindings binding
     // TODO currently using signed and sub because I only have signed numbers implemented
     // must update this as I add more types
     if(operator_ == "+")
-	std::cout << "\tadd\t$2,$2,$3" << std::endl;
+	printf("\tadd\t$2,$2,$3\n");
     else if(operator_ == "-")
-	std::cout << "\tsub\t$2,$2,$3" << std::endl;
+	printf("\tsub\t$2,$2,$3\n");
     else
-	std::cerr << "Don't recognize symbol: '" << operator_ << "'" << std::endl;
+	throw std::runtime_error("Error : '"+operator_+"' not recognized");
 
     // now I have to store it back into the original stack position
-    std::cout << "\tsw\t$2," << bindings.currentExpressionStackPosition() << "($fp)" << std::endl;
+    printf("\tsw\t$2,%d($fp)\n", bindings.currentExpressionStackPosition());
 
     return bindings;
+}
+
+int AdditiveExpression::constantFold() const
+{
+    if(operator_ == "+")
+	return lhs_->constantFold()+rhs_->constantFold();
+    return lhs_->constantFold()-rhs_->constantFold();
 }
 
 
@@ -231,21 +245,34 @@ VariableStackBindings MultiplicativeExpression::printAsm(VariableStackBindings b
     evaluateExpression(bindings, label_count);
 
     // then perform the right operation
-    if(operator_ == "*")
-	std::cout << "\tmul\t$2,$2,$3" << std::endl;
-    else if(operator_ == "/" || operator_ == "%") {
-	std::cout << "\tdiv\t$2,$3" << std::endl;
+    if(operator_ == "*") {
+	printf("\tmul\t$2,$2,$3\n");
+	
+    } else if(operator_ == "/" || operator_ == "%") {
+	printf("\tdiv\t$2,$3\n");
 	if(operator_ == "/")
-	    std::cout << "\tmflo\t$2" << std::endl;
+	    printf("\tmflo\t$2\n");
 	else
-	    std::cout << "\tmfhi\t$2" << std::endl;
-    } else
-	std::cerr << "Error : don't recognize symbol '" << operator_ << "'\n";
+	    printf("\tmfhi\t$2\n");
+	
+    } else {
+	throw std::runtime_error("Error : '"+operator_+"' not recognized");
+    }
+	
 
     // finally store result back into the stack position
-    std::cout << "\tsw\t$2," << bindings.currentExpressionStackPosition() << "($fp)\n";
+    printf("\tsw\t$2,%d($fp)\n", bindings.currentExpressionStackPosition());
 
     return bindings;
+}
+
+int MultiplicativeExpression::constantFold() const
+{
+    if(operator_ == "*")
+	return lhs_->constantFold()*rhs_->constantFold();
+    else if(operator_ == "/")
+	return lhs_->constantFold()/rhs_->constantFold();
+    return lhs_->constantFold()%rhs_->constantFold();
 }
 
 
@@ -270,6 +297,13 @@ VariableStackBindings ShiftExpression::printAsm(VariableStackBindings bindings, 
     std::cout << "\tsw\t$2," << bindings.currentExpressionStackPosition() << "($fp)\n";
 
     return bindings;
+}
+
+int ShiftExpression::constantFold() const
+{
+    if(operator_ == "<<")
+	return lhs_->constantFold()<<rhs_->constantFold();
+    return lhs_->constantFold()>>rhs_->constantFold();
 }
 
 
@@ -303,6 +337,17 @@ VariableStackBindings RelationalExpression::printAsm(VariableStackBindings bindi
     return bindings;
 }
 
+int RelationalExpression::constantFold() const
+{
+    if(operator_ == "<")
+	return lhs_->constantFold()<rhs_->constantFold();
+    else if(operator_ == ">")
+	return lhs_->constantFold()>rhs_->constantFold();
+    else if(operator_ == "<=")
+	return lhs_->constantFold()<=rhs_->constantFold();
+    return lhs_->constantFold()>=rhs_->constantFold();
+}
+
 
 // EqualityExpression definition
 
@@ -332,6 +377,13 @@ VariableStackBindings EqualityExpression::printAsm(VariableStackBindings binding
     return bindings;
 }
 
+int EqualityExpression::constantFold() const
+{
+    if(operator_ == "==")
+	return lhs_->constantFold()==rhs_->constantFold();
+    return lhs_->constantFold()!=rhs_->constantFold();
+}
+
 
 // AndExpression definition
 
@@ -350,6 +402,11 @@ VariableStackBindings AndExpression::printAsm(VariableStackBindings bindings, un
     return bindings;
 }
 
+int AndExpression::constantFold() const
+{
+    return lhs_->constantFold()&rhs_->constantFold();
+}
+
 
 // ExclusiveOrExpression definition
 
@@ -360,12 +417,13 @@ ExclusiveOrExpression::ExclusiveOrExpression(Expression* lhs, Expression* rhs)
 VariableStackBindings ExclusiveOrExpression::printAsm(VariableStackBindings bindings, unsigned& label_count) const
 {
     evaluateExpression(bindings, label_count);
-
-    std::cout << "\txor\t$2,$2,$3\n";
-
-    std::cout << "\tsw\t$2," << bindings.currentExpressionStackPosition() << "($fp)\n";
-
+    printf("\txor\t$2,$2,$3\n\tsw\t$2,%d($fp)\n", bindings.currentExpressionStackPosition());
     return bindings;
+}
+
+int ExclusiveOrExpression::constantFold() const
+{
+    return lhs_->constantFold()^rhs_->constantFold();
 }
 
 
@@ -378,12 +436,13 @@ InclusiveOrExpression::InclusiveOrExpression(Expression* lhs, Expression* rhs)
 VariableStackBindings InclusiveOrExpression::printAsm(VariableStackBindings bindings, unsigned& label_count) const
 {
     evaluateExpression(bindings, label_count);
-
-    std::cout << "\tor\t$2,$2,$3\n";
-
-    std::cout << "\tsw\t$2," << bindings.currentExpressionStackPosition() << "($fp)\n";
-    
+    printf("\tor\t$2,$2,$3\n\tsw\t$2,%d($fp)\n", bindings.currentExpressionStackPosition());
     return bindings;
+}
+
+int InclusiveOrExpression::constantFold() const
+{
+    return lhs_->constantFold()|rhs_->constantFold();
 }
 
 
@@ -398,6 +457,11 @@ VariableStackBindings LogicalAndExpression::printAsm(VariableStackBindings bindi
     return bindings;
 }
 
+int LogicalAndExpression::constantFold() const
+{
+    return lhs_->constantFold()&&rhs_->constantFold();
+}
+
 
 // LogicalOrExpression definition
 
@@ -408,6 +472,11 @@ LogicalOrExpression::LogicalOrExpression(Expression* lhs, Expression* rhs)
 VariableStackBindings LogicalOrExpression::printAsm(VariableStackBindings bindings, unsigned& label_count) const
 {
     return bindings;
+}
+
+int LogicalOrExpression::constantFold() const
+{
+    return lhs_->constantFold()&&rhs_->constantFold();
 }
 
 
@@ -447,10 +516,10 @@ VariableStackBindings AssignmentExpression::printAsm(VariableStackBindings bindi
     rhs_->printAsm(bindings, label_count);
 
     // now the result of the rhs will be in that stack position, so we can load it into $2
-    std::cout << "\tlw\t$2," << expression_stack_position << "($fp)" << std::endl;
+    printf("\tlw\t$2,%d($fp)\n", expression_stack_position);
 
     // we are assigning so we don't have to evaluate the lhs as it will be overwritten anyways
-    std::cout << "\tsw\t$2," << store_stack_position << "($fp)" << std::endl;
+    printf("\tsw\t$2,%d($fp)\n", store_stack_position);
     return bindings;
 }
 
@@ -464,13 +533,21 @@ Identifier::Identifier(const std::string& id)
 VariableStackBindings Identifier::printAsm(VariableStackBindings bindings, unsigned& label_count) const
 {
     (void)label_count;
+    
     if(bindings.bindingExists(id_)) {
-	std::cout << "\tlw\t$2," << bindings.stackPosition(id_) << "($fp)" << std::endl;
-    } else
-	std::cerr << "Can't find identifier '" << id_ << "' in current scope binding" << std::endl;
-
-    std::cout << "\tsw\t$2," << bindings.currentExpressionStackPosition() << "($fp)" << std::endl;
+	if(bindings.stackPosition(id_) == -1) {
+	    // it's a global variable
+	    printf("\tlui\t$2,%%hi(%s)\n\tlw\t$2,%%lo(%s)($2)\n", id_.c_str(), id_.c_str());
+	    
+	} else {
+	    printf("\tlw\t$2,%d($fp)\n", bindings.stackPosition(id_));
+	}
 	
+    } else{
+	throw std::runtime_error("Error : Can't find '"+id_+"' in current scope binding");
+    }
+
+    printf("\tsw\t$2,%d($fp)\n", bindings.currentExpressionStackPosition());
     return bindings;
 }
 
@@ -480,7 +557,7 @@ int Identifier::postfixStackPosition(VariableStackBindings bindings) const
 	return bindings.stackPosition(id_);
     }
 
-    return -1;
+    throw std::runtime_error("Error : Variable '"+id_+"' not yet declared");
 }
 
 std::string Identifier::id() const
@@ -499,7 +576,12 @@ VariableStackBindings Constant::printAsm(VariableStackBindings bindings, unsigne
 {
     (void)label_count;
     // constant only has to load to $2 because the other expression will take care of the rest
-    std::cout << "\tli\t$2," << constant_ << std::endl;
-    std::cout << "\tsw\t$2," << bindings.currentExpressionStackPosition() << "($fp)" << std::endl;
+    printf("\tli\t$2,%d\n", constant_);
+    printf("\tsw\t$2,%d($fp)\n", bindings.currentExpressionStackPosition());
     return bindings;
+}
+
+int Constant::constantFold() const
+{
+    return constant_;
 }

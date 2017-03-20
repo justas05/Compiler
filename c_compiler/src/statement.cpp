@@ -59,7 +59,7 @@ VariableStackBindings CompoundStatement::printAsm(VariableStackBindings bindings
 	next_statement_->printAsm(bindings, label_count);
     
     if(declaration_ != nullptr)
-	bindings = declaration_->printAsm(bindings, label_count);
+	bindings = declaration_->localAsm(bindings, label_count);
 
     if(statement_ != nullptr)
 	statement_->printAsm(bindings, label_count);
