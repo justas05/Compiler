@@ -2,7 +2,6 @@
 
 #include <cstdio>
 #include <exception>
-#include <iostream>
 #include <vector>
 
 // Expression definition
@@ -102,18 +101,6 @@ void OperationExpression::evaluateExpression(VariableStackBindings bindings, uns
 	   lhs_stack_position, bindings.currentExpressionStackPosition());
 }
 
-
-// PostfixExpression definition
-
-PostfixExpression::PostfixExpression()
-{}
-
-VariableStackBindings PostfixExpression::printAsm(VariableStackBindings bindings, unsigned& label_count) const
-{
-    return bindings;
-}
-
-
 // PostfixArrayElement
 
 PostfixArrayElement::PostfixArrayElement()
@@ -137,12 +124,14 @@ VariableStackBindings PostfixFunctionCall::printAsm(VariableStackBindings bindin
     ExpressionPtr current_argument = argument_expression_list_;
     unsigned argument_counter = 0;
 
-    while(current_argument != nullptr) {
+    while(current_argument != nullptr)
+    {
 	argument_vector.push_back(current_argument);
 	current_argument = current_argument->nextExpression();
     }
 
-    for(auto itr = argument_vector.rbegin(); itr != argument_vector.rend(); ++itr) {
+    for(auto itr = argument_vector.rbegin(); itr != argument_vector.rend(); ++itr)
+    {
 	(*itr)->printAsm(bindings, label_count);
 
 	if(argument_counter < 4)
@@ -164,7 +153,8 @@ void PostfixFunctionCall::countArguments(unsigned int &argument_count) const
 
     argument_count = 0;
     
-    while(current_argument != nullptr) {
+    while(current_argument != nullptr)
+    {
 	argument_count++;
 	current_argument = current_argument->nextExpression();
     }
@@ -177,13 +167,46 @@ void PostfixFunctionCall::setPostfixExpression(Expression* postfix_expression)
 }
 
 
-// UnaryExpression definition
+// Post increment and decrement definition
 
-UnaryExpression::UnaryExpression()
+PostfixPostIncDecExpression::PostfixPostIncDecExpression(const std::string& _operator, Expression* postfix_expression)
+    : operator_(_operator), postfix_expression_(postfix_expression)
 {}
 
-VariableStackBindings UnaryExpression::printAsm(VariableStackBindings bindings, unsigned& label_count) const
+VariableStackBindings PostfixPostIncDecExpression::printAsm(VariableStackBindings bindings, unsigned& label_count) const
 {
+    postfix_expression_->printAsm(bindings, label_count);
+    if(operator_ == "++")
+	printf("\taddi\t$3,$2,1\n");
+    else if(operator_ == "--")
+	printf("\tsubi\t$3,$2,1\n");
+    else
+	throw std::runtime_error("Error : '"+operator_+"' not recognized");
+
+    printf("\tsw\t$2,%d($fp)\n\tsw\t$3,%d($fp)\n", bindings.currentExpressionStackPosition(),
+	   postfix_expression_->postfixStackPosition(bindings));
+    return bindings;
+}
+
+
+// Pre increment and decrement implementation
+
+UnaryPreIncDecExpression::UnaryPreIncDecExpression(const std::string& _operator, Expression* unary_expression)
+    : operator_(_operator), unary_expression_(unary_expression)
+{}
+
+VariableStackBindings UnaryPreIncDecExpression::printAsm(VariableStackBindings bindings, unsigned& label_count) const
+{
+    unary_expression_->printAsm(bindings, label_count);
+    if(operator_ == "++")
+	printf("\taddi\t$2,$2,1\n");
+    else if(operator_ == "--")
+	printf("\tsubi\t$2,$2,1\n");
+    else
+	throw std::runtime_error("Error : '"+operator_+"' not recognized");
+    
+    printf("\tsw\t$2,%d($fp)\n\tsw\t$2,%d($fp)\n", bindings.currentExpressionStackPosition(),
+	   unary_expression_->postfixStackPosition(bindings));
     return bindings;
 }
 
@@ -245,17 +268,20 @@ VariableStackBindings MultiplicativeExpression::printAsm(VariableStackBindings b
     evaluateExpression(bindings, label_count);
 
     // then perform the right operation
-    if(operator_ == "*") {
-	printf("\tmul\t$2,$2,$3\n");
-	
-    } else if(operator_ == "/" || operator_ == "%") {
+    if(operator_ == "*")
+    {
+	printf("\tmul\t$2,$2,$3\n");	
+    }
+    else if(operator_ == "/" || operator_ == "%")
+    {
 	printf("\tdiv\t$2,$3\n");
 	if(operator_ == "/")
 	    printf("\tmflo\t$2\n");
 	else
-	    printf("\tmfhi\t$2\n");
-	
-    } else {
+	    printf("\tmfhi\t$2\n");	
+    }
+    else
+    {
 	throw std::runtime_error("Error : '"+operator_+"' not recognized");
     }
 	
@@ -286,15 +312,20 @@ VariableStackBindings ShiftExpression::printAsm(VariableStackBindings bindings, 
 {
     evaluateExpression(bindings, label_count);
 
-    if(operator_ == "<<") {
-	std::cout << "\tsll\t$2,$2,$3\n";
-    } else if(operator_ == ">>") {
-	std::cout << "\tsra\t$2,$2,$3\n";
-    } else {
-	std::cerr << "Error : don't recognize symbol '" << operator_ << "'\n";
+    if(operator_ == "<<")
+    {
+	printf("\tsll\t$2,$2,$3\n");
+    }
+    else if(operator_ == ">>")
+    {
+	printf("\tsra\t$2,$2,$3\n");
+    }
+    else
+    {
+	throw std::runtime_error("Error : '"+operator_+"' not recognized");
     }
 
-    std::cout << "\tsw\t$2," << bindings.currentExpressionStackPosition() << "($fp)\n";
+    printf("\tsw\t$2,%d($fp)\n", bindings.currentExpressionStackPosition());
 
     return bindings;
 }
@@ -317,34 +348,47 @@ VariableStackBindings RelationalExpression::printAsm(VariableStackBindings bindi
 {
     evaluateExpression(bindings, label_count);
 
-    if(operator_ == "<") {
-	std::cout << "\tslt\t$2,$2,$3\n";
-    } else if(operator_ == ">") {
-	std::cout << "\tslt\t$2,$3,$2\n";
-    } else if(operator_ == "<=") {
-	std::cout << "\tslt\t$2,$3,$2\n\txori\t$2,$2,0x1\n";
-    } else if(operator_ == ">=") {
-	std::cout << "\tslt\t$2,$2,$3\n\txori\t$2,$2,0x1\n";	
-    } else {
-	std::cerr << "Error : don't recognize symbol '" << operator_ << "'\n";
+    if(operator_ == "<")
+    {
+	printf("\tslt\t$2,$2,$3\n");
+    }
+    else if(operator_ == ">")
+    {
+	printf("\tslt\t$2,$3,$2\n");
+    }
+    else if(operator_ == "<=")
+    {
+	printf("\tslt\t$2,$3,$2\n\txori\t$2,$2,0x1\n");
+    }
+    else if(operator_ == ">=")
+    {
+	printf("\tslt\t$2,$2,$3\n\txori\t$2,$2,0x1\n");
+    }
+    else
+    {
+	throw std::runtime_error("Error : '"+operator_+"' not recognized");
     }
 
     // TODO might get rid of this
-    std::cout << "\tandi\t$2,$2,0x00ff\n";
-
-    std::cout << "\tsw\t$2," << bindings.currentExpressionStackPosition() << "($fp)\n";
-    
+    printf("\tandi\t$2,$2,0x00ff\n\tsw\t$2,%d($fp)\n", bindings.currentExpressionStackPosition());
     return bindings;
 }
 
 int RelationalExpression::constantFold() const
 {
     if(operator_ == "<")
+    {
 	return lhs_->constantFold()<rhs_->constantFold();
+    }
     else if(operator_ == ">")
+    {
 	return lhs_->constantFold()>rhs_->constantFold();
+    }
     else if(operator_ == "<=")
+    {
 	return lhs_->constantFold()<=rhs_->constantFold();
+    }
+    
     return lhs_->constantFold()>=rhs_->constantFold();
 }
 
@@ -358,22 +402,23 @@ EqualityExpression::EqualityExpression(Expression* lhs, const std::string& _oper
 VariableStackBindings EqualityExpression::printAsm(VariableStackBindings bindings, unsigned& label_count) const
 {
     evaluateExpression(bindings, label_count);
+    printf("\txor\t$2,$2,$3\n");
 
-    std::cout << "\txor\t$2,$2,$3\n";
-
-    if(operator_ == "==") {
-	std::cout << "\tsltiu\t$2,$2,1\n";
-    } else if(operator_ == "!="){
-	std::cout << "\tsltu\t$2,$0,$2\n";
-    } else {
-	std::cerr << "Error : no instruction found for operator '" << operator_ << "'\n";
+    if(operator_ == "==")
+    {
+	printf("\tsltiu\t$2,$2,1\n");
+    }
+    else if(operator_ == "!=")
+    {
+	printf("\tsltu\t$2,$0,$2\n");
+    }
+    else
+    {
+	throw std::runtime_error("Error : '"+operator_+"' not recognized");
     }
 
     // TODO Work out why it is necessary to remove bytes 3 and 2.
-    std::cout << "\tandi\t$2,$2,0x00ff\n";
-
-    std::cout << "\tsw\t$2," << bindings.currentExpressionStackPosition() << "($fp)\n";    
-    
+    printf("\tandi\t$2,$2,0x00ff\n\tsw\t$2,%d($fp)\n", bindings.currentExpressionStackPosition());
     return bindings;
 }
 
@@ -394,11 +439,7 @@ AndExpression::AndExpression(Expression* lhs, Expression* rhs)
 VariableStackBindings AndExpression::printAsm(VariableStackBindings bindings, unsigned& label_count) const
 {
     evaluateExpression(bindings, label_count);
-
-    std::cout << "\tand\t$2,$2,$3\n";
-
-    std::cout << "\tsw\t$2," << bindings.currentExpressionStackPosition() << "($fp)\n";
-
+    printf("\tand\t$2,$2,$3\n\tsw\t$2,%d($fp)\n", bindings.currentExpressionStackPosition());
     return bindings;
 }
 
@@ -534,16 +575,20 @@ VariableStackBindings Identifier::printAsm(VariableStackBindings bindings, unsig
 {
     (void)label_count;
     
-    if(bindings.bindingExists(id_)) {
-	if(bindings.stackPosition(id_) == -1) {
+    if(bindings.bindingExists(id_))
+    {
+	if(bindings.stackPosition(id_) == -1)
+	{
 	    // it's a global variable
-	    printf("\tlui\t$2,%%hi(%s)\n\tlw\t$2,%%lo(%s)($2)\n", id_.c_str(), id_.c_str());
-	    
-	} else {
+	    printf("\tlui\t$2,%%hi(%s)\n\tlw\t$2,%%lo(%s)($2)\n", id_.c_str(), id_.c_str());   
+	}
+	else
+	{
 	    printf("\tlw\t$2,%d($fp)\n", bindings.stackPosition(id_));
 	}
-	
-    } else{
+    }
+    else
+    {
 	throw std::runtime_error("Error : Can't find '"+id_+"' in current scope binding");
     }
 
@@ -553,7 +598,8 @@ VariableStackBindings Identifier::printAsm(VariableStackBindings bindings, unsig
 
 int Identifier::postfixStackPosition(VariableStackBindings bindings) const
 {
-    if(bindings.bindingExists(id_)) {
+    if(bindings.bindingExists(id_))
+    {
 	return bindings.stackPosition(id_);
     }
 

@@ -10,6 +10,7 @@
     
     
 extern Node* g_root; // A way of getting the AST out
+void setTypeInformation(Type* type_ptr, std::string type_str);
 
 //! This is to fix problems when generating C++
 // We are declaring the functions provided by Flex, so
@@ -38,7 +39,11 @@ void yyerror(const char *);
 			T_REM T_TILDE T_NOT T_DOT T_ARROW T_INCDEC T_ADDSUB_OP T_ASSIGN_OPER T_EQ
 			T_SIZEOF T_INT_CONST T_IF T_WHILE T_DO T_FOR T_RETURN
 			
-			T_VOID T_CHAR T_SCHAR T_UCHAR T_SSINT T_USINT T_LINT T_ULINT T_UINT T_SINT
+			T_VOID T_CHAR T_SHORT T_INT T_LONG T_FLOAT T_DOUBLE T_SIGNED T_UNSIGNED
+
+			T_TYPEDEF T_EXTERN T_STATIC T_AUTO T_REGISTER
+
+			T_CONST T_VOLATILE
 			
 %nonassoc		T_RRB
 %nonassoc		T_ELSE
@@ -66,11 +71,13 @@ void yyerror(const char *);
 			PostfixExpression PostfixExpression2 ArgumentExpressionList PrimaryExpression
 			Constant
 
+%type	<type>		DeclarationSpecifierList 
+
 %type	<number>        T_INT_CONST
 			
 %type	<string>	T_IDENTIFIER ASSIGN_OPER T_ASSIGN_OPER T_EQ T_AND T_ADDSUB_OP T_TILDE T_NOT
-			T_MULT T_DIV T_REM T_EQUALITY_OP T_REL_OP T_SHIFT_OP MultDivRemOP UnaryOperator
-			DeclarationSpec
+			T_MULT T_DIV T_REM T_EQUALITY_OP T_REL_OP T_SHIFT_OP T_INCDEC MultDivRemOP
+			UnaryOperator DeclarationSpecifier
                         
 %start ROOT
                         
@@ -95,7 +102,7 @@ ExternalDeclaration:
 // FUNCTION DEFINITION
 
 FunctionDefinition:
-		DeclarationSpec Declarator CompoundStatement
+		DeclarationSpecifierList Declarator CompoundStatement
 		{ $$ = new Function($2->getId(), $3, $2->getNext()); delete $1; }
 		;
 
@@ -105,7 +112,7 @@ ParameterList:
 	|       ParameterList T_CMA Parameter { $3->linkDeclaration($$); $$ = $3; }
 		;
 
-Parameter:	DeclarationSpec T_IDENTIFIER { $$ = new Declaration(*$2); delete $2; delete $1; }
+Parameter:	DeclarationSpecifierList T_IDENTIFIER { $$ = new Declaration(*$2); delete $2; delete $1; }
 		;
 
 // Declaration
@@ -115,36 +122,48 @@ DeclarationList:
 	|	DeclarationList Declaration { $2->linkDeclaration($$); $$ = $2; }
 		;
 
-Declaration:	DeclarationSpec InitDeclaratorList T_SC
+Declaration:	DeclarationSpecifierList InitDeclaratorList T_SC
 		{
 		    $$ = $2;
 		    Declaration* tmp_decl = $2;
+		    Type* tmp_type = new TypeContainer();
     
 		    while(tmp_decl != nullptr) {
-			if(*$1 == "void") {
-			    tmp_decl->setType(new Void);
-			} else if(*$1 == "char") {
-			    tmp_decl->setType(new Char);
-			} else {
-			    tmp_decl->setType(new Int);
-			}
+			tmp_type->type($1->type());
 			tmp_decl = tmp_decl->getNextListItem().get();
 		    }
 
 		    delete $1;
 		};
 
-DeclarationSpec:
+DeclarationSpecifierList:
+		DeclarationSpecifier
+		{
+		    $$ = new TypeContainer();
+		    setTypeInformation($$, *$1);
+		    delete $1;
+		}
+	|	DeclarationSpecifierList DeclarationSpecifier
+		{ setTypeInformation($$, *$2); delete $2; }
+		;
+
+DeclarationSpecifier:
 		T_VOID { $$ = new std::string("void"); }
 	|	T_CHAR { $$ = new std::string("char"); }
-	|	T_SCHAR { $$ = new std::string("char"); }
-	|	T_UCHAR { $$ = new std::string("char"); }
-	|	T_SSINT { $$ = new std::string("int"); }
-	|	T_USINT { $$ = new std::string("int"); }
-	|	T_LINT { $$ = new std::string("int"); }
-	|	T_ULINT { $$ = new std::string("int"); }
-	|	T_UINT { $$ = new std::string("int"); }
-	|	T_SINT { $$ = new std::string("int"); }
+	|	T_SHORT { $$ = new std::string("short"); }
+	|	T_INT { $$ = new std::string("int"); }
+	|	T_LONG { $$ = new std::string("long"); }
+	|	T_FLOAT { $$ = new std::string("float"); }
+	|	T_DOUBLE { $$ = new std::string("double"); }
+	|	T_SIGNED { $$ = new std::string("signed"); }
+	|	T_UNSIGNED { $$ = new std::string("unsigned"); }
+	|	T_TYPEDEF { $$ = new std::string("typedef"); }
+	|	T_EXTERN { $$ = new std::string("extern"); }
+	|	T_STATIC { $$ = new std::string("static"); }
+	|	T_AUTO { $$ = new std::string("auto"); }
+	|	T_REGISTER { $$ = new std::string("register"); }
+	|	T_CONST { $$ = new std::string("const"); }
+	|	T_VOLATILE { $$ = new std::string("volatile"); }
 		;
 
 InitDeclaratorList:
@@ -298,26 +317,16 @@ MultDivRemOP:	T_MULT { $$ = $1; }
 		;
 
 CastExpression:	UnaryExpression { $$ = $1; }
-	|	T_LRB DeclarationSpec T_RRB CastExpression
-		{
-		    if(*$2 == "int") {
-			$$ = new CastExpression(new Int, $4);
-		    } else if(*$2 == "char") {
-			$$ = new CastExpression(new Char, $4);
-		    } else {
-			$$ = new CastExpression(new Void, $4);
-		    }
-
-		    delete $2;
-		}
+	|	T_LRB DeclarationSpecifierList T_RRB CastExpression
+		{ new CastExpression($2, $4); delete $2; }
 		;
 
 UnaryExpression:
 		PostfixExpression { $$ = $1; }
-	|	T_INCDEC UnaryExpression { $$ = $2; }
+	|	T_INCDEC UnaryExpression { $$ = new UnaryPreIncDecExpression(*$1, $2); delete $1; }
 	|	UnaryOperator CastExpression { $$ = $2; }
 	|	T_SIZEOF UnaryExpression { $$ = $2; }
-	|	T_SIZEOF T_LRB DeclarationSpec T_RRB { $$ = new Constant(0); delete $3; }
+	|	T_SIZEOF T_LRB DeclarationSpecifierList T_RRB { $$ = new Constant(0); delete $3; }
 		;
 
 UnaryOperator:	T_AND { $$ = $1; }
@@ -333,7 +342,8 @@ PostfixExpression:
 	|	PostfixExpression T_LRB PostfixExpression2 { $$ = $3; $$->setPostfixExpression($1); }
 	|	PostfixExpression T_DOT T_IDENTIFIER { $$ = $1; }
 	|	PostfixExpression T_ARROW T_IDENTIFIER { $$ = $1; }
-	|	PostfixExpression T_INCDEC { $$ = $1; }
+	|	PostfixExpression T_INCDEC
+		{ $$ = new PostfixPostIncDecExpression(*$2, $1); delete $2; }
 		;
 
 PostfixExpression2:
@@ -359,8 +369,52 @@ Constant:	T_INT_CONST { $$ = new Constant($1); }
 
 Node* g_root; // Definition of variable (to match declaration earlier)
 
-Node* parseAST() {
+Node* parseAST()
+{
     g_root = 0;
     yyparse();
     return g_root;
+}
+
+void setTypeInformation(Type* type_ptr, std::string type_str)
+{
+    if(type_str == "void") {
+	type_ptr->type(new Void());
+    } else if(type_str == "char") {
+	type_ptr->type(new Char());
+	type_ptr->setSize(8);
+    } else if(type_str == "short") {
+	type_ptr->type(new Int());
+	type_ptr->setSize(16);
+    } else if(type_str == "int") {
+	type_ptr->type(new Int());
+    } else if(type_str == "long") {
+	type_ptr->type(new Int());
+    } else if(type_str == "float") {
+	type_ptr->type(new Float());
+    } else if(type_str == "double") {
+	type_ptr->type(new Float());
+    } else if(type_str == "signed") {
+	type_ptr->type(new Int());
+	type_ptr->setSigned(true);
+    } else if(type_str == "unsigned") {
+	type_ptr->type(new Int());
+	type_ptr->setSigned(false);
+    } else if(type_str == "typedef") {
+	// TODO do typedef
+    } else if(type_str == "extern") {
+	type_ptr->setExtern(true);
+    } else if(type_str == "static") {
+	type_ptr->setStatic(true);
+    } else if(type_str == "auto") {
+	// TODO do auto
+    } else if(type_str == "register") {
+	// TODO do register
+    } else if(type_str == "const") {
+	type_ptr->setConst(true);
+    } else if(type_str == "volatile") {
+	// TODO do volatile
+    } else {
+			
+    }
 }

@@ -26,9 +26,8 @@ void Declaration::printXml() const
     if(next_declaration_ != nullptr)
 	next_declaration_->printXml();
 
-    if(next_list_declaration_ != nullptr) {
+    if(next_list_declaration_ != nullptr)
 	next_list_declaration_->printXml();
-    }
 
     if(id_ != "")
 	printf("<Variable id=\"%s\" />", id_.c_str());
@@ -56,7 +55,8 @@ VariableStackBindings Declaration::localAsm(VariableStackBindings bindings, unsi
     if(next_list_declaration_ != nullptr)
 	bindings = next_list_declaration_->localAsm(bindings, label_count);
     
-    if(id_ != "") {
+    if(id_ != "")
+    {
 	if(initializer_ != nullptr)
 	    initializer_->printAsm(bindings, label_count);
 	else

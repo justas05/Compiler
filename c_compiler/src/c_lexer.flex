@@ -28,17 +28,24 @@ ALL .
 
 %%
 
-(void)			{ return T_VOID; }
-(char) 			{ return T_CHAR; }
-(signed[ ]char) 	{ return T_SCHAR; }
-(unsigned[ ]char) 	{ return T_UCHAR; }
-((short[ ]int)|(signed[ ]short[ ]int)|short|(signed[ ]short))	{ return T_SSINT; }
-((unsigned[ ]short[ ]int)|(unsigned[ ]short)) 	     		{ return T_USINT; }
-((signed[ ]long[ ]int)|(signed[ ]long)|(long[ ]int)|long)     	{ return T_LINT; }
-((unsigned[ ]long[ ]int)|(unsigned[ ]long))   		      	{ return T_ULINT; }
-((unsigned[ ]int)|unsigned) 	    { return T_UINT; }
-((signed[ ]int)|int|signed) 	    { return T_SINT; }
+(void)		{ return T_VOID; }
+(char)		{ return T_CHAR; }
+(short)		{ return T_SHORT; }
+(int)		{ return T_INT; }
+(long)		{ return T_LONG; }
+(float)		{ return T_FLOAT; }
+(double)	{ return T_DOUBLE; }
+(signed)	{ return T_SIGNED; }
+(unsigned)	{ return T_UNSIGNED; }
 
+(typedef)	{ return T_TYPEDEF; }
+(extern)	{ return T_EXTERN; }
+(static)	{ return T_STATIC; }
+(auto)		{ return T_AUTO; }
+(register)	{ return T_REGISTER; }
+
+(const)		{ return T_CONST; }
+(volatile)	{ return T_VOLATILE; }
 
 [;]		{ return T_SC; }
 [,]		{ return T_CMA; }
@@ -66,7 +73,7 @@ ALL .
 [!]		{ return T_NOT; }
 [.]		{ return T_DOT; }
 [-][>]		{ return T_ARROW; }
-[+-][+-]	{ return T_INCDEC; }
+[+-][+-]	{ yylval.string = new std::string(yytext); return T_INCDEC; }
 [+-]		{ yylval.string = new std::string(yytext); return T_ADDSUB_OP; }
 [=]		{ yylval.string = new std::string(yytext); return T_EQ; }
 

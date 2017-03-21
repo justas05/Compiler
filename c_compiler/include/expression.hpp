@@ -26,13 +26,11 @@ public:
     virtual void print() const;
     virtual void printXml() const;
     virtual void countArguments(unsigned& argument_count) const;
-    virtual void expressionDepth(unsigned& depth_count) const;
-    
+    virtual void expressionDepth(unsigned& depth_count) const;    
     virtual int postfixStackPosition(VariableStackBindings bindings) const;
     virtual void setPostfixExpression(Expression* postfix_expression);
-
     virtual std::string id() const;
-
+    
     void linkExpression(Expression* next_expression);
     ExpressionPtr nextExpression() const;
 };
@@ -47,18 +45,11 @@ public:
     OperationExpression(Expression* lhs, Expression* rhs);
 
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const = 0;
+    
     virtual int constantFold() const;
     virtual void expressionDepth(unsigned& depth_count) const;
+    
     void evaluateExpression(VariableStackBindings bindings, unsigned& label_count) const;
-};
-
-
-class PostfixExpression : public Expression
-{
-public:
-    PostfixExpression();
-
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
 };
 
 
@@ -86,11 +77,28 @@ public:
     void setPostfixExpression(Expression* postfix_expression);
 };
 
-
-class UnaryExpression : public Expression
+class PostfixPostIncDecExpression : public Expression
 {
+private:
+    std::string operator_;
+    ExpressionPtr postfix_expression_;
+
 public:
-    UnaryExpression();
+    PostfixPostIncDecExpression(const std::string& _operator, Expression* postfix_expression);
+
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
+    
+};
+
+
+class UnaryPreIncDecExpression : public Expression
+{
+private:
+    std::string operator_;
+    ExpressionPtr unary_expression_;
+    
+public:
+    UnaryPreIncDecExpression(const std::string& _operator, Expression* unary_expression);
 
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
 };

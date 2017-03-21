@@ -19,6 +19,7 @@ private:
     ExpressionPtr initializer_;
     DeclarationPtr next_declaration_;
     DeclarationPtr next_list_declaration_;
+    bool extern_declaration;
     
 public:
     Declaration(const std::string& id = "", Expression* initializer = nullptr);
