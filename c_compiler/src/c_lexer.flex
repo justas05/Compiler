@@ -8,7 +8,7 @@
 
 IDENTIFIER [_a-zA-Z][_a-zA-Z0-9]*
 
-ASSIGNMENT_OPERATOR (([<>][<>]|[*\/%+\-&^|])[=]|[=])
+ASSIGNMENT_OPERATOR (([<>][<>]|[*\/%+\-&^|])[=])
 
 INTEGERSUFFIX ([uU][lL]|[lL][uU]|[uUlL])
 
@@ -59,6 +59,8 @@ ALL .
 [}]             { return T_RCB; }
 [[]		{ return T_LSB; }
 []]		{ return T_RSB; }
+[=]		{ yylval.string = new std::string(yytext); return T_EQ; }
+{ASSIGNMENT_OPERATOR} { yylval.string = new std::string(yytext); return T_ASSIGN_OPER; }
 [?]		{ return T_QU; }
 [:]		{ return T_COL; }
 [|][|]		{ return T_LOG_OR; }
@@ -79,9 +81,6 @@ ALL .
 [-][>]		{ return T_ARROW; }
 [+-][+-]	{ yylval.string = new std::string(yytext); return T_INCDEC; }
 [+-]		{ yylval.string = new std::string(yytext); return T_ADDSUB_OP; }
-[=]		{ yylval.string = new std::string(yytext); return T_EQ; }
-
-{ASSIGNMENT_OPERATOR} { yylval.string = new std::string(yytext); return T_ASSIGN_OPER; }
 
 if		{ return T_IF; }
 else		{ return T_ELSE; }

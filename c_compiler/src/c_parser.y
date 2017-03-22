@@ -71,7 +71,7 @@ void yyerror(const char *);
 			AndExpression EqualityExpression RelationalExpression ShiftExpression
 			AdditiveExpression MultiplicativeExpression CastExpression UnaryExpression
 			PostfixExpression PostfixExpression2 ArgumentExpressionList PrimaryExpression
-			Constant
+			Constant Initializer InitializerList
 
 %type	<type>		DeclarationSpecifierList 
 
@@ -174,7 +174,7 @@ InitDeclaratorList:
 		;
 
 InitDeclarator:	Declarator { $$ = $1; }
-		    |	Declarator T_EQ AssignmentExpression { $$->setInitializer($3); delete $2; }
+	|	Declarator T_EQ Initializer { $$ = $1; $$->setInitializer($3); delete $2; }
 		;
 
 Declarator:	DirectDeclarator { $$ = $1; }
@@ -193,6 +193,15 @@ DirectDeclarator:
 
 IdentifierList:	T_IDENTIFIER { $$ = new Declaration(); }
 	|	IdentifierList T_CMA T_IDENTIFIER { $$ = new Declaration(); }
+
+Initializer: 	AssignmentExpression { $$ = $1; }
+	|	T_LCB InitializerList T_RCB { $$ = $2; }
+	|	T_LCB InitializerList T_CMA T_RCB { $$ = $2; }
+		;
+
+InitializerList:
+		Initializer { $$ = $1; }
+	|	InitializerList T_CMA Initializer { $3->linkExpression($$); $$ = $3; }
 
 // Statement
 
@@ -250,7 +259,45 @@ Expression:	AssignmentExpression { $$ = $1; }
 
 AssignmentExpression:
 		ConditionalExpression { $$ = $1; }
-	|	UnaryExpression ASSIGN_OPER AssignmentExpression { $$ = new AssignmentExpression($1, $3); delete $2; }
+	|	UnaryExpression ASSIGN_OPER AssignmentExpression
+		{
+		    Expression* tmp;
+		    if(*$2 == "=") {
+			$$ = new AssignmentExpression($1, $3);
+		    } else if(*$2 == "+=") {
+			tmp = new AdditiveExpression($1, "+", $3);
+			$$ = new AssignmentExpression(tmp->getLhs(), tmp);
+		    } else if(*$2 == "-=") {
+			tmp = new AdditiveExpression($1, "-", $3);
+			$$ = new AssignmentExpression(tmp->getLhs(), tmp);
+		    } else if(*$2 == "*=") {
+			tmp = new MultiplicativeExpression($1, "*", $3);
+			$$ = new AssignmentExpression(tmp->getLhs(), tmp);
+		    } else if(*$2 == "/=") {
+			tmp = new MultiplicativeExpression($1, "/", $3);
+			$$ = new AssignmentExpression(tmp->getLhs(), tmp);
+		    } else if(*$2 == "%=") {
+			tmp = new MultiplicativeExpression($1, "%", $3);
+			$$ = new AssignmentExpression(tmp->getLhs(), tmp);
+		    } else if(*$2 == "&=") {
+			tmp = new AndExpression($1, $3);
+			$$ = new AssignmentExpression(tmp->getLhs(), tmp);
+		    } else if(*$2 == "^=") {
+			tmp = new ExclusiveOrExpression($1, $3);
+			$$ = new AssignmentExpression(tmp->getLhs(), tmp);
+		    } else if(*$2 == "|=") {
+			tmp = new InclusiveOrExpression($1, $3);
+			$$ = new AssignmentExpression(tmp->getLhs(), tmp);
+		    } else if(*$2 == "<<=") {
+			tmp = new ShiftExpression($1, "<<", $3);
+			$$ = new AssignmentExpression(tmp->getLhs(), tmp);
+		    } else {
+			tmp = new ShiftExpression($1, ">>", $3);
+			$$ = new AssignmentExpression(tmp->getLhs(), tmp);
+		    }
+		    
+		    delete $2;
+		}
 		;
 
 ASSIGN_OPER:	T_ASSIGN_OPER { ; }

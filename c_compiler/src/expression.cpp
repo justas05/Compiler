@@ -46,6 +46,16 @@ std::string Expression::id() const
     return "";
 }
 
+ExpressionPtr Expression::getLhs() const
+{
+    throw std::runtime_error("Error : Cannot get lhs");
+}
+
+ExpressionPtr Expression::getRhs() const
+{
+    throw std::runtime_error("Error : Cannot get rhs");
+}
+
 void Expression::linkExpression(Expression *next_expression)
 {
     ExpressionPtr expression_ptr(next_expression);
@@ -61,6 +71,10 @@ ExpressionPtr Expression::nextExpression() const
 // OperationExpression definition
 
 OperationExpression::OperationExpression(Expression* lhs, Expression* rhs)
+    : lhs_(lhs), rhs_(rhs)
+{}
+
+OperationExpression::OperationExpression(ExpressionPtr lhs, Expression* rhs)
     : lhs_(lhs), rhs_(rhs)
 {}
 
@@ -81,6 +95,16 @@ void OperationExpression::expressionDepth(unsigned& depth_count) const
 	depth_count = lhs_depth_count;
     else
 	depth_count = rhs_depth_count;
+}
+
+ExpressionPtr OperationExpression::getLhs() const
+{
+    return lhs_;
+}
+
+ExpressionPtr OperationExpression::getRhs() const
+{
+    return rhs_;
 }
 
 void OperationExpression::evaluateExpression(VariableStackBindings bindings, unsigned& label_count) const
@@ -539,6 +563,10 @@ VariableStackBindings ConditionalExpression::printAsm(VariableStackBindings bind
 // Assignment Expression definition
 
 AssignmentExpression::AssignmentExpression(Expression* lhs, Expression* rhs)
+    : OperationExpression(lhs, rhs)
+{}
+
+AssignmentExpression::AssignmentExpression(ExpressionPtr lhs, Expression* rhs)
     : OperationExpression(lhs, rhs)
 {}
 

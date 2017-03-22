@@ -30,6 +30,8 @@ public:
     virtual int postfixStackPosition(VariableStackBindings bindings) const;
     virtual void setPostfixExpression(Expression* postfix_expression);
     virtual std::string id() const;
+    virtual ExpressionPtr getLhs() const;
+    virtual ExpressionPtr getRhs() const;
     
     void linkExpression(Expression* next_expression);
     ExpressionPtr nextExpression() const;
@@ -43,11 +45,14 @@ protected:
     ExpressionPtr rhs_;
 public:
     OperationExpression(Expression* lhs, Expression* rhs);
+    OperationExpression(ExpressionPtr lhs, Expression* rhs);
 
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const = 0;
     
     virtual int constantFold() const;
     virtual void expressionDepth(unsigned& depth_count) const;
+    virtual ExpressionPtr getLhs() const;
+    virtual ExpressionPtr getRhs() const;
     
     void evaluateExpression(VariableStackBindings bindings, unsigned& label_count) const;
 };
@@ -248,6 +253,7 @@ class AssignmentExpression : public OperationExpression
 {
 public:
     AssignmentExpression(Expression* lhs, Expression* rhs);
+    AssignmentExpression(ExpressionPtr lhs, Expression* rhs);
 
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
 };
