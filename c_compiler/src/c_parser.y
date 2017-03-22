@@ -37,15 +37,11 @@ void yyerror(const char *);
 %token			T_IDENTIFIER T_SC T_CMA T_LRB T_LCB T_RCB T_LSB T_RSB T_QU T_COL T_LOG_OR
 			T_LOG_AND T_OR T_XOR T_AND T_EQUALITY_OP T_REL_OP T_SHIFT_OP T_MULT T_DIV
 			T_REM T_TILDE T_NOT T_DOT T_ARROW T_INCDEC T_ADDSUB_OP T_ASSIGN_OPER T_EQ
-			T_SIZEOF T_INT_CONST T_IF T_WHILE T_DO T_FOR T_RETURN
-			
+			T_SIZEOF T_INT_CONST T_IF T_WHILE T_DO T_FOR T_RETURN			
 			T_VOID T_CHAR T_SHORT T_INT T_LONG T_FLOAT T_DOUBLE T_SIGNED T_UNSIGNED
-
 			T_TYPEDEF T_EXTERN T_STATIC T_AUTO T_REGISTER
-
-			T_CONST T_VOLATILE
-
-			T_GOTO T_BREAK T_CONTINUE
+			T_CONST T_VOLATILE T_GOTO T_BREAK T_CONTINUE
+			T_CASE T_DEFAULT T_SWITCH
 			
 %nonassoc		T_RRB
 %nonassoc		T_ELSE
@@ -59,7 +55,7 @@ void yyerror(const char *);
 
 %type	<statement>	StatementList Statement CompoundStatement CompoundStatement_2
 			SelectionStatement
-			ExpressionStatement JumpStatement IterationStatement
+			ExpressionStatement JumpStatement IterationStatement LabeledStatement
 
 %type	<declaration>	ParameterList Parameter DeclarationList Declaration InitDeclaratorList
 			InitDeclarator
@@ -210,12 +206,19 @@ StatementList:
 	|	StatementList Statement { $2->linkStatement($$); $$ = $2; }
 		;
 
-Statement:	CompoundStatement { $$ = $1; }
+Statement: 	LabeledStatement { $$ = $1; }
+	| 	CompoundStatement { $$ = $1; }
 	|	SelectionStatement { $$ = $1; }
 	|	ExpressionStatement { $$ = $1; }
 	|       JumpStatement { $$ = $1; }
 	|	IterationStatement { $$ = $1; }
 		;
+
+LabeledStatement:
+		T_IDENTIFIER T_COL Statement { $$ = new LabelStatement(*$1, $3); }
+	|	T_CASE ConditionalExpression T_COL Statement { $$ = new CaseStatement($4, $2); }
+	|	T_DEFAULT T_COL Statement { $$ = new CaseStatement($3, nullptr, true); }
+	;
 
 CompoundStatement:
 		T_LCB CompoundStatement_2 { $$ = $2; }
@@ -231,6 +234,7 @@ CompoundStatement_2:
 SelectionStatement:
 		T_IF T_LRB Expression T_RRB Statement { $$ = new IfElseStatement($3, $5); }
 	|	T_IF T_LRB Expression T_RRB Statement T_ELSE Statement { $$ = new IfElseStatement($3, $5, $7); }
+	|	T_SWITCH T_LRB Expression T_RRB Statement { $$ = new SwitchStatement($3, $5); }
 		;
 
 ExpressionStatement:

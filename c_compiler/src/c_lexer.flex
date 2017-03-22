@@ -50,6 +50,9 @@ ALL .
 (continue)	{ return T_CONTINUE; }
 (break)		{ return T_BREAK; }
 (goto)		{ return T_GOTO; }
+(case)		{ return T_CASE; }
+(default)	{ return T_DEFAULT; }
+(switch)	{ return T_SWITCH; }
 
 [;]		{ return T_SC; }
 [,]		{ return T_CMA; }
