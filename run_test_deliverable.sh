@@ -3,12 +3,23 @@
 if [[ -z "$1" ]]; then 
     COMPILER=bin/c_compiler
 else
-    COMPILER=$1
+    COMPILER=bin/c_compiler
+    make clean
+    make -B ${COMPILER}
 fi
+
+echo ""
+echo "========================================"
+echo " Testing compiler"
+echo ""
+
+PASSED=0
+CHECKED=0
 
 mkdir -p working
 
 for DRIVER in test_deliverable/testcases/*_driver.c ; do
+    CHECKED=$(( CHECKED+1 ))
     NAME=$(basename $DRIVER _driver.c)
     TESTCODE=test_deliverable/testcases/$NAME.c
     
@@ -39,7 +50,13 @@ for DRIVER in test_deliverable/testcases/*_driver.c ; do
     qemu-mips working/${NAME}.elf
     if [[ $? -ne 0 ]]; then
         >&2 echo "ERROR : Testcase returned $?, but expected 0."
+	continue
     fi
 
     echo "pass"
+    PASSED=$(( PASSED+1 ))
 done
+
+echo "########################################"
+echo " Passed ${PASSED} out of ${CHECKED}"
+echo ""

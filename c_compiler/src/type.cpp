@@ -1,22 +1,21 @@
 #include "type.hpp"
 
+#include <cstdio>
 #include <exception>
-#include <iostream>
 
 
 // Type definition
 
 void Type::print() const
 {
-    std::cout << getType() << " " << std::endl;
+    printf("%s\n", getType().c_str());
 }
 
 void Type::printXml() const
 {}
 
-VariableStackBindings Type::printAsm(VariableStackBindings bindings, unsigned& label_count) const
+VariableStackBindings Type::printAsm(VariableStackBindings bindings, unsigned&) const
 {
-    (void)label_count;
     return bindings;
 }
 
@@ -25,45 +24,38 @@ TypePtr Type::type()
     throw std::runtime_error("Error : does not have a type");
 }
 
-TypePtr Type::type(Type* type_ptr)
+TypePtr Type::type(Type*)
 {
-    (void) type_ptr;
     throw std::runtime_error("Error : cannot assign type");
 }
 
-TypePtr Type::type(TypePtr type_ptr)
+TypePtr Type::type(TypePtr)
 {
-    (void)type_ptr;
     throw std::runtime_error("Error : cannot assign type");
 }
 
-void Type::setSigned(bool _signed)
+void Type::setSigned(bool)
 {
-    (void)_signed;
     throw std::runtime_error("Error : cannot set sign");
 }
 
-void Type::setExtern(bool _extern)
+void Type::setExtern(bool)
 {
-    (void)_extern;
     throw std::runtime_error("Error : cannot set extern");
 }
 
-void Type::setStatic(bool _static)
+void Type::setStatic(bool)
 {
-    (void)_static;
     throw std::runtime_error("Error : cannot set static");
 }
 
-void Type::setConst(bool _const)
+void Type::setConst(bool)
 {
-    (void)_const;
     throw std::runtime_error("Error : cannot set const");
 }
 
-void Type::setSize(int _size)
+void Type::setSize(int)
 {
-    (void)_size;
     throw std::runtime_error("Error : cannot set size");
 }
 

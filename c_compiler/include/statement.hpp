@@ -53,14 +53,14 @@ public:
 };
 
 
-class SelectionStatement : public Statement
+class IfElseStatement : public Statement
 {
 protected:
     ExpressionPtr condition_;
     StatementPtr if_;
     StatementPtr else_;
 public:
-    SelectionStatement(Expression* condition, Statement* _if, Statement* _else = nullptr);
+    IfElseStatement(Expression* condition, Statement* _if, Statement* _else = nullptr);
 
     virtual void print() const;
     virtual void printXml() const;
@@ -91,18 +91,56 @@ public:
 
 class JumpStatement : public Statement
 {
-protected:
-    ExpressionPtr expression_;
 public:
-    JumpStatement(Expression* expression = nullptr);
-
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned &label_count) const = 0;
+    
     virtual void print() const;
     virtual void printXml() const;
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
+
+    virtual void countVariables(unsigned &var_count) const;
+    virtual void countArguments(unsigned &argument_count) const;
+    virtual void countExpressionDepth(unsigned &depth_count) const;
+};
+
+
+class ReturnStatement : public JumpStatement
+{
+private:
+    ExpressionPtr expression_;
+public:
+    ReturnStatement(Expression* expression = nullptr);
+
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned &label_count) const;
 
     virtual void countVariables(unsigned& var_count) const;
     virtual void countArguments(unsigned& argument_count) const;
     virtual void countExpressionDepth(unsigned& depth_count) const;    
+};
+
+class BreakStatement : public JumpStatement
+{
+public:
+    BreakStatement();
+
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned &) const;
+};
+
+class ContinueStatement : public JumpStatement
+{
+public:
+    ContinueStatement();
+
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned &) const;
+};
+
+class GotoStatement : public JumpStatement
+{
+private:
+    std::string label_;
+public:
+    GotoStatement(const std::string &label);
+
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned &) const;
 };
 
 
@@ -125,8 +163,10 @@ public:
 
 class WhileLoop : public IterationStatement
 {
+private:
+    bool is_while_;
 public:
-    WhileLoop(Expression* condition, Statement* statement);
+    WhileLoop(Expression* condition, Statement* statement, const bool &is_while = true);
 
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
 };

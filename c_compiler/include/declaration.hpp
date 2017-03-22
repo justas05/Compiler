@@ -19,7 +19,7 @@ private:
     ExpressionPtr initializer_;
     DeclarationPtr next_declaration_;
     DeclarationPtr next_list_declaration_;
-    bool extern_declaration;
+    bool extern_declaration_;
     
 public:
     Declaration(const std::string& id = "", Expression* initializer = nullptr);
@@ -34,7 +34,8 @@ public:
     void linkListDeclaration(Declaration* next_list_declaration);
 
     void setType(Type* type);
-    void setInitializer(Expression* initializer); 
+    void setInitializer(Expression* initializer);
+    void setExternDeclaration(bool is_extern);
 
     DeclarationPtr getNext() const;
     DeclarationPtr getNextListItem() const;

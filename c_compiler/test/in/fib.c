@@ -1,6 +1,6 @@
 int main()
 {
-   int n, first = 0, second = 1, next, c;
+   unsigned long int n, first = 0, second = 1, next, c;
 
    n = 10;
  

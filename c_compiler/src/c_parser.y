@@ -44,6 +44,8 @@ void yyerror(const char *);
 			T_TYPEDEF T_EXTERN T_STATIC T_AUTO T_REGISTER
 
 			T_CONST T_VOLATILE
+
+			T_GOTO T_BREAK T_CONTINUE
 			
 %nonassoc		T_RRB
 %nonassoc		T_ELSE
@@ -107,12 +109,12 @@ FunctionDefinition:
 		;
 
 ParameterList:
-		%empty { $$ = new Declaration(); }
-	| 	Parameter { $$ = $1; }
+		Parameter { $$ = $1; }
 	|       ParameterList T_CMA Parameter { $3->linkDeclaration($$); $$ = $3; }
 		;
 
 Parameter:	DeclarationSpecifierList T_IDENTIFIER { $$ = new Declaration(*$2); delete $2; delete $1; }
+		    |	DeclarationSpecifierList {$$ = new Declaration(""); }
 		;
 
 // Declaration
@@ -184,9 +186,9 @@ DirectDeclarator:
 	|	T_LRB Declarator T_RRB { $$ = $2; }
 	|	DirectDeclarator T_LSB ConditionalExpression T_RSB { $$ = $1; }
 	|	DirectDeclarator T_LSB T_RSB { $$ = $1; }
-	|	DirectDeclarator T_LRB T_RRB { $$ = $1; }
-	|	DirectDeclarator T_LRB ParameterList T_RRB { $1->linkDeclaration($3); $$ = $1; }
-	|	DirectDeclarator T_LRB IdentifierList T_RRB { $$ = $1; }
+	|	DirectDeclarator T_LRB T_RRB { $$ = $1; $$->setExternDeclaration(true); }
+	|	DirectDeclarator T_LRB ParameterList T_RRB { $1->linkDeclaration($3); $$ = $1; $$->setExternDeclaration(true); }
+	|	DirectDeclarator T_LRB IdentifierList T_RRB { $$ = $1; $$->setExternDeclaration(true); }
 		;
 
 IdentifierList:	T_IDENTIFIER { $$ = new Declaration(); }
@@ -218,8 +220,8 @@ CompoundStatement_2:
 		;
 
 SelectionStatement:
-		T_IF T_LRB Expression T_RRB Statement { $$ = new SelectionStatement($3, $5); }
-	|	T_IF T_LRB Expression T_RRB Statement T_ELSE Statement { $$ = new SelectionStatement($3, $5, $7); }
+		T_IF T_LRB Expression T_RRB Statement { $$ = new IfElseStatement($3, $5); }
+	|	T_IF T_LRB Expression T_RRB Statement T_ELSE Statement { $$ = new IfElseStatement($3, $5, $7); }
 		;
 
 ExpressionStatement:
@@ -227,12 +229,16 @@ ExpressionStatement:
 |	Expression T_SC { $$ = new ExpressionStatement($1); }
 		;
 
-JumpStatement:	T_RETURN Expression T_SC { $$ = new JumpStatement($2); }
+JumpStatement:	T_RETURN Expression T_SC { $$ = new ReturnStatement($2); }
+	|	T_BREAK T_SC { $$ = new BreakStatement(); }
+	|	T_CONTINUE T_SC { $$ = new ContinueStatement(); }
+	|	T_GOTO T_IDENTIFIER { $$ = new GotoStatement(*$2); }
 		;
 
 IterationStatement:
 		T_WHILE T_LRB Expression T_RRB Statement { $$ = new WhileLoop($3, $5); }
-	|	T_DO Statement T_WHILE T_LRB Expression T_RRB T_SC { $$ = $2; }
+	|	T_DO Statement T_WHILE T_LRB Expression T_RRB T_SC
+		{ $$ = new WhileLoop($5, $2, false); }
 	|	T_FOR T_LRB Expression T_SC Expression T_SC Expression T_RRB Statement
 		{ $$ = new ForLoop($3, $5, $7, $9); }
 		;

@@ -23,6 +23,8 @@ class VariableStackBindings
 {
 private:
     std::map<std::string, DeclarationData> bindings_;
+    std::string break_label_;
+    std::string continue_label_;
     int stack_counter_;
     int expression_stack_;
 	     
@@ -33,13 +35,18 @@ public:
     void increaseStackPosition();
     void setStackPosition(int stack_counter);
     void nextExpressionStackPosition();
-    void setExpressionStackPosition(const int& stack_counter);
+    void setExpressionStackPosition(const int &stack_counter);
+
+    std::string breakLabel();
+    std::string breakLabel(const std::string &label);
+    std::string continueLabel();
+    std::string continueLabel(const std::string &label);
 
     int currentStackPosition() const;
-    int stackPosition(const std::string& id) const;
+    int stackPosition(const std::string &id) const;
     int currentExpressionStackPosition() const;
 
-    bool bindingExists(const std::string& id) const;
+    bool bindingExists(const std::string &id) const;
 };
 
 

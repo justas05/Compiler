@@ -1,12 +1,10 @@
 #include "bindings.hpp"
 
-#include <iostream>
-
 
 // VariableStackBindings definition
 
 VariableStackBindings::VariableStackBindings()
-    : stack_counter_(0), expression_stack_(16)
+    : break_label_(""), continue_label_(""), stack_counter_(0), expression_stack_(16)
 {}
 
 void VariableStackBindings::insertBinding(std::string id, TypePtr type, int stack_position)
@@ -33,9 +31,31 @@ void VariableStackBindings::nextExpressionStackPosition()
     expression_stack_ += 4;
 }
 
-void VariableStackBindings::setExpressionStackPosition(const int& stack_counter)
+void VariableStackBindings::setExpressionStackPosition(const int &stack_counter)
 {
     expression_stack_ = stack_counter;
+}
+
+std::string VariableStackBindings::breakLabel()
+{
+    return break_label_;
+}
+
+std::string VariableStackBindings::breakLabel(const std::string &label)
+{
+    break_label_ = label;
+    return break_label_;
+}
+
+std::string VariableStackBindings::continueLabel()
+{
+    return continue_label_;
+}
+
+std::string VariableStackBindings::continueLabel(const std::string &label)
+{
+    continue_label_ = label;
+    return continue_label_;
 }
 
 int VariableStackBindings::currentStackPosition() const

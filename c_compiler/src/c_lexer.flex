@@ -47,6 +47,10 @@ ALL .
 (const)		{ return T_CONST; }
 (volatile)	{ return T_VOLATILE; }
 
+(continue)	{ return T_CONTINUE; }
+(break)		{ return T_BREAK; }
+(goto)		{ return T_GOTO; }
+
 [;]		{ return T_SC; }
 [,]		{ return T_CMA; }
 [(]		{ return T_LRB; }

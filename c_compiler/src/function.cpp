@@ -1,6 +1,6 @@
 #include "function.hpp"
 
-#include <iostream>
+#include <cstdio>
 #include <vector>
 
 
@@ -12,7 +12,7 @@ Function::Function(const std::string& id, Statement* statement, DeclarationPtr p
 
 void Function::print() const
 {
-    std::cout << id_ << std::endl;
+    printf("%s\n", id_.c_str());
     
     if(parameter_list_ != nullptr)
 	parameter_list_->print();
@@ -23,26 +23,28 @@ void Function::print() const
 
 void Function::printXml() const
 {
-    std::cout << "<Function id=\"" << id_ << "\">" << std::endl;
+    printf("<Function id=\"%s\">\n", id_.c_str());
 
     DeclarationPtr parameter = parameter_list_;
     std::vector<std::string> parameter_vec;
     
-    while(parameter != nullptr) {
+    while(parameter != nullptr)
+    {
 	parameter_vec.push_back(parameter->getId());
 	parameter = parameter->getNext();
     }
 
     for(std::vector<std::string>::reverse_iterator itr = parameter_vec.rbegin();
-	itr != parameter_vec.rend(); ++itr) {
-	
-	std::cout << "<Parameter id=\"" << *itr << "\" />" << std::endl;	
+	itr != parameter_vec.rend(); ++itr)
+    {
+	printf("<Parameter id=\"%s\" />", (*itr).c_str());	
     }
+
     
     if(statement_ != nullptr)
 	statement_->printXml();
 
-    std::cout << "</Function>" << std::endl;
+    printf("</Function>\n");
 }
 
 VariableStackBindings Function::printAsm(VariableStackBindings bindings, unsigned& label_count) const
@@ -72,11 +74,10 @@ VariableStackBindings Function::printAsm(VariableStackBindings bindings, unsigne
     // make frame double word aligned
     if(memory_needed % 8 != 0)
 	memory_needed += 4;
-
-    std::cout << "\t.text\n\t.globl\t" << id_ << "\n" << id_ << ":\n\taddiu\t$sp,$sp,-"
-	      << memory_needed << "\n\tsw\t$31," << memory_needed-4 << "($sp)\n" << "\tsw\t$fp,"
-	      << memory_needed-8 << "($sp)\n\tmove\t$fp,$sp\n";
-
+    
+    printf("\t.text\n\t.globl\t%s\n%s:\n\taddiu\t$sp,$sp,-%d\n\tsw\t",
+	   id_.c_str(), id_.c_str(), memory_needed);
+    printf("$31,%d($sp)\n\tsw\t$fp,%d($sp)\n\tmove\t$fp,$sp\n", memory_needed-4, memory_needed-8);
 
     // set the stack counter to the right value
     bindings.setStackPosition((max_argument_count+parameter_count)*4);
@@ -86,10 +87,9 @@ VariableStackBindings Function::printAsm(VariableStackBindings bindings, unsigne
     
     // Prints the asm for the compound statement in the function
     statement_->printAsm(bindings, label_count);
-
-    std::cout << "0:\n\tmove\t$sp,$fp\n\tlw\t$31," << memory_needed-4 << "($sp)\n\tlw\t$fp,"
-	      << memory_needed-8 << "($sp)\n\taddiu\t$sp,$sp," << memory_needed
-	      << "\n\tjr\t$31\n\tnop\n";
+    
+    printf("\tmove\t$2,$0\n0:\n\tmove\t$sp,$fp\n\tlw\t$31,%d($sp)\n\tlw\t$fp,%d", memory_needed-4, memory_needed-8);
+    printf("($sp)\n\taddiu\t$sp,$sp,%d\n\tjr\t$31\n\tnop\n", memory_needed);
 
     return original_bindings;
 }
@@ -100,19 +100,20 @@ void Function::printParameterAsm(VariableStackBindings& bindings, unsigned& stac
     std::vector<DeclarationPtr> parameter_vector;
     DeclarationPtr parameter_list = parameter_list_;
 
-    while(parameter_list != nullptr) {
+    while(parameter_list != nullptr)
+    {
 	parameter_vector.push_back(parameter_list);
 	parameter_list = parameter_list->getNext();
     }
 
-    for(auto itr = parameter_vector.rbegin(); itr != parameter_vector.rend(); ++itr) {
+    for(auto itr = parameter_vector.rbegin(); itr != parameter_vector.rend(); ++itr)
+    {
 	unsigned i = itr-parameter_vector.rbegin();
 	bindings.insertBinding((*itr)->getId(), (*itr)->getType(), (i+stack_offset)*4);
 	if(i < 4)
-	    std::cout << "\tsw\t$" << 4+i << "," << (i+stack_offset)*4 << "($fp)\n";
+	    printf("\tsw\t$%d,%d($fp)\n", 4+i, (i+stack_offset)*4);
 	else
-	    std::cout << "\tlw\t$2," << frame_offset + 4*i << "($fp)\n\tsw\t$2," << (i+stack_offset)*4
-		      << "($fp)\n";
+	    printf("\tlw\t$2,%d($fp)\n\tsw\t$2,%d($fp)\n", frame_offset+4*i, (i+stack_offset)*4);
     }
 }
 
@@ -120,7 +121,8 @@ void Function::countParameters(unsigned& parameter_count) const
 {
     DeclarationPtr parameter_list = parameter_list_;
 
-    while(parameter_list != nullptr) {
+    while(parameter_list != nullptr)
+    {
 	parameter_count++;
 	parameter_list = parameter_list->getNext();
     }

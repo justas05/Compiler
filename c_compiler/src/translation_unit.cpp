@@ -1,6 +1,6 @@
 #include "translation_unit.hpp"
 
-#include <iostream>
+#include <cstdio>
 
 // Translation Unit definition
 
@@ -18,11 +18,11 @@ void TranslationUnit::print() const
 
 void TranslationUnit::printXml() const
 {
-    std::cout << "<?xml version=\"1.0\"?>\n<Program>" << std::endl;
+    printf("<?xml version=\"1.0\"?>\n<Program>\n");
     for(auto& node : translation_unit_) {
 	node->printXml();
     }
-    std::cout << "</Program>" << std::endl;
+    printf("</Program>\n");
 }
 
 VariableStackBindings TranslationUnit::printAsm(VariableStackBindings bindings, unsigned& label_count) const
