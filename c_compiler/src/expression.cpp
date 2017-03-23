@@ -44,16 +44,6 @@ std::string Expression::id() const
     return "";
 }
 
-ExpressionPtr Expression::getLhs() const
-{
-    throw std::runtime_error("Error : Cannot get lhs");
-}
-
-ExpressionPtr Expression::getRhs() const
-{
-    throw std::runtime_error("Error : Cannot get rhs");
-}
-
 void Expression::linkExpression(Expression *next_expression)
 {
     ExpressionPtr expression_ptr(next_expression);

@@ -30,9 +30,7 @@ public:
     virtual int postfixStackPosition(VariableStackBindings bindings) const;
     virtual void setPostfixExpression(Expression *postfix_expression);
     virtual std::string id() const;
-    virtual ExpressionPtr getLhs() const;
-    virtual ExpressionPtr getRhs() const;
-    
+       
     void linkExpression(Expression* next_expression);
     ExpressionPtr nextExpression() const;
 };
@@ -51,8 +49,9 @@ public:
     
     virtual int constantFold() const;
     virtual void expressionDepth(unsigned &depth_count) const;
-    virtual ExpressionPtr getLhs() const;
-    virtual ExpressionPtr getRhs() const;
+
+    ExpressionPtr getLhs() const;
+    ExpressionPtr getRhs() const;
     
     void evaluateExpression(VariableStackBindings bindings, unsigned &label_count) const;
 };

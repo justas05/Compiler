@@ -286,7 +286,7 @@ AssignmentExpression:
 		ConditionalExpression { $$ = $1; }
 	|	UnaryExpression ASSIGN_OPER AssignmentExpression
 		{
-		    Expression* tmp;
+		    OperationExpression* tmp;
 		    if(*$2 == "=") {
 			$$ = new AssignmentExpression($1, $3);
 		    } else if(*$2 == "+=") {
