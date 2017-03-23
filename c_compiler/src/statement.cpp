@@ -16,11 +16,6 @@ int Statement::constantFold() const
     throw std::runtime_error("Error : not implemented");
 }
 
-StatementPtr Statement::getStatementList() const
-{
-    throw std::runtime_error("Error : not implemented");
-}
-
 ExpressionPtr Statement::getExpression() const
 {
     return nullptr;  
@@ -425,17 +420,22 @@ void SwitchStatement::printXml() const
 VariableStackBindings SwitchStatement::printAsm(VariableStackBindings bindings, unsigned &label_count) const
 {
     unsigned switch_count = label_count++;
+    std::shared_ptr<CompoundStatement> comp_statement;
+    StatementPtr case_statement_list;
+    std::vector<StatementPtr> case_statement_vector;
     
     if(next_statement_ != nullptr)
 	next_statement_->printAsm(bindings, label_count);
 
     condition_->printAsm(bindings, label_count);
 
-    StatementPtr case_statement_list = statement_->getStatementList();
-    std::vector<StatementPtr> case_statement_vector;
+    comp_statement = std::dynamic_pointer_cast<CompoundStatement>(statement_);
+    if(comp_statement == nullptr)
+	throw std::runtime_error("Error : not implemented");
 
     bindings.breakLabel("$"+std::to_string(switch_count)+"_break_switch");
-    
+
+    case_statement_list = comp_statement->getStatementList();
     while(case_statement_list != nullptr)
     {
 	case_statement_vector.push_back(case_statement_list);

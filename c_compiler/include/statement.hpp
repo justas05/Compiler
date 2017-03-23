@@ -30,7 +30,6 @@ public:
     virtual void countExpressionDepth(unsigned &depth_count) const = 0;
 
     virtual int constantFold() const;
-    virtual StatementPtr getStatementList() const;
     virtual ExpressionPtr getExpression() const;
     virtual bool isDefault() const;
     
@@ -95,7 +94,8 @@ public:
     virtual void countVariables(unsigned &var_count) const;
     virtual void countArguments(unsigned &argument_count) const;
     virtual void countExpressionDepth(unsigned &depth_count) const;
-    virtual StatementPtr getStatementList() const;
+
+    StatementPtr getStatementList() const;
 };
 
 class IfElseStatement : public Statement
