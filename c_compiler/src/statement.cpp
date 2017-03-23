@@ -65,6 +65,8 @@ VariableStackBindings LabelStatement::printAsm(VariableStackBindings bindings, u
 
     printf("%s:\n", label_.c_str());
 
+    statement_->printAsm(bindings, label_count);
+
     return bindings;
 }
 
@@ -468,7 +470,7 @@ VariableStackBindings SwitchStatement::printAsm(VariableStackBindings bindings, 
 	
 	if((*itr)->isDefault())
 	    printf("$%d_default_switch:\n", switch_count);
-	
+	(*itr)->linkStatement(nullptr);
 	(*itr)->printAsm(bindings, label_count);
     }
 
@@ -693,8 +695,11 @@ void ReturnStatement::countExpressionDepth(unsigned &depth_count) const
 BreakStatement::BreakStatement()
 {}
 
-VariableStackBindings BreakStatement::printAsm(VariableStackBindings bindings, unsigned &) const
+VariableStackBindings BreakStatement::printAsm(VariableStackBindings bindings, unsigned &label_count) const
 {
+    if(next_statement_ != nullptr)
+	next_statement_->printAsm(bindings, label_count);
+    
     printf("\tb\t%s\n\tnop\n", bindings.breakLabel().c_str());
     return bindings;
 }
@@ -705,8 +710,11 @@ VariableStackBindings BreakStatement::printAsm(VariableStackBindings bindings, u
 ContinueStatement::ContinueStatement()
 {}
 
-VariableStackBindings ContinueStatement::printAsm(VariableStackBindings bindings, unsigned &) const
+VariableStackBindings ContinueStatement::printAsm(VariableStackBindings bindings, unsigned &label_count) const
 {
+    if(next_statement_ != nullptr)
+	next_statement_->printAsm(bindings, label_count);
+    
     printf("\tb\t%s\n\tnop\n", bindings.continueLabel().c_str());
     return bindings;
 }
@@ -718,8 +726,11 @@ GotoStatement::GotoStatement(const std::string &label)
     : label_(label)
 {}
 
-VariableStackBindings GotoStatement::printAsm(VariableStackBindings bindings, unsigned &) const
+VariableStackBindings GotoStatement::printAsm(VariableStackBindings bindings, unsigned &label_count) const
 {
+    if(next_statement_ != nullptr)
+	next_statement_->printAsm(bindings, label_count);
+    
     printf("\tb\t%s\n\tnop\n", label_.c_str());
     return bindings;
 }

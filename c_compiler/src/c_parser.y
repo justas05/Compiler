@@ -402,7 +402,7 @@ CastExpression:	UnaryExpression { $$ = $1; }
 UnaryExpression:
 		PostfixExpression { $$ = $1; }
 	|	T_INCDEC UnaryExpression { $$ = new UnaryPreIncDecExpression(*$1, $2); delete $1; }
-	|	UnaryOperator CastExpression { $$ = $2; }
+	|	UnaryOperator CastExpression { $$ = new OperatorUnaryExpression(*$1, $2); delete $1; }
 	|	T_SIZEOF UnaryExpression { $$ = $2; }
 	|	T_SIZEOF T_LRB DeclarationSpecifierList T_RRB { $$ = new Constant(0); delete $3; }
 		;

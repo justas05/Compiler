@@ -9,11 +9,20 @@ VariableStackBindings::VariableStackBindings()
 
 void VariableStackBindings::insertBinding(std::string id, TypePtr type, int stack_position)
 {
-    DeclarationData decl_data;
-    decl_data.type = type;
-    decl_data.stack_position = stack_position;
+    auto binding = bindings_.find(id);
 
-    bindings_.insert(std::pair<std::string, DeclarationData>(id, decl_data));
+    if(binding == bindings_.end())
+    {
+	DeclarationData decl_data;
+	decl_data.type = type;
+	decl_data.stack_position = stack_position;
+	bindings_.insert(std::pair<std::string, DeclarationData>(id, decl_data));
+    }
+    else
+    {
+	(*binding).second.stack_position = stack_position;
+	(*binding).second.type = type;
+    }
 }
 
 void VariableStackBindings::increaseStackPosition()

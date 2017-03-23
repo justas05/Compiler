@@ -70,7 +70,7 @@ ALL .
 [&][&]		{ return T_LOG_AND; }
 [|]		{ return T_OR; }
 [\^]		{ return T_XOR; }
-[&]		{ return T_AND; }
+[&]		{ yylval.string = new std::string(yytext); return T_AND; }
 [=][=]		{ yylval.string = new std::string(yytext); return T_EQUALITY_OP; }
 [!][=]		{ yylval.string = new std::string(yytext); return T_EQUALITY_OP; }
 ([<>][=])|[<>]	{ yylval.string = new std::string(yytext); return T_REL_OP; }
@@ -78,8 +78,8 @@ ALL .
 [*] 		{ yylval.string = new std::string(yytext); return T_MULT; }
 [\/]		{ yylval.string = new std::string(yytext); return T_DIV; }
 [%]		{ yylval.string = new std::string(yytext); return T_REM; }
-[~]		{ return T_TILDE; }
-[!]		{ return T_NOT; }
+[~]		{ yylval.string = new std::string(yytext); return T_TILDE; }
+[!]		{ yylval.string = new std::string(yytext); return T_NOT; }
 [.]		{ return T_DOT; }
 [-][>]		{ return T_ARROW; }
 [+-][+-]	{ yylval.string = new std::string(yytext); return T_INCDEC; }

@@ -1,17 +1,18 @@
 #!/bin/bash
 
-if [[ -z "$1" ]]; then 
+if [[ "$1" -eq 0 ]]; then 
     COMPILER=bin/c_compiler
-    #COMPILER=test_deliverable/c_compiler_ref.sh
-else
+elif [[ "$1" -eq 1 ]]; then
     COMPILER=bin/c_compiler
     make clean
     make -B ${COMPILER}
+elif [[ "$1" -eq 2 ]]; then
+    COMPILER=test_deliverable/c_compiler_ref.sh
 fi
 
 echo ""
 echo "========================================"
-echo " Testing compiler"
+echo " Testing compiler : ${COMPILER}"
 echo ""
 
 PASSED=0

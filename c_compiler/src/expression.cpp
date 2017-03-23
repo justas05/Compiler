@@ -17,7 +17,7 @@ void Expression::print() const
 void Expression::printXml() const
 {}
 
-void Expression::countArguments(unsigned& argument_count) const
+void Expression::countArguments(unsigned &argument_count) const
 {
     // by default don't do anything to the count
     (void)argument_count;
@@ -68,11 +68,11 @@ ExpressionPtr Expression::nextExpression() const
 
 // OperationExpression definition
 
-OperationExpression::OperationExpression(Expression* lhs, Expression* rhs)
+OperationExpression::OperationExpression(Expression *lhs, Expression *rhs)
     : lhs_(lhs), rhs_(rhs)
 {}
 
-OperationExpression::OperationExpression(ExpressionPtr lhs, Expression* rhs)
+OperationExpression::OperationExpression(ExpressionPtr lhs, Expression *rhs)
     : lhs_(lhs), rhs_(rhs)
 {}
 
@@ -81,7 +81,7 @@ int OperationExpression::constantFold() const
     throw std::runtime_error("Error : Cannot constant fold expression\n");
 }
 
-void OperationExpression::expressionDepth(unsigned& depth_count) const
+void OperationExpression::expressionDepth(unsigned &depth_count) const
 {
     unsigned lhs_depth_count = depth_count;
     unsigned rhs_depth_count = depth_count+1;
@@ -105,7 +105,7 @@ ExpressionPtr OperationExpression::getRhs() const
     return rhs_;
 }
 
-void OperationExpression::evaluateExpression(VariableStackBindings bindings, unsigned& label_count) const
+void OperationExpression::evaluateExpression(VariableStackBindings bindings, unsigned &label_count) const
 {
     // I can just evaluate the lhs with the same entry stack position
     lhs_->printAsm(bindings, label_count);
@@ -128,7 +128,7 @@ void OperationExpression::evaluateExpression(VariableStackBindings bindings, uns
 PostfixArrayElement::PostfixArrayElement()
 {}
 
-VariableStackBindings PostfixArrayElement::printAsm(VariableStackBindings bindings, unsigned& label_count) const
+VariableStackBindings PostfixArrayElement::printAsm(VariableStackBindings bindings, unsigned &label_count) const
 {
     return bindings;
 }
@@ -136,11 +136,11 @@ VariableStackBindings PostfixArrayElement::printAsm(VariableStackBindings bindin
 
 // PostfixFunctionCall
 
-PostfixFunctionCall::PostfixFunctionCall(Expression* argument_expression_list)
+PostfixFunctionCall::PostfixFunctionCall(Expression *argument_expression_list)
     : argument_expression_list_(argument_expression_list)
 {}
 
-VariableStackBindings PostfixFunctionCall::printAsm(VariableStackBindings bindings, unsigned& label_count) const
+VariableStackBindings PostfixFunctionCall::printAsm(VariableStackBindings bindings, unsigned &label_count) const
 {
     std::vector<ExpressionPtr> argument_vector;
     ExpressionPtr current_argument = argument_expression_list_;
@@ -169,7 +169,7 @@ VariableStackBindings PostfixFunctionCall::printAsm(VariableStackBindings bindin
     return bindings;
 }
 
-void PostfixFunctionCall::countArguments(unsigned int &argument_count) const
+void PostfixFunctionCall::countArguments(unsigned &argument_count) const
 {
     ExpressionPtr current_argument = argument_expression_list_;
 
@@ -182,7 +182,7 @@ void PostfixFunctionCall::countArguments(unsigned int &argument_count) const
     }
 }
 
-void PostfixFunctionCall::setPostfixExpression(Expression* postfix_expression)
+void PostfixFunctionCall::setPostfixExpression(Expression *postfix_expression)
 {
     ExpressionPtr expression_ptr(postfix_expression);
     postfix_expression_ = expression_ptr;
@@ -191,11 +191,11 @@ void PostfixFunctionCall::setPostfixExpression(Expression* postfix_expression)
 
 // Post increment and decrement definition
 
-PostfixPostIncDecExpression::PostfixPostIncDecExpression(const std::string& _operator, Expression* postfix_expression)
+PostfixPostIncDecExpression::PostfixPostIncDecExpression(const std::string &_operator, Expression *postfix_expression)
     : operator_(_operator), postfix_expression_(postfix_expression)
 {}
 
-VariableStackBindings PostfixPostIncDecExpression::printAsm(VariableStackBindings bindings, unsigned& label_count) const
+VariableStackBindings PostfixPostIncDecExpression::printAsm(VariableStackBindings bindings, unsigned &label_count) const
 {
     postfix_expression_->printAsm(bindings, label_count);
     if(operator_ == "++")
@@ -213,11 +213,11 @@ VariableStackBindings PostfixPostIncDecExpression::printAsm(VariableStackBinding
 
 // Pre increment and decrement implementation
 
-UnaryPreIncDecExpression::UnaryPreIncDecExpression(const std::string& _operator, Expression* unary_expression)
+UnaryPreIncDecExpression::UnaryPreIncDecExpression(const std::string &_operator, Expression *unary_expression)
     : operator_(_operator), unary_expression_(unary_expression)
 {}
 
-VariableStackBindings UnaryPreIncDecExpression::printAsm(VariableStackBindings bindings, unsigned& label_count) const
+VariableStackBindings UnaryPreIncDecExpression::printAsm(VariableStackBindings bindings, unsigned &label_count) const
 {
     unary_expression_->printAsm(bindings, label_count);
     if(operator_ == "++")
@@ -233,13 +233,49 @@ VariableStackBindings UnaryPreIncDecExpression::printAsm(VariableStackBindings b
 }
 
 
+// Operator unary definition
+
+OperatorUnaryExpression::OperatorUnaryExpression(const std::string &_operator, Expression *cast_expression)
+    : operator_(_operator), cast_expression_(cast_expression)
+{}
+
+VariableStackBindings OperatorUnaryExpression::printAsm(VariableStackBindings bindings, unsigned &label_count) const
+{
+    cast_expression_->printAsm(bindings, label_count);
+    if(operator_ == "!")
+    {
+	printf("\tsltu\t$2,$2,1\n\tandi\t$2,$2,0x00ff\n");
+    }
+    else if(operator_ == "~")
+    {
+	printf("\tnor\t$2,$0,$2\n");
+    }
+    else if(operator_ == "&")
+    {
+	printf("\taddiu\t$2,$fp,%d\n", cast_expression_->postfixStackPosition(bindings));
+    }
+    else if(operator_ == "-")
+    {
+	printf("\tsubu\t$2,$0,$2\n");
+    }
+    else if(operator_ == "*")
+    {
+	printf("\tlw\t$2,0($2)\n");
+    }
+
+    printf("\tsw\t$2,%d($fp)\n", bindings.currentExpressionStackPosition());
+
+    return bindings;
+}
+
+
 // CastExpression definition
 
-CastExpression::CastExpression(Type* type, Expression* expression)
+CastExpression::CastExpression(Type *type, Expression *expression)
     : type_(type), expression_(expression)
 {}
 
-VariableStackBindings CastExpression::printAsm(VariableStackBindings bindings, unsigned& label_count) const
+VariableStackBindings CastExpression::printAsm(VariableStackBindings bindings, unsigned &label_count) const
 {
     return bindings;
 }
@@ -247,11 +283,11 @@ VariableStackBindings CastExpression::printAsm(VariableStackBindings bindings, u
 
 // Additive Expression definition
 
-AdditiveExpression::AdditiveExpression(Expression* lhs, const std::string& _operator, Expression* rhs)
+AdditiveExpression::AdditiveExpression(Expression *lhs, const std::string &_operator, Expression *rhs)
     : OperationExpression(lhs, rhs), operator_(_operator)
 {}
 
-VariableStackBindings AdditiveExpression::printAsm(VariableStackBindings bindings, unsigned& label_count) const
+VariableStackBindings AdditiveExpression::printAsm(VariableStackBindings bindings, unsigned &label_count) const
 {
     evaluateExpression(bindings, label_count);
     
@@ -281,11 +317,11 @@ int AdditiveExpression::constantFold() const
 // Multiplicative Expression definition
 
 
-MultiplicativeExpression::MultiplicativeExpression(Expression* lhs, const std::string& _operator, Expression* rhs)
+MultiplicativeExpression::MultiplicativeExpression(Expression *lhs, const std::string &_operator, Expression *rhs)
     : OperationExpression(lhs, rhs), operator_(_operator)
 {}
 
-VariableStackBindings MultiplicativeExpression::printAsm(VariableStackBindings bindings, unsigned& label_count) const
+VariableStackBindings MultiplicativeExpression::printAsm(VariableStackBindings bindings, unsigned &label_count) const
 {
     evaluateExpression(bindings, label_count);
 
@@ -326,11 +362,11 @@ int MultiplicativeExpression::constantFold() const
 
 // ShiftExpression definition
 
-ShiftExpression::ShiftExpression(Expression* lhs, const std::string& _operator, Expression* rhs)
+ShiftExpression::ShiftExpression(Expression* lhs, const std::string &_operator, Expression *rhs)
     : OperationExpression(lhs, rhs), operator_(_operator)
 {}
 
-VariableStackBindings ShiftExpression::printAsm(VariableStackBindings bindings, unsigned& label_count) const
+VariableStackBindings ShiftExpression::printAsm(VariableStackBindings bindings, unsigned &label_count) const
 {
     evaluateExpression(bindings, label_count);
 
@@ -362,11 +398,11 @@ int ShiftExpression::constantFold() const
 
 // RelationalExpression definition
 
-RelationalExpression::RelationalExpression(Expression* lhs, const std::string& _operator, Expression* rhs)
+RelationalExpression::RelationalExpression(Expression* lhs, const std::string &_operator, Expression *rhs)
     : OperationExpression(lhs, rhs), operator_(_operator)
 {}
 
-VariableStackBindings RelationalExpression::printAsm(VariableStackBindings bindings, unsigned& label_count) const
+VariableStackBindings RelationalExpression::printAsm(VariableStackBindings bindings, unsigned &label_count) const
 {
     evaluateExpression(bindings, label_count);
 
@@ -417,11 +453,11 @@ int RelationalExpression::constantFold() const
 
 // EqualityExpression definition
 
-EqualityExpression::EqualityExpression(Expression* lhs, const std::string& _operator, Expression* rhs)
+EqualityExpression::EqualityExpression(Expression *lhs, const std::string &_operator, Expression *rhs)
     : OperationExpression(lhs, rhs), operator_(_operator)
 {}
 
-VariableStackBindings EqualityExpression::printAsm(VariableStackBindings bindings, unsigned& label_count) const
+VariableStackBindings EqualityExpression::printAsm(VariableStackBindings bindings, unsigned &label_count) const
 {
     evaluateExpression(bindings, label_count);
     printf("\txor\t$2,$2,$3\n");
@@ -454,11 +490,11 @@ int EqualityExpression::constantFold() const
 
 // AndExpression definition
 
-AndExpression::AndExpression(Expression* lhs, Expression* rhs)
+AndExpression::AndExpression(Expression *lhs, Expression *rhs)
     : OperationExpression(lhs, rhs)
 {}
 
-VariableStackBindings AndExpression::printAsm(VariableStackBindings bindings, unsigned& label_count) const
+VariableStackBindings AndExpression::printAsm(VariableStackBindings bindings, unsigned &label_count) const
 {
     evaluateExpression(bindings, label_count);
     printf("\tand\t$2,$2,$3\n\tsw\t$2,%d($fp)\n", bindings.currentExpressionStackPosition());
@@ -473,11 +509,11 @@ int AndExpression::constantFold() const
 
 // ExclusiveOrExpression definition
 
-ExclusiveOrExpression::ExclusiveOrExpression(Expression* lhs, Expression* rhs)
+ExclusiveOrExpression::ExclusiveOrExpression(Expression *lhs, Expression *rhs)
     : OperationExpression(lhs, rhs)
 {}
 
-VariableStackBindings ExclusiveOrExpression::printAsm(VariableStackBindings bindings, unsigned& label_count) const
+VariableStackBindings ExclusiveOrExpression::printAsm(VariableStackBindings bindings, unsigned &label_count) const
 {
     evaluateExpression(bindings, label_count);
     printf("\txor\t$2,$2,$3\n\tsw\t$2,%d($fp)\n", bindings.currentExpressionStackPosition());
@@ -492,11 +528,11 @@ int ExclusiveOrExpression::constantFold() const
 
 // InclusiveOrExpression definition
 
-InclusiveOrExpression::InclusiveOrExpression(Expression* lhs, Expression* rhs)
+InclusiveOrExpression::InclusiveOrExpression(Expression *lhs, Expression *rhs)
     : OperationExpression(lhs, rhs)
 {}
 
-VariableStackBindings InclusiveOrExpression::printAsm(VariableStackBindings bindings, unsigned& label_count) const
+VariableStackBindings InclusiveOrExpression::printAsm(VariableStackBindings bindings, unsigned &label_count) const
 {
     evaluateExpression(bindings, label_count);
     printf("\tor\t$2,$2,$3\n\tsw\t$2,%d($fp)\n", bindings.currentExpressionStackPosition());
@@ -511,12 +547,20 @@ int InclusiveOrExpression::constantFold() const
 
 // LogicalAndExpression definition
 
-LogicalAndExpression::LogicalAndExpression(Expression* lhs, Expression* rhs)
+LogicalAndExpression::LogicalAndExpression(Expression *lhs, Expression *rhs)
     : OperationExpression(lhs, rhs)
 {}
 
-VariableStackBindings LogicalAndExpression::printAsm(VariableStackBindings bindings, unsigned& label_count) const
+VariableStackBindings LogicalAndExpression::printAsm(VariableStackBindings bindings, unsigned &label_count) const
 {
+    unsigned log_and = label_count++;
+    lhs_->printAsm(bindings, label_count);
+    printf("\tbeq\t$2,$0,$%d_log_and_load_0\n\tnop\n", log_and);
+    rhs_->printAsm(bindings, label_count);
+    printf("\tbeq\t$2,$0,$%d_log_and_load_0\n\tnop\n", log_and);
+    printf("\tli\t$2,1\n\tb\t$%d_log_and_end\n\tnop\n", log_and);
+    printf("$%d_log_and_load_0:\n\tmove\t$2,$0\n$%d_log_and_end:\n", log_and, log_and);
+    printf("\tsw\t$2,%d($fp)\n", bindings.currentExpressionStackPosition());
     return bindings;
 }
 
@@ -528,12 +572,20 @@ int LogicalAndExpression::constantFold() const
 
 // LogicalOrExpression definition
 
-LogicalOrExpression::LogicalOrExpression(Expression* lhs, Expression* rhs)
+LogicalOrExpression::LogicalOrExpression(Expression *lhs, Expression *rhs)
     : OperationExpression(lhs, rhs)
 {}
 
-VariableStackBindings LogicalOrExpression::printAsm(VariableStackBindings bindings, unsigned& label_count) const
+VariableStackBindings LogicalOrExpression::printAsm(VariableStackBindings bindings, unsigned &label_count) const
 {
+    unsigned log_or = label_count++;
+    lhs_->printAsm(bindings, label_count);
+    printf("\tbne\t$2,$0,$%d_log_or_load_1\n\tnop\n", log_or);
+    rhs_->printAsm(bindings, label_count);
+    printf("\tbeq\t$2,$0,$%d_log_or_load_0\n\tnop\n", log_or);
+    printf("$%d_log_or_load_1:\n\tli\t$2,1\n\tb\t$%d_log_or_end\n\tnop\n", log_or, log_or);
+    printf("$%d_log_or_load_0:\n\tmove\t$2,$0\n$%d_log_or_end:\n", log_or, log_or);
+    printf("\tsw\t$2,%d($fp)\n", bindings.currentExpressionStackPosition());
     return bindings;
 }
 
@@ -545,14 +597,14 @@ int LogicalOrExpression::constantFold() const
 
 // ConditionalExpression definition
 
-ConditionalExpression::ConditionalExpression(Expression* logical_or,
-					     Expression* expression,
-					     Expression* conditional_expression)
+ConditionalExpression::ConditionalExpression(Expression *logical_or,
+					     Expression *expression,
+					     Expression *conditional_expression)
     : logical_or_(logical_or), expression_(expression),
       conditional_expression_(conditional_expression)
 {}
 
-VariableStackBindings ConditionalExpression::printAsm(VariableStackBindings bindings, unsigned& label_count) const
+VariableStackBindings ConditionalExpression::printAsm(VariableStackBindings bindings, unsigned &label_count) const
 {
     return bindings;
 }
@@ -560,15 +612,15 @@ VariableStackBindings ConditionalExpression::printAsm(VariableStackBindings bind
 
 // Assignment Expression definition
 
-AssignmentExpression::AssignmentExpression(Expression* lhs, Expression* rhs)
+AssignmentExpression::AssignmentExpression(Expression *lhs, Expression *rhs)
     : OperationExpression(lhs, rhs)
 {}
 
-AssignmentExpression::AssignmentExpression(ExpressionPtr lhs, Expression* rhs)
+AssignmentExpression::AssignmentExpression(ExpressionPtr lhs, Expression *rhs)
     : OperationExpression(lhs, rhs)
 {}
 
-VariableStackBindings AssignmentExpression::printAsm(VariableStackBindings bindings, unsigned& label_count) const
+VariableStackBindings AssignmentExpression::printAsm(VariableStackBindings bindings, unsigned &label_count) const
 {
     // TODO add stack and store results in there, also for addition and multiplication.
 
@@ -593,11 +645,11 @@ VariableStackBindings AssignmentExpression::printAsm(VariableStackBindings bindi
 
 // Identifier definition
 
-Identifier::Identifier(const std::string& id)
+Identifier::Identifier(const std::string &id)
     : id_(id)
 {}
 
-VariableStackBindings Identifier::printAsm(VariableStackBindings bindings, unsigned& label_count) const
+VariableStackBindings Identifier::printAsm(VariableStackBindings bindings, unsigned &label_count) const
 {
     (void)label_count;
     
@@ -640,11 +692,11 @@ std::string Identifier::id() const
 
 // Constant definition
 
-Constant::Constant(const int32_t& constant)
+Constant::Constant(const int32_t &constant)
     : constant_(constant)
 {}
 
-VariableStackBindings Constant::printAsm(VariableStackBindings bindings, unsigned& label_count) const
+VariableStackBindings Constant::printAsm(VariableStackBindings bindings, unsigned &label_count) const
 {
     (void)label_count;
     // constant only has to load to $2 because the other expression will take care of the rest
