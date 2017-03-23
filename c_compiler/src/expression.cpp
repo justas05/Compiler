@@ -23,10 +23,8 @@ void Expression::countArguments(unsigned& argument_count) const
     (void)argument_count;
 }
 
-void Expression::expressionDepth(unsigned& depth_count) const
-{
-    (void)depth_count;
-}
+void Expression::expressionDepth(unsigned &) const
+{}
 
 int Expression::postfixStackPosition(VariableStackBindings bindings) const
 {

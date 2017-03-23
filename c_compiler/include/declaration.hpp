@@ -33,7 +33,7 @@ public:
     void linkDeclaration(Declaration* next_declaration);
     void linkListDeclaration(Declaration* next_list_declaration);
 
-    void setType(Type* type);
+    void setType(TypePtr type);
     void setInitializer(Expression* initializer);
     void setExternDeclaration(bool is_extern);
 

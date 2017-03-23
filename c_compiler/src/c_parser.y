@@ -69,13 +69,13 @@ void yyerror(const char *);
 			PostfixExpression PostfixExpression2 ArgumentExpressionList PrimaryExpression
 			Constant Initializer InitializerList
 
-%type	<type>		DeclarationSpecifierList 
+%type	<type>		DeclarationSpecifierList Pointer
 
 %type	<number>        T_INT_CONST
 			
 %type	<string>	T_IDENTIFIER ASSIGN_OPER T_ASSIGN_OPER T_EQ T_AND T_ADDSUB_OP T_TILDE T_NOT
 			T_MULT T_DIV T_REM T_EQUALITY_OP T_REL_OP T_SHIFT_OP T_INCDEC MultDivRemOP
-			UnaryOperator DeclarationSpecifier
+			UnaryOperator DeclarationSpecifier TypeQualifier TypeQualifierList
                         
 %start ROOT
                         
@@ -123,11 +123,16 @@ DeclarationList:
 Declaration:	DeclarationSpecifierList InitDeclaratorList T_SC
 		{
 		    $$ = $2;
-		    Declaration* tmp_decl = $2;
-		    Type* tmp_type = new TypeContainer();
-    
+		    Declaration *tmp_decl = $2;
+		    std::shared_ptr<Type> tmp_type;
+		    if(tmp_decl->getType() == nullptr)
+			tmp_type = std::make_shared<TypeContainer>();
+		    else
+			tmp_type = tmp_decl->getType();
+		    
 		    while(tmp_decl != nullptr) {
 			tmp_type->type($1->type());
+			tmp_decl->setType(tmp_type);
 			tmp_decl = tmp_decl->getNextListItem().get();
 		    }
 
@@ -174,8 +179,24 @@ InitDeclarator:	Declarator { $$ = $1; }
 		;
 
 Declarator:	DirectDeclarator { $$ = $1; }
-	|	T_MULT DirectDeclarator { $$ = $2; }
+|	Pointer DirectDeclarator { $$ = $2; std::shared_ptr<Type> tmp($1); $$->setType(tmp); }
 		;
+
+Pointer:
+T_MULT { $$ = new Pointer(); delete $1; }
+| T_MULT Pointer { $$ = $2; delete $1; }
+| T_MULT TypeQualifierList Pointer { $$ = $3; delete $1; delete $2; }
+;
+
+TypeQualifierList:
+TypeQualifier { $$ = $1; }
+| TypeQualifierList TypeQualifier { $$ = $2; delete $1; }
+;
+
+TypeQualifier:
+T_CONST { $$ = new std::string("const"); }
+| T_VOLATILE { $$ = new std::string("volatile"); }
+;
 
 DirectDeclarator:
 		T_IDENTIFIER { $$ = new Declaration(*$1); delete $1; }

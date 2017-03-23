@@ -6,34 +6,6 @@
 
 // Type definition
 
-void Type::print() const
-{
-    printf("%s\n", getType().c_str());
-}
-
-void Type::printXml() const
-{}
-
-VariableStackBindings Type::printAsm(VariableStackBindings bindings, unsigned&) const
-{
-    return bindings;
-}
-
-TypePtr Type::type()
-{
-    throw std::runtime_error("Error : does not have a type");
-}
-
-TypePtr Type::type(Type*)
-{
-    throw std::runtime_error("Error : cannot assign type");
-}
-
-TypePtr Type::type(TypePtr)
-{
-    throw std::runtime_error("Error : cannot assign type");
-}
-
 void Type::setSigned(bool)
 {
     throw std::runtime_error("Error : cannot set sign");
@@ -60,26 +32,81 @@ void Type::setSize(int)
 }
 
 
+// Array definition
+
+Array::Array(const int &size, TypePtr type)
+    : size_(size), type_(type)
+{}
+
+void Array::print() const
+{
+    printf("Array\n");
+}
+
+void Array::printXml() const
+{}
+
+VariableStackBindings Array::printAsm(VariableStackBindings bindings, unsigned &label_count) const
+{
+    return bindings;
+}
+
+TypePtr Array::type()
+{
+    return type_;
+}
+
+TypePtr Array::type(Type *type_ptr)
+{
+    TypePtr sh_type_ptr(type_ptr);
+    type_ = sh_type_ptr;
+    return type_;
+}
+
+TypePtr Array::type(TypePtr type_ptr)
+{
+    type_ = type_ptr;
+    return type_;
+}
+
+
 // Pointer definition
 
 Pointer::Pointer()
 {}
 
-std::string Pointer::getType() const
+void Pointer::print() const
 {
-    return "pointer";
+    printf("Pointer\n");
 }
 
-
-// Array definition
-
-Array::Array()
+void Pointer::printXml() const
 {}
 
-std::string Array::getType() const
+VariableStackBindings Pointer::printAsm(VariableStackBindings bindings, unsigned &label_count) const
 {
-    return "array";
+    return bindings;
 }
+
+TypePtr Pointer::type()
+{
+    return type_;
+}
+
+TypePtr Pointer::type(Type *type_ptr)
+{
+    TypePtr sh_type_ptr(type_ptr);
+    type_ = sh_type_ptr;
+    return type_;
+}
+
+TypePtr Pointer::type(TypePtr type_ptr)
+{
+    type_ = type_ptr;
+    return type_;
+}
+
+
 
 
 // TypeContainer definition
@@ -88,9 +115,18 @@ TypeContainer::TypeContainer()
     : type_(nullptr), size_(32), extern_(false), static_(false), const_(false), signed_(true)
 {}
 
-std::string TypeContainer::getType() const
+void TypeContainer::print() const
 {
-    return type_->getType();
+    printf("TypeContainer : ");
+    type_->print();
+}
+
+void TypeContainer::printXml() const
+{}
+
+VariableStackBindings TypeContainer::printAsm(VariableStackBindings bindings, unsigned &label_count) const
+{
+    return bindings;
 }
 
 TypePtr TypeContainer::type()
@@ -98,7 +134,7 @@ TypePtr TypeContainer::type()
     return type_;
 }
 
-TypePtr TypeContainer::type(Type* type_ptr)
+TypePtr TypeContainer::type(Type *type_ptr)
 {
     TypePtr new_type_ptr(type_ptr);
     type_ = new_type_ptr;
@@ -139,14 +175,40 @@ void TypeContainer::setSize(int size)
 }
 
 
+// Specifier definitions
+
+TypePtr Specifier::type()
+{
+    throw std::runtime_error("Error : Cannot get type");
+}
+
+TypePtr Specifier::type(Type *)
+{
+    throw std::runtime_error("Error : Cannot get type");
+}
+
+TypePtr Specifier::type(TypePtr)
+{
+    throw std::runtime_error("Error : Cannot get type");
+}
+
+
 // Int definition
 
 Int::Int()
 {}
 
-std::string Int::getType() const
+void Int::print() const
 {
-    return "int";
+    printf("Int\n");
+}
+
+void Int::printXml() const
+{}
+
+VariableStackBindings Int::printAsm(VariableStackBindings bindings, unsigned &label_count) const
+{
+    return bindings;
 }
 
 
@@ -155,9 +217,17 @@ std::string Int::getType() const
 Void::Void()
 {}
 
-std::string Void::getType() const
+void Void::print() const
 {
-    return "void";
+    printf("Void\n");
+}
+
+void Void::printXml() const
+{}
+
+VariableStackBindings Void::printAsm(VariableStackBindings bindings, unsigned &label_count) const
+{
+    return bindings;
 }
 
 
@@ -166,9 +236,17 @@ std::string Void::getType() const
 Char::Char()
 {}
 
-std::string Char::getType() const
+void Char::print() const
 {
-    return "char";
+    printf("Char\n");
+}
+
+void Char::printXml() const
+{}
+
+VariableStackBindings Char::printAsm(VariableStackBindings bindings, unsigned &label_count) const
+{
+    return bindings;
 }
 
 
@@ -177,7 +255,15 @@ std::string Char::getType() const
 Float::Float()
 {}
 
-std::string Float::getType() const
+void Float::print() const
 {
-    return "float";
+    printf("Float\n");
+}
+
+void Float::printXml() const
+{}
+
+VariableStackBindings Float::printAsm(VariableStackBindings bindings, unsigned &label_count) const
+{
+    return bindings;
 }
