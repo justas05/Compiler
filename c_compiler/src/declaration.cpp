@@ -85,10 +85,9 @@ void Declaration::linkListDeclaration(Declaration* next_declaration)
     next_list_declaration_ = decl_ptr;
 }
 
-void Declaration::setType(Type* type)
+void Declaration::setType(TypePtr type)
 {
-    TypePtr type_ptr(type);
-    type_ = type_ptr;
+    type_ = type;
 }
 
 void Declaration::setInitializer(Expression* initializer)

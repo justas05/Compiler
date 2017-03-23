@@ -13,15 +13,14 @@ typedef std::shared_ptr<Type> TypePtr;
 class Type : public Node
 {
 public:
-    virtual void print() const;
-    virtual void printXml() const;
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
-
-    virtual std::string getType() const = 0;
-
-    virtual TypePtr type();    
-    virtual TypePtr type(Type* type_ptr);
-    virtual TypePtr type(TypePtr type_ptr);
+    virtual void print() const = 0;
+    virtual void printXml() const = 0;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned &label_count) const = 0;
+    
+    virtual TypePtr type() = 0;
+    virtual TypePtr type(Type *type_ptr) = 0;
+    virtual TypePtr type(TypePtr type_ptr) = 0;
+    
     virtual void setSigned(bool _signed);
     virtual void setExtern(bool _extern);
     virtual void setStatic(bool _static);
@@ -31,16 +30,35 @@ public:
 
 class Array : public Type
 {
+private:
+    int size_;
+    TypePtr type_;
 public:
-    Array();
-    virtual std::string getType() const;
+    Array(const int &size, TypePtr type_);
+
+    virtual void print() const;
+    virtual void printXml() const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned &label_count) const;
+    
+    virtual TypePtr type();
+    virtual TypePtr type(Type *type_ptr);
+    virtual TypePtr type(TypePtr type_ptr);
 };
 
 class Pointer : public Type
 {
+private:
+    TypePtr type_;
 public:
     Pointer();
-    virtual std::string getType() const;
+
+    virtual void print() const;
+    virtual void printXml() const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned &label_count) const;
+    
+    virtual TypePtr type();
+    virtual TypePtr type(Type *type_ptr);
+    virtual TypePtr type(TypePtr type_ptr);
 };
 
 class TypeContainer : public Type
@@ -56,10 +74,14 @@ protected:
 public:
     TypeContainer();
 
-    virtual std::string getType() const;
+    virtual void print() const;
+    virtual void printXml() const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned &label_count) const;
+    
     virtual TypePtr type();    
-    virtual TypePtr type(Type* type_ptr);
+    virtual TypePtr type(Type *type_ptr);
     virtual TypePtr type(TypePtr type_ptr);
+    
     virtual void setSigned(bool _signed);
     virtual void setExtern(bool _extern);
     virtual void setStatic(bool _static);
@@ -70,39 +92,53 @@ public:
 class Specifier : public Type
 {
 public:
-    virtual std::string getType() const = 0;
+    virtual void print() const = 0;
+    virtual void printXml() const = 0;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned &label_count) const = 0;
+    
+    virtual TypePtr type();
+    virtual TypePtr type(Type *type_ptr);
+    virtual TypePtr type(TypePtr type_ptr);
 };
 
 class Int : public Specifier
 {
 public:
     Int();
-    
-    virtual std::string getType() const;
+
+    virtual void print() const;
+    virtual void printXml() const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned &label_count) const;
 };
 
 class Void : public Specifier
 {
 public:
     Void();
-    
-    virtual std::string getType() const;    
+
+    virtual void print() const;
+    virtual void printXml() const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned &label_count) const;
 };
 
 class Char : public Specifier
 {
 public:
     Char();
-    
-    virtual std::string getType() const;    
+
+    virtual void print() const;
+    virtual void printXml() const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned &label_count) const;
 };
 
 class Float : public Specifier
 {
 public:
     Float();
-    
-    virtual std::string getType() const;    
+
+    virtual void print() const;
+    virtual void printXml() const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned &label_count) const;
 };
 
 #endif
