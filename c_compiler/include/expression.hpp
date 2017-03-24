@@ -69,6 +69,7 @@ public:
     PostfixArrayElement(Expression *postfix_expression, Expression *index_expression);
 
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned &label_count) const;
+    virtual void expressionDepth(unsigned &depth_count) const;
     virtual void stackPosition(VariableStackBindings bindings) const;
 };
 
@@ -83,6 +84,7 @@ public:
 
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned &label_count) const;
     virtual void countArguments(unsigned &argument_count) const;
+    virtual void expressionDepth(unsigned &depth_count) const;
     
     void setPostfixExpression(Expression *postfix_expression);
 };
@@ -136,6 +138,7 @@ public:
     CastExpression(Type *type, Expression *expression);
 
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned &label_count) const;
+    virtual void expressionDepth(unsigned &depth_count) const;
 };
 
 class AdditiveExpression : public OperationExpression

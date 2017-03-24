@@ -270,6 +270,7 @@ ExpressionStatement:
 		;
 
 JumpStatement:	T_RETURN Expression T_SC { $$ = new ReturnStatement($2); }
+	|	T_RETURN T_SC { $$ = new ReturnStatement(); }
 	|	T_BREAK T_SC { $$ = new BreakStatement(); }
 	|	T_CONTINUE T_SC { $$ = new ContinueStatement(); }
 	|	T_GOTO T_IDENTIFIER { $$ = new GotoStatement(*$2); }

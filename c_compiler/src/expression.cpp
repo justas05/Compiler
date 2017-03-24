@@ -28,8 +28,11 @@ void Expression::countArguments(unsigned &argument_count) const
     (void)argument_count;
 }
 
-void Expression::expressionDepth(unsigned &) const
-{}
+void Expression::expressionDepth(unsigned &depth_count) const
+{
+    if(next_expression_ != nullptr)
+	next_expression_->expressionDepth(depth_count);
+}
 
 std::string Expression::id() const
 {
@@ -131,6 +134,15 @@ void PostfixArrayElement::stackPosition(VariableStackBindings bindings) const
     
 }
 
+void PostfixArrayElement::expressionDepth(unsigned &depth_count) const
+{
+    if(nextExpression() != nullptr)
+	nextExpression()->expressionDepth(depth_count);
+
+    if(index_expression_ != nullptr)
+	index_expression_->expressionDepth(depth_count);
+}
+
 
 // PostfixFunctionCall
 
@@ -184,6 +196,12 @@ void PostfixFunctionCall::setPostfixExpression(Expression *postfix_expression)
 {
     ExpressionPtr expression_ptr(postfix_expression);
     postfix_expression_ = expression_ptr;
+}
+
+void PostfixFunctionCall::expressionDepth(unsigned &depth_count) const
+{
+    if(argument_expression_list_ != nullptr)
+	argument_expression_list_->expressionDepth(depth_count);
 }
 
 
@@ -299,6 +317,14 @@ CastExpression::CastExpression(Type *type, Expression *expression)
 VariableStackBindings CastExpression::printAsm(VariableStackBindings bindings, unsigned &label_count) const
 {
     return bindings;
+}
+
+void CastExpression::expressionDepth(unsigned &depth_count) const
+{
+    if(nextExpression() != nullptr)
+	nextExpression()->expressionDepth(depth_count);
+
+    expression_->expressionDepth(depth_count);
 }
 
 

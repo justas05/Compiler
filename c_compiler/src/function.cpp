@@ -69,7 +69,7 @@ VariableStackBindings Function::printAsm(VariableStackBindings bindings, unsigne
     countParameters(parameter_count);
     
     // This adds 2 to store the frame pointer and the return address
-    unsigned memory_needed = 4*(variable_count+max_argument_count+max_depth+parameter_count+2);
+    unsigned memory_needed = 4*(variable_count+max_argument_count+max_depth+2);
     
     // make frame double word aligned
     if(memory_needed % 8 != 0)
@@ -80,10 +80,10 @@ VariableStackBindings Function::printAsm(VariableStackBindings bindings, unsigne
     printf("$31,%d($sp)\n\tsw\t$fp,%d($sp)\n\tmove\t$fp,$sp\n", memory_needed-4, memory_needed-8);
 
     // set the stack counter to the right value
-    bindings.setStackPosition((max_argument_count+parameter_count)*4);
-    bindings.setExpressionStackPosition((max_argument_count+parameter_count+variable_count)*4);
+    bindings.setStackPosition(max_argument_count*4);
+    bindings.setExpressionStackPosition((max_argument_count+variable_count)*4);
 
-    printParameterAsm(bindings, max_argument_count, memory_needed);
+    printParameterAsm(bindings, memory_needed);
     
     // Prints the asm for the compound statement in the function
     statement_->printAsm(bindings, label_count);
@@ -94,8 +94,7 @@ VariableStackBindings Function::printAsm(VariableStackBindings bindings, unsigne
     return original_bindings;
 }
 
-void Function::printParameterAsm(VariableStackBindings& bindings, unsigned& stack_offset,
-				 unsigned& frame_offset) const
+void Function::printParameterAsm(VariableStackBindings& bindings, unsigned& frame_offset) const
 {
     std::vector<DeclarationPtr> parameter_vector;
     DeclarationPtr parameter_list = parameter_list_;
@@ -109,11 +108,9 @@ void Function::printParameterAsm(VariableStackBindings& bindings, unsigned& stac
     for(auto itr = parameter_vector.rbegin(); itr != parameter_vector.rend(); ++itr)
     {
 	unsigned i = itr-parameter_vector.rbegin();
-	bindings.insertBinding((*itr)->getId(), (*itr)->getType(), (i+stack_offset)*4);
+	bindings.insertBinding((*itr)->getId(), (*itr)->getType(), i*4+frame_offset);
 	if(i < 4)
-	    printf("\tsw\t$%d,%d($fp)\n", 4+i, (i+stack_offset)*4);
-	else
-	    printf("\tlw\t$2,%d($fp)\n\tsw\t$2,%d($fp)\n", frame_offset+4*i, (i+stack_offset)*4);
+	    printf("\tsw\t$%d,%d($fp)\n", 4+i, i*4+frame_offset);
     }
 }
 
