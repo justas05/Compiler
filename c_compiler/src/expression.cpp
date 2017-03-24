@@ -12,7 +12,12 @@ int Expression::constantFold() const
 }
 
 void Expression::print() const
-{}
+{
+    if(next_expression_ != nullptr)
+	next_expression_->print();
+
+    printf("Expression\n");
+}
 
 void Expression::printXml() const
 {}
@@ -25,18 +30,6 @@ void Expression::countArguments(unsigned &argument_count) const
 
 void Expression::expressionDepth(unsigned &) const
 {}
-
-int Expression::postfixStackPosition(VariableStackBindings bindings) const
-{
-    (void)bindings;
-    throw std::runtime_error("Error : Can't call postfixStackExpression() on this type");
-}
-
-void Expression::setPostfixExpression(Expression *postfix_expression)
-{
-    // do nothing if expression isn't a postfix expression
-    (void)postfix_expression;
-}
 
 std::string Expression::id() const
 {
@@ -68,7 +61,7 @@ OperationExpression::OperationExpression(ExpressionPtr lhs, Expression *rhs)
 
 int OperationExpression::constantFold() const
 {
-    throw std::runtime_error("Error : Cannot constant fold expression\n");
+    throw std::runtime_error("Error : Cannot constant fold expression");
 }
 
 void OperationExpression::expressionDepth(unsigned &depth_count) const
@@ -112,6 +105,15 @@ void OperationExpression::evaluateExpression(VariableStackBindings bindings, uns
     printf("\tlw\t$2,%d($fp)\n\tlw\t$3,%d($fp)\n",
 	   lhs_stack_position, bindings.currentExpressionStackPosition());
 }
+
+
+// Unary expression definition
+
+void UnaryExpression::stackPosition(VariableStackBindings) const
+{
+    throw std::runtime_error("Error : Cannot get stack position of expression");
+}
+
 
 // PostfixArrayElement
 
@@ -189,14 +191,19 @@ VariableStackBindings PostfixPostIncDecExpression::printAsm(VariableStackBinding
 {
     postfix_expression_->printAsm(bindings, label_count);
     if(operator_ == "++")
-	printf("\taddi\t$3,$2,1\n");
+	printf("\taddiu\t$3,$2,1\n");
     else if(operator_ == "--")
-	printf("\tsubi\t$3,$2,1\n");
+	printf("\tsubiu\t$3,$2,1\n");
     else
 	throw std::runtime_error("Error : '"+operator_+"' not recognized");
 
-    printf("\tsw\t$2,%d($fp)\n\tsw\t$3,%d($fp)\n", bindings.currentExpressionStackPosition(),
-	   postfix_expression_->postfixStackPosition(bindings));
+    std::shared_ptr<UnaryExpression> unary_expression;
+    unary_expression = std::static_pointer_cast<UnaryExpression>(postfix_expression_);
+
+    printf("\tsw\t$2,%d($fp)\n", bindings.currentExpressionStackPosition());
+    unary_expression->stackPosition(bindings);
+    printf("\tsw\t$3,0($t0)\n");
+     
     return bindings;
 }
 
@@ -216,9 +223,13 @@ VariableStackBindings UnaryPreIncDecExpression::printAsm(VariableStackBindings b
 	printf("\tsubi\t$2,$2,1\n");
     else
 	throw std::runtime_error("Error : '"+operator_+"' not recognized");
-    
-    printf("\tsw\t$2,%d($fp)\n\tsw\t$2,%d($fp)\n", bindings.currentExpressionStackPosition(),
-	   unary_expression_->postfixStackPosition(bindings));
+
+    std::shared_ptr<UnaryExpression> unary_expression;
+    unary_expression = std::static_pointer_cast<UnaryExpression>(unary_expression_);
+
+    printf("\tsw\t$2,%d($fp)\n", bindings.currentExpressionStackPosition());
+    unary_expression->stackPosition(bindings);
+    printf("\tsw\t$2,0($t0)\n");
     return bindings;
 }
 
@@ -242,7 +253,10 @@ VariableStackBindings OperatorUnaryExpression::printAsm(VariableStackBindings bi
     }
     else if(operator_ == "&")
     {
-	printf("\taddiu\t$2,$fp,%d\n", cast_expression_->postfixStackPosition(bindings));
+	std::shared_ptr<UnaryExpression> unary_expression;
+	unary_expression = std::static_pointer_cast<UnaryExpression>(cast_expression_);
+	unary_expression->stackPosition(bindings);
+	printf("\tmove\t$2,$t0\n");
     }
     else if(operator_ == "-")
     {
@@ -256,6 +270,17 @@ VariableStackBindings OperatorUnaryExpression::printAsm(VariableStackBindings bi
     printf("\tsw\t$2,%d($fp)\n", bindings.currentExpressionStackPosition());
 
     return bindings;
+}
+
+void OperatorUnaryExpression::stackPosition(VariableStackBindings bindings) const
+{
+    if(operator_ == "*")
+    {	
+	std::shared_ptr<UnaryExpression> unary_expression;
+	unary_expression = std::static_pointer_cast<UnaryExpression>(cast_expression_);
+	unary_expression->stackPosition(bindings);
+	printf("\tlw\t$t0,0($t0)\n");
+    }
 }
 
 
@@ -284,9 +309,9 @@ VariableStackBindings AdditiveExpression::printAsm(VariableStackBindings binding
     // TODO currently using signed and sub because I only have signed numbers implemented
     // must update this as I add more types
     if(operator_ == "+")
-	printf("\tadd\t$2,$2,$3\n");
+	printf("\taddu\t$2,$2,$3\n");
     else if(operator_ == "-")
-	printf("\tsub\t$2,$2,$3\n");
+	printf("\tsubu\t$2,$2,$3\n");
     else
 	throw std::runtime_error("Error : '"+operator_+"' not recognized");
 
@@ -615,7 +640,8 @@ VariableStackBindings AssignmentExpression::printAsm(VariableStackBindings bindi
     // TODO add stack and store results in there, also for addition and multiplication.
 
     // get the current location of lhs in the stack so that I can store result there
-    int store_stack_position = lhs_->postfixStackPosition(bindings);
+    std::shared_ptr<UnaryExpression> lhs_postfix;
+    lhs_postfix = std::static_pointer_cast<UnaryExpression>(lhs_);
 
     // get the current available stack position
     int expression_stack_position = bindings.currentExpressionStackPosition();
@@ -628,7 +654,8 @@ VariableStackBindings AssignmentExpression::printAsm(VariableStackBindings bindi
     printf("\tlw\t$2,%d($fp)\n", expression_stack_position);
 
     // we are assigning so we don't have to evaluate the lhs as it will be overwritten anyways
-    printf("\tsw\t$2,%d($fp)\n", store_stack_position);
+    lhs_postfix->stackPosition(bindings);
+    printf("\tsw\t$2,0($t0)\n");
     return bindings;
 }
 
@@ -664,14 +691,15 @@ VariableStackBindings Identifier::printAsm(VariableStackBindings bindings, unsig
     return bindings;
 }
 
-int Identifier::postfixStackPosition(VariableStackBindings bindings) const
+void Identifier::stackPosition(VariableStackBindings bindings) const
 {
     if(bindings.bindingExists(id_))
     {
-	return bindings.stackPosition(id_);
+	printf("\taddiu\t$t0,$fp,%d\n", bindings.stackPosition(id_));
+	return;
     }
 
-    throw std::runtime_error("Error : Variable '"+id_+"' not yet declared");
+    throw std::runtime_error("Error : '"+id_+"' not yet declared");
 }
 
 std::string Identifier::id() const

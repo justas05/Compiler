@@ -109,8 +109,8 @@ ParameterList:
 	|       ParameterList T_CMA Parameter { $3->linkDeclaration($$); $$ = $3; }
 		;
 
-Parameter:	DeclarationSpecifierList T_IDENTIFIER { $$ = new Declaration(*$2); delete $2; delete $1; }
-		    |	DeclarationSpecifierList {$$ = new Declaration(""); }
+Parameter:	DeclarationSpecifierList Declarator { $$ = new Declaration($2->getId()); delete $1; }
+	|	DeclarationSpecifierList {$$ = new Declaration(""); }
 		;
 
 // Declaration
@@ -179,24 +179,24 @@ InitDeclarator:	Declarator { $$ = $1; }
 		;
 
 Declarator:	DirectDeclarator { $$ = $1; }
-|	Pointer DirectDeclarator { $$ = $2; std::shared_ptr<Type> tmp($1); $$->setType(tmp); }
+	|	Pointer DirectDeclarator { $$ = $2; std::shared_ptr<Type> tmp($1); $$->setType(tmp); }
 		;
 
 Pointer:
-T_MULT { $$ = new Pointer(); delete $1; }
-| T_MULT Pointer { $$ = $2; delete $1; }
-| T_MULT TypeQualifierList Pointer { $$ = $3; delete $1; delete $2; }
-;
+		T_MULT { $$ = new Pointer(); delete $1; }
+	| 	T_MULT Pointer { $$ = $2; delete $1; }
+	| 	T_MULT TypeQualifierList Pointer { $$ = $3; delete $1; delete $2; }
+		;
 
 TypeQualifierList:
-TypeQualifier { $$ = $1; }
-| TypeQualifierList TypeQualifier { $$ = $2; delete $1; }
-;
+		TypeQualifier { $$ = $1; }
+	| 	TypeQualifierList TypeQualifier { $$ = $2; delete $1; }
+		;
 
 TypeQualifier:
-T_CONST { $$ = new std::string("const"); }
-| T_VOLATILE { $$ = new std::string("volatile"); }
-;
+		T_CONST { $$ = new std::string("const"); }
+	| 	T_VOLATILE { $$ = new std::string("volatile"); }
+		;
 
 DirectDeclarator:
 		T_IDENTIFIER { $$ = new Declaration(*$1); delete $1; }
@@ -417,7 +417,13 @@ UnaryOperator:	T_AND { $$ = $1; }
 PostfixExpression:
 		PrimaryExpression { $$ = $1; }
 	|	PostfixExpression T_LSB Expression T_RSB { $$ = new PostfixArrayElement(); }
-	|	PostfixExpression T_LRB PostfixExpression2 { $$ = $3; $$->setPostfixExpression($1); }
+	|	PostfixExpression T_LRB PostfixExpression2
+		{
+		    $$ = $3;
+		    PostfixFunctionCall *tmp = dynamic_cast<PostfixFunctionCall *>($$);
+		    if(tmp != nullptr)
+			tmp->setPostfixExpression($1);
+		}
 	|	PostfixExpression T_DOT T_IDENTIFIER { $$ = $1; }
 	|	PostfixExpression T_ARROW T_IDENTIFIER { $$ = $1; }
 	|	PostfixExpression T_INCDEC

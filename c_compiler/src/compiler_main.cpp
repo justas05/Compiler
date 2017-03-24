@@ -15,9 +15,9 @@ int main(int, char**)
 	unsigned label_count = 0;
 	ast->printAsm(bindings, label_count);	
     }
-    catch(std::string error_msg)
+    catch(const std::exception& e)
     {
-	fprintf(stderr, "%s\n", error_msg.c_str());
+	fprintf(stderr, "%s\n", e.what());
     }
     catch(...)
     {
