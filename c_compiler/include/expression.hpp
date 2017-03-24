@@ -61,10 +61,15 @@ public:
 
 class PostfixArrayElement : public UnaryExpression
 {
+private:
+    ExpressionPtr postfix_expression_;
+    ExpressionPtr index_expression_;
+    
 public:
-    PostfixArrayElement();
+    PostfixArrayElement(Expression *postfix_expression, Expression *index_expression);
 
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned &label_count) const;
+    virtual void stackPosition(VariableStackBindings bindings) const;
 };
 
 class PostfixFunctionCall : public UnaryExpression

@@ -110,7 +110,8 @@ ParameterList:
 		;
 
 Parameter:	DeclarationSpecifierList Declarator { $$ = new Declaration($2->getId()); delete $1; }
-	|	DeclarationSpecifierList {$$ = new Declaration(""); }
+	|	DeclarationSpecifierList { $$ = new Declaration(""); }
+	|	DeclarationSpecifierList T_MULT { $$ = new Declaration(""); delete $2; }
 		;
 
 // Declaration
@@ -201,7 +202,7 @@ TypeQualifier:
 DirectDeclarator:
 		T_IDENTIFIER { $$ = new Declaration(*$1); delete $1; }
 	|	T_LRB Declarator T_RRB { $$ = $2; }
-	|	DirectDeclarator T_LSB ConditionalExpression T_RSB { $$ = $1; }
+|	DirectDeclarator T_LSB ConditionalExpression T_RSB { $$ = new ArrayDeclaration($1->getId(), $1->getInitializer(), $3->constantFold()); }
 	|	DirectDeclarator T_LSB T_RSB { $$ = $1; }
 	|	DirectDeclarator T_LRB T_RRB { $$ = $1; $$->setExternDeclaration(true); }
 	|	DirectDeclarator T_LRB ParameterList T_RRB { $1->linkDeclaration($3); $$ = $1; $$->setExternDeclaration(true); }
@@ -416,7 +417,7 @@ UnaryOperator:	T_AND { $$ = $1; }
 
 PostfixExpression:
 		PrimaryExpression { $$ = $1; }
-	|	PostfixExpression T_LSB Expression T_RSB { $$ = new PostfixArrayElement(); }
+	|	PostfixExpression T_LSB Expression T_RSB { $$ = new PostfixArrayElement($1, $3); }
 	|	PostfixExpression T_LRB PostfixExpression2
 		{
 		    $$ = $3;

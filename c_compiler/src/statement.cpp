@@ -234,27 +234,14 @@ VariableStackBindings CompoundStatement::printAsm(VariableStackBindings bindings
 
 void CompoundStatement::countVariables(unsigned &var_count) const
 {
-    DeclarationPtr declaration = declaration_;
-
     if(next_statement_ != nullptr)
 	next_statement_->countVariables(var_count);
+    
+    if(declaration_ != nullptr)
+	declaration_->countDeclarations(var_count);
 
     if(statement_ != nullptr)
 	statement_->countVariables(var_count);
-    
-    while(declaration != nullptr) {
-        DeclarationPtr declaration_list = declaration->getNextListItem();
-
-	while(declaration_list != nullptr) {
-	    var_count++;
-
-	    declaration_list = declaration_list->getNextListItem();
-	}
-
-	var_count++;
-	
-	declaration = declaration->getNext();
-    }
 }
 
 void CompoundStatement::countArguments(unsigned &argument_count) const

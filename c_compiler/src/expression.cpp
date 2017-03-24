@@ -117,12 +117,18 @@ void UnaryExpression::stackPosition(VariableStackBindings) const
 
 // PostfixArrayElement
 
-PostfixArrayElement::PostfixArrayElement()
+PostfixArrayElement::PostfixArrayElement(Expression *postfix_expression, Expression *index_expression)
+    : postfix_expression_(postfix_expression), index_expression_(index_expression)
 {}
 
 VariableStackBindings PostfixArrayElement::printAsm(VariableStackBindings bindings, unsigned &label_count) const
 {
     return bindings;
+}
+
+void PostfixArrayElement::stackPosition(VariableStackBindings bindings) const
+{
+    
 }
 
 

@@ -8,8 +8,12 @@
 
 // Declaration definition
 
-Declaration::Declaration(const std::string& id, Expression* initializer)
+Declaration::Declaration(const std::string &id, Expression *initializer)
     : id_(id), initializer_(initializer), extern_declaration_(false)
+{}
+
+Declaration::Declaration(const std::string &id, ExpressionPtr initializer)
+    :id_(id), initializer_(initializer), extern_declaration_(false)
 {}
 
 void Declaration::print() const
@@ -73,6 +77,17 @@ VariableStackBindings Declaration::localAsm(VariableStackBindings bindings, unsi
     return bindings;
 }
 
+void Declaration::countDeclarations(unsigned &declaration_count) const
+{
+    if(next_declaration_ != nullptr)
+	next_declaration_->countDeclarations(declaration_count);
+
+    if(next_list_declaration_ != nullptr)
+	next_list_declaration_->countDeclarations(declaration_count);
+
+    ++declaration_count;
+}
+
 void Declaration::linkDeclaration(Declaration* next_declaration)
 {
     DeclarationPtr decl_ptr(next_declaration);
@@ -111,6 +126,11 @@ DeclarationPtr Declaration::getNextListItem() const
     return next_list_declaration_;
 }
 
+ExpressionPtr Declaration::getInitializer() const
+{
+    return initializer_;
+}
+
 std::string Declaration::getId() const
 {
     return id_;
@@ -119,4 +139,32 @@ std::string Declaration::getId() const
 TypePtr Declaration::getType() const
 {
     return type_;
+}
+
+
+// Array declaration class
+
+ArrayDeclaration::ArrayDeclaration(const std::string &id, ExpressionPtr initializer, const unsigned &size)
+    : Declaration(id, initializer), size_(size)
+{}
+
+VariableStackBindings ArrayDeclaration::printAsm(VariableStackBindings bindings, unsigned &label_count) const
+{
+    return bindings;
+}
+
+VariableStackBindings ArrayDeclaration::localAsm(VariableStackBindings bindings, unsigned &label_count) const
+{
+    return bindings;
+}
+
+void ArrayDeclaration::countDeclarations(unsigned &declaration_count) const
+{
+    if(next_declaration_ != nullptr)
+	next_declaration_->countDeclarations(declaration_count);
+
+    if(next_list_declaration_ != nullptr)
+	next_list_declaration_->countDeclarations(declaration_count);
+
+    declaration_count += size_;
 }
