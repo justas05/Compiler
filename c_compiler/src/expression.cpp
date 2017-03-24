@@ -678,14 +678,22 @@ VariableStackBindings Identifier::printAsm(VariableStackBindings bindings, unsig
     
     if(bindings.bindingExists(id_))
     {
-	if(bindings.stackPosition(id_) == -1)
+	int stack_position = bindings.stackPosition(id_);
+	if(stack_position == -1)
 	{
 	    // it's a global variable
 	    printf("\tlui\t$2,%%hi(%s)\n\tlw\t$2,%%lo(%s)($2)\n", id_.c_str(), id_.c_str());   
 	}
 	else
 	{
-	    printf("\tlw\t$2,%d($fp)\n", bindings.stackPosition(id_));
+	    if(std::dynamic_pointer_cast<Array>(bindings.getType(id_)) != nullptr)
+	    {
+		printf("\taddiu\t$2,$fp,%d\n", stack_position);
+	    }
+	    else
+	    {
+		printf("\tlw\t$2,%d($fp)\n", stack_position);
+	    }
 	}
     }
     else

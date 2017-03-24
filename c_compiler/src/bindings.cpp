@@ -7,7 +7,7 @@ VariableStackBindings::VariableStackBindings()
     : break_label_(""), continue_label_(""), stack_counter_(0), expression_stack_(16)
 {}
 
-void VariableStackBindings::insertBinding(std::string id, TypePtr type, int stack_position)
+void VariableStackBindings::insertBinding(const std::string &id, TypePtr type, const int &stack_position)
 {
     auto binding = bindings_.find(id);
 
@@ -30,7 +30,12 @@ void VariableStackBindings::increaseStackPosition()
     stack_counter_ += 4;
 }
 
-void VariableStackBindings::setStackPosition(int stack_counter)
+void VariableStackBindings::increaseStackPosition(const int &position)
+{
+    stack_counter_ += position;
+}
+
+void VariableStackBindings::setStackPosition(const int &stack_counter)
 {
     stack_counter_ = stack_counter;
 }
@@ -43,6 +48,12 @@ void VariableStackBindings::nextExpressionStackPosition()
 void VariableStackBindings::setExpressionStackPosition(const int &stack_counter)
 {
     expression_stack_ = stack_counter;
+}
+
+TypePtr VariableStackBindings::getType(const std::string &id) const
+{
+    auto binding = bindings_.find(id);
+    return (*binding).second.type;
 }
 
 std::string VariableStackBindings::breakLabel()

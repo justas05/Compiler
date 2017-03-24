@@ -31,11 +31,14 @@ private:
 public:
     VariableStackBindings();
 
-    void insertBinding(std::string id, TypePtr type, int stack_position);
+    void insertBinding(const std::string &id, TypePtr type, const int &stack_position);
     void increaseStackPosition();
-    void setStackPosition(int stack_counter);
+    void increaseStackPosition(const int &position);
+    void setStackPosition(const int &stack_counter);
     void nextExpressionStackPosition();
     void setExpressionStackPosition(const int &stack_counter);
+
+    TypePtr getType(const std::string &id) const;
 
     std::string breakLabel();
     std::string breakLabel(const std::string &label);

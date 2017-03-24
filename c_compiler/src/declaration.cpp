@@ -4,6 +4,7 @@
 #include "expression.hpp"
 
 #include <cstdio>
+#include <vector>
 
 
 // Declaration definition
@@ -63,13 +64,12 @@ VariableStackBindings Declaration::localAsm(VariableStackBindings bindings, unsi
     
     if(id_ != "")
     {
-	if(initializer_ != nullptr)
-	    initializer_->printAsm(bindings, label_count);
-	else
-	    printf("\tmove\t$2,$0\n");
-
 	int stack_position = bindings.currentStackPosition();
-	printf("\tsw\t$2,%d($fp)\n", stack_position);
+	if(initializer_ != nullptr)
+	{
+	    initializer_->printAsm(bindings, label_count);
+	    printf("\tsw\t$2,%d($fp)\n", stack_position);	    
+	}
 	bindings.insertBinding(id_, type_, stack_position);
 	bindings.increaseStackPosition();
     }
@@ -155,6 +155,38 @@ VariableStackBindings ArrayDeclaration::printAsm(VariableStackBindings bindings,
 
 VariableStackBindings ArrayDeclaration::localAsm(VariableStackBindings bindings, unsigned &label_count) const
 {
+    if(next_declaration_ != nullptr)
+	bindings = next_declaration_->localAsm(bindings, label_count);
+
+    if(next_list_declaration_ != nullptr)
+	bindings = next_list_declaration_->localAsm(bindings, label_count);
+
+    if(id_ != "")
+    {
+	int stack_position = bindings.currentStackPosition();
+	if(initializer_ != nullptr)
+	{
+	    ExpressionPtr initializer = initializer_;
+	    std::vector<ExpressionPtr> initializer_vector;
+	    
+	    while(initializer != nullptr)
+	    {
+		initializer_vector.push_back(initializer);
+		initializer = initializer->nextExpression();
+	    }
+
+	    for(auto itr = initializer_vector.rbegin(); itr != initializer_vector.rend(); ++itr)
+	    {
+		int initializer_count = itr-initializer_vector.rbegin();
+		(*itr)->printAsm(bindings, label_count);
+		printf("\tsw\t$2,%d($fp)\n", stack_position+4*initializer_count);
+	    }
+	}
+	
+	bindings.insertBinding(id_, type_, stack_position);
+	bindings.increaseStackPosition(size_);
+    }
+    
     return bindings;
 }
 

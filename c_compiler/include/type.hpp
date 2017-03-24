@@ -34,7 +34,7 @@ private:
     int size_;
     TypePtr type_;
 public:
-    Array(const int &size, TypePtr type_);
+    Array(const int &size, TypePtr type_ = nullptr);
 
     virtual void print() const;
     virtual void printXml() const;
