@@ -22,10 +22,9 @@ void Expression::print() const
 void Expression::printXml() const
 {}
 
-void Expression::countArguments(unsigned &argument_count) const
+void Expression::countArguments(unsigned &) const
 {
     // by default don't do anything to the count
-    (void)argument_count;
 }
 
 void Expression::expressionDepth(unsigned &depth_count) const
@@ -112,7 +111,7 @@ void OperationExpression::evaluateExpression(VariableStackBindings bindings, uns
 
 // Unary expression definition
 
-void UnaryExpression::stackPosition(VariableStackBindings) const
+void UnaryExpression::stackPosition(VariableStackBindings, unsigned &) const
 {
     throw std::runtime_error("Error : Cannot get stack position of expression");
 }
@@ -126,12 +125,21 @@ PostfixArrayElement::PostfixArrayElement(Expression *postfix_expression, Express
 
 VariableStackBindings PostfixArrayElement::printAsm(VariableStackBindings bindings, unsigned &label_count) const
 {
+    stackPosition(bindings, label_count);
+    printf("\tlw\t$2,0($t0)\n");
+    printf("\tsw\t$2,%d($fp)\n", bindings.currentExpressionStackPosition());
     return bindings;
 }
 
-void PostfixArrayElement::stackPosition(VariableStackBindings bindings) const
+void PostfixArrayElement::stackPosition(VariableStackBindings bindings, unsigned &label_count) const
 {
-    
+    index_expression_->printAsm(bindings, label_count);
+
+    std::shared_ptr<UnaryExpression> unary_expression;
+    unary_expression = std::static_pointer_cast<UnaryExpression>(postfix_expression_);
+    unary_expression->stackPosition(bindings, label_count);
+
+    printf("\tli\t$3,4\n\tmul\t$2,$2,$3\n\taddu\t$t0,$t0,$2\n");
 }
 
 void PostfixArrayElement::expressionDepth(unsigned &depth_count) const
@@ -225,7 +233,7 @@ VariableStackBindings PostfixPostIncDecExpression::printAsm(VariableStackBinding
     unary_expression = std::static_pointer_cast<UnaryExpression>(postfix_expression_);
 
     printf("\tsw\t$2,%d($fp)\n", bindings.currentExpressionStackPosition());
-    unary_expression->stackPosition(bindings);
+    unary_expression->stackPosition(bindings, label_count);
     printf("\tsw\t$3,0($t0)\n");
      
     return bindings;
@@ -252,7 +260,7 @@ VariableStackBindings UnaryPreIncDecExpression::printAsm(VariableStackBindings b
     unary_expression = std::static_pointer_cast<UnaryExpression>(unary_expression_);
 
     printf("\tsw\t$2,%d($fp)\n", bindings.currentExpressionStackPosition());
-    unary_expression->stackPosition(bindings);
+    unary_expression->stackPosition(bindings, label_count);
     printf("\tsw\t$2,0($t0)\n");
     return bindings;
 }
@@ -279,7 +287,7 @@ VariableStackBindings OperatorUnaryExpression::printAsm(VariableStackBindings bi
     {
 	std::shared_ptr<UnaryExpression> unary_expression;
 	unary_expression = std::static_pointer_cast<UnaryExpression>(cast_expression_);
-	unary_expression->stackPosition(bindings);
+	unary_expression->stackPosition(bindings, label_count);
 	printf("\tmove\t$2,$t0\n");
     }
     else if(operator_ == "-")
@@ -296,13 +304,13 @@ VariableStackBindings OperatorUnaryExpression::printAsm(VariableStackBindings bi
     return bindings;
 }
 
-void OperatorUnaryExpression::stackPosition(VariableStackBindings bindings) const
+void OperatorUnaryExpression::stackPosition(VariableStackBindings bindings, unsigned &label_count) const
 {
     if(operator_ == "*")
     {	
 	std::shared_ptr<UnaryExpression> unary_expression;
 	unary_expression = std::static_pointer_cast<UnaryExpression>(cast_expression_);
-	unary_expression->stackPosition(bindings);
+	unary_expression->stackPosition(bindings, label_count);
 	printf("\tlw\t$t0,0($t0)\n");
     }
 }
@@ -686,7 +694,7 @@ VariableStackBindings AssignmentExpression::printAsm(VariableStackBindings bindi
     printf("\tlw\t$2,%d($fp)\n", expression_stack_position);
 
     // we are assigning so we don't have to evaluate the lhs as it will be overwritten anyways
-    lhs_postfix->stackPosition(bindings);
+    lhs_postfix->stackPosition(bindings, label_count);
     printf("\tsw\t$2,0($t0)\n");
     return bindings;
 }
@@ -698,10 +706,8 @@ Identifier::Identifier(const std::string &id)
     : id_(id)
 {}
 
-VariableStackBindings Identifier::printAsm(VariableStackBindings bindings, unsigned &label_count) const
+VariableStackBindings Identifier::printAsm(VariableStackBindings bindings, unsigned &) const
 {
-    (void)label_count;
-    
     if(bindings.bindingExists(id_))
     {
 	int stack_position = bindings.stackPosition(id_);
@@ -731,7 +737,7 @@ VariableStackBindings Identifier::printAsm(VariableStackBindings bindings, unsig
     return bindings;
 }
 
-void Identifier::stackPosition(VariableStackBindings bindings) const
+void Identifier::stackPosition(VariableStackBindings bindings, unsigned &) const
 {
     if(bindings.bindingExists(id_))
     {
@@ -754,9 +760,8 @@ Constant::Constant(const int32_t &constant)
     : constant_(constant)
 {}
 
-VariableStackBindings Constant::printAsm(VariableStackBindings bindings, unsigned &label_count) const
+VariableStackBindings Constant::printAsm(VariableStackBindings bindings, unsigned &) const
 {
-    (void)label_count;
     // constant only has to load to $2 because the other expression will take care of the rest
     printf("\tli\t$2,%d\n", constant_);
     printf("\tsw\t$2,%d($fp)\n", bindings.currentExpressionStackPosition());

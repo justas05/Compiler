@@ -56,7 +56,7 @@ class UnaryExpression : public Expression
 public:
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned &label_count) const = 0;
 
-    virtual void stackPosition(VariableStackBindings bindings) const;
+    virtual void stackPosition(VariableStackBindings bindings, unsigned &depth_count) const;
 };
 
 class PostfixArrayElement : public UnaryExpression
@@ -70,7 +70,7 @@ public:
 
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned &label_count) const;
     virtual void expressionDepth(unsigned &depth_count) const;
-    virtual void stackPosition(VariableStackBindings bindings) const;
+    virtual void stackPosition(VariableStackBindings bindings, unsigned &depth_count) const;
 };
 
 class PostfixFunctionCall : public UnaryExpression
@@ -124,7 +124,7 @@ public:
     OperatorUnaryExpression(const std::string &_operator, Expression *cast_expression);
 
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned &label_count) const;
-    virtual void stackPosition(VariableStackBindings bindings) const;
+    virtual void stackPosition(VariableStackBindings bindings, unsigned &depth_count) const;
 };
 
 
@@ -274,7 +274,7 @@ public:
     Identifier(const std::string &id);
 
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned &label_count) const;
-    virtual void stackPosition(VariableStackBindings bindings) const;
+    virtual void stackPosition(VariableStackBindings bindings, unsigned &depth_count) const;
     virtual std::string id() const;
 };
 
