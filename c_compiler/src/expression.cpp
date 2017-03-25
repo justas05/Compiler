@@ -39,6 +39,12 @@ std::string Expression::id() const
     return "";
 }
 
+TypePtr Expression::getType(const VariableStackBindings &) const
+{
+    // by default return largest size, which is 32 bits
+    return std::make_shared<Int>();
+}
+
 void Expression::linkExpression(Expression *next_expression)
 {
     ExpressionPtr expression_ptr(next_expression);
@@ -78,6 +84,11 @@ void OperationExpression::expressionDepth(unsigned &depth_count) const
 	depth_count = lhs_depth_count;
     else
 	depth_count = rhs_depth_count;
+}
+
+TypePtr OperationExpression::getType(const VariableStackBindings &bindings) const
+{
+    return lhs_->getType(bindings);
 }
 
 ExpressionPtr OperationExpression::getLhs() const
@@ -151,6 +162,11 @@ void PostfixArrayElement::expressionDepth(unsigned &depth_count) const
 	index_expression_->expressionDepth(depth_count);
 }
 
+TypePtr PostfixArrayElement::getType(const VariableStackBindings &bindings) const
+{
+    return postfix_expression_->getType(bindings);
+}
+
 
 // PostfixFunctionCall
 
@@ -212,6 +228,11 @@ void PostfixFunctionCall::expressionDepth(unsigned &depth_count) const
 	argument_expression_list_->expressionDepth(depth_count);
 }
 
+TypePtr PostfixFunctionCall::getType(const VariableStackBindings &) const
+{
+    return std::make_shared<Int>();
+}
+
 
 // Post increment and decrement definition
 
@@ -239,6 +260,11 @@ VariableStackBindings PostfixPostIncDecExpression::printAsm(VariableStackBinding
     return bindings;
 }
 
+TypePtr PostfixPostIncDecExpression::getType(const VariableStackBindings &bindings) const
+{
+    return postfix_expression_->getType(bindings);
+}
+
 
 // Pre increment and decrement implementation
 
@@ -263,6 +289,11 @@ VariableStackBindings UnaryPreIncDecExpression::printAsm(VariableStackBindings b
     unary_expression->stackPosition(bindings, label_count);
     printf("\tsw\t$2,0($t0)\n");
     return bindings;
+}
+
+TypePtr UnaryPreIncDecExpression::getType(const VariableStackBindings &bindings) const
+{
+    return unary_expression_->getType(bindings);
 }
 
 
@@ -315,6 +346,11 @@ void OperatorUnaryExpression::stackPosition(VariableStackBindings bindings, unsi
     }
 }
 
+TypePtr OperatorUnaryExpression::getType(const VariableStackBindings &bindings) const
+{
+    return cast_expression_->getType(bindings);
+}
+
 
 // CastExpression definition
 
@@ -333,6 +369,11 @@ void CastExpression::expressionDepth(unsigned &depth_count) const
 	nextExpression()->expressionDepth(depth_count);
 
     expression_->expressionDepth(depth_count);
+}
+
+TypePtr CastExpression::getType(const VariableStackBindings &) const
+{
+    return type_;
 }
 
 
@@ -664,6 +705,11 @@ VariableStackBindings ConditionalExpression::printAsm(VariableStackBindings bind
     return bindings;
 }
 
+TypePtr ConditionalExpression::getType(const VariableStackBindings &bindings) const
+{
+    return std::make_shared<Int>();
+}
+
 
 // Assignment Expression definition
 
@@ -754,6 +800,11 @@ std::string Identifier::id() const
     return id_;
 }
 
+TypePtr Identifier::getType(const VariableStackBindings &bindings) const
+{
+    return bindings.getType(id_);
+}
+
 
 // Constant definition
 
@@ -772,4 +823,9 @@ VariableStackBindings Constant::printAsm(VariableStackBindings bindings, unsigne
 int Constant::constantFold() const
 {
     return constant_;
+}
+
+TypePtr Constant::getType(const VariableStackBindings &) const
+{
+    return std::make_shared<Int>();
 }

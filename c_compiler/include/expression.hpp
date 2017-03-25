@@ -26,6 +26,7 @@ public:
     virtual void countArguments(unsigned &argument_count) const;
     virtual void expressionDepth(unsigned &depth_count) const;
     virtual std::string id() const;
+    virtual TypePtr getType(const VariableStackBindings &bindings) const = 0;
        
     void linkExpression(Expression* next_expression);
     ExpressionPtr nextExpression() const;
@@ -44,6 +45,7 @@ public:
     
     virtual int constantFold() const;
     virtual void expressionDepth(unsigned &depth_count) const;
+    virtual TypePtr getType(const VariableStackBindings &bindings) const;
 
     ExpressionPtr getLhs() const;
     ExpressionPtr getRhs() const;
@@ -54,8 +56,6 @@ public:
 class UnaryExpression : public Expression
 {
 public:
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned &label_count) const = 0;
-
     virtual void stackPosition(VariableStackBindings bindings, unsigned &depth_count) const;
 };
 
@@ -71,6 +71,7 @@ public:
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned &label_count) const;
     virtual void expressionDepth(unsigned &depth_count) const;
     virtual void stackPosition(VariableStackBindings bindings, unsigned &depth_count) const;
+    virtual TypePtr getType(const VariableStackBindings &bindings) const;
 };
 
 class PostfixFunctionCall : public UnaryExpression
@@ -85,6 +86,7 @@ public:
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned &label_count) const;
     virtual void countArguments(unsigned &argument_count) const;
     virtual void expressionDepth(unsigned &depth_count) const;
+    virtual TypePtr getType(const VariableStackBindings &bindings) const;
     
     void setPostfixExpression(Expression *postfix_expression);
 };
@@ -99,6 +101,7 @@ public:
     PostfixPostIncDecExpression(const std::string &_operator, Expression *postfix_expression);
 
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned &label_count) const;
+    virtual TypePtr getType(const VariableStackBindings &bindings) const;
     
 };
 
@@ -112,6 +115,7 @@ public:
     UnaryPreIncDecExpression(const std::string &_operator, Expression *unary_expression);
 
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned &label_count) const;
+    virtual TypePtr getType(const VariableStackBindings &bindings) const;
 };
 
 class OperatorUnaryExpression : public UnaryExpression
@@ -125,6 +129,7 @@ public:
 
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned &label_count) const;
     virtual void stackPosition(VariableStackBindings bindings, unsigned &depth_count) const;
+    virtual TypePtr getType(const VariableStackBindings &bindings) const;
 };
 
 
@@ -139,6 +144,7 @@ public:
 
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned &label_count) const;
     virtual void expressionDepth(unsigned &depth_count) const;
+    virtual TypePtr getType(const VariableStackBindings &bindings) const;
 };
 
 class AdditiveExpression : public OperationExpression
@@ -255,6 +261,7 @@ public:
 			  Expression *conditional_expression);
     
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned &label_count) const;
+    virtual TypePtr getType(const VariableStackBindings &bindings) const;
 };
 
 class AssignmentExpression : public OperationExpression
@@ -276,6 +283,7 @@ public:
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned &label_count) const;
     virtual void stackPosition(VariableStackBindings bindings, unsigned &depth_count) const;
     virtual std::string id() const;
+    virtual TypePtr getType(const VariableStackBindings &bindings) const;
 };
 
 class Constant : public UnaryExpression
@@ -287,6 +295,7 @@ public:
 
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned &label_count) const;
     virtual int constantFold() const;
+    virtual TypePtr getType(const VariableStackBindings &bindings) const;
 };
 
 #endif

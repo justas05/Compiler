@@ -68,10 +68,10 @@ VariableStackBindings Declaration::localAsm(VariableStackBindings bindings, unsi
 	if(initializer_ != nullptr)
 	{
 	    initializer_->printAsm(bindings, label_count);
-	    printf("\tsw\t$2,%d($fp)\n", stack_position);	    
+	    type_->store(stack_position);
 	}
 	bindings.insertBinding(id_, type_, stack_position);
-	bindings.increaseStackPosition();
+	type_->increaseStackPosition(bindings);
     }
 
     return bindings;
@@ -179,12 +179,12 @@ VariableStackBindings ArrayDeclaration::localAsm(VariableStackBindings bindings,
 	    {
 		int initializer_count = itr-initializer_vector.rbegin();
 		(*itr)->printAsm(bindings, label_count);
-		printf("\tsw\t$2,%d($fp)\n", stack_position+4*initializer_count);
+		type_->store(stack_position+4*initializer_count);
 	    }
 	}
 	
 	bindings.insertBinding(id_, type_, stack_position);
-	bindings.increaseStackPosition(size_);
+	type_->increaseStackPosition(bindings);
     }
     
     return bindings;

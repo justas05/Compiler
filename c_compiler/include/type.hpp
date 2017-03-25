@@ -20,12 +20,16 @@ public:
     virtual TypePtr type() = 0;
     virtual TypePtr type(Type *type_ptr) = 0;
     virtual TypePtr type(TypePtr type_ptr) = 0;
+
+    virtual void increaseStackPosition(VariableStackBindings &bindings) const = 0;
+    virtual void load(const int &reg, const int &position) const = 0;
+    virtual void store(const int &position) const = 0;
     
     virtual void setSigned(bool _signed);
     virtual void setExtern(bool _extern);
     virtual void setStatic(bool _static);
     virtual void setConst(bool _const);
-    virtual void setSize(int size);    
+    virtual void setSize(int size);
 };
 
 class Array : public Type
@@ -43,6 +47,10 @@ public:
     virtual TypePtr type();
     virtual TypePtr type(Type *type_ptr);
     virtual TypePtr type(TypePtr type_ptr);
+
+    virtual void increaseStackPosition(VariableStackBindings &bindings) const;
+    virtual void load(const int &reg, const int &position) const;    
+    virtual void store(const int &position) const;
 };
 
 class Pointer : public Type
@@ -59,6 +67,10 @@ public:
     virtual TypePtr type();
     virtual TypePtr type(Type *type_ptr);
     virtual TypePtr type(TypePtr type_ptr);
+
+    virtual void increaseStackPosition(VariableStackBindings &bindings) const;
+    virtual void load(const int &reg, const int &position) const;        
+    virtual void store(const int &position) const;    
 };
 
 class TypeContainer : public Type
@@ -81,6 +93,10 @@ public:
     virtual TypePtr type();    
     virtual TypePtr type(Type *type_ptr);
     virtual TypePtr type(TypePtr type_ptr);
+
+    virtual void increaseStackPosition(VariableStackBindings &bindings) const;
+    virtual void load(const int &reg, const int &position) const;        
+    virtual void store(const int &position) const;    
     
     virtual void setSigned(bool _signed);
     virtual void setExtern(bool _extern);
@@ -95,6 +111,10 @@ public:
     virtual void print() const = 0;
     virtual void printXml() const = 0;
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned &label_count) const = 0;
+
+    virtual void increaseStackPosition(VariableStackBindings &bindings) const = 0;
+    virtual void load(const int &reg, const int &position) const = 0;    
+    virtual void store(const int &position) const = 0;
     
     virtual TypePtr type();
     virtual TypePtr type(Type *type_ptr);
@@ -109,6 +129,22 @@ public:
     virtual void print() const;
     virtual void printXml() const;
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned &label_count) const;
+    virtual void increaseStackPosition(VariableStackBindings &bindings) const;
+    virtual void load(const int &reg, const int &position) const;    
+    virtual void store(const int &position) const;
+};
+
+class Short : public Specifier
+{
+public:
+    Short();
+
+    virtual void print() const;
+    virtual void printXml() const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned &label_count) const;
+    virtual void increaseStackPosition(VariableStackBindings &bindings) const;
+    virtual void load(const int &reg, const int &position) const;    
+    virtual void store(const int &position) const;
 };
 
 class Void : public Specifier
@@ -119,6 +155,9 @@ public:
     virtual void print() const;
     virtual void printXml() const;
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned &label_count) const;
+    virtual void increaseStackPosition(VariableStackBindings &bindings) const;
+    virtual void load(const int &reg, const int &position) const;    
+    virtual void store(const int &position) const;
 };
 
 class Char : public Specifier
@@ -129,6 +168,9 @@ public:
     virtual void print() const;
     virtual void printXml() const;
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned &label_count) const;
+    virtual void increaseStackPosition(VariableStackBindings &bindings) const;
+    virtual void load(const int &reg, const int &position) const;    
+    virtual void store(const int &position) const;
 };
 
 class Float : public Specifier
@@ -139,6 +181,9 @@ public:
     virtual void print() const;
     virtual void printXml() const;
     virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned &label_count) const;
+    virtual void increaseStackPosition(VariableStackBindings &bindings) const;
+    virtual void load(const int &reg, const int &position) const;    
+    virtual void store(const int &position) const;
 };
 
 #endif

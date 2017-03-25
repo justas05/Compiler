@@ -46,7 +46,7 @@ void Array::print() const
 void Array::printXml() const
 {}
 
-VariableStackBindings Array::printAsm(VariableStackBindings bindings, unsigned &label_count) const
+VariableStackBindings Array::printAsm(VariableStackBindings bindings, unsigned &) const
 {
     return bindings;
 }
@@ -69,6 +69,24 @@ TypePtr Array::type(TypePtr type_ptr)
     return type_;
 }
 
+void Array::increaseStackPosition(VariableStackBindings &bindings) const
+{
+    for(int i = 0; i < size_; ++i)
+    {
+	type_->increaseStackPosition(bindings);
+    }
+}
+
+void Array::load(const int &reg, const int &position) const
+{
+    type_->load(reg, position);
+}
+
+void Array::store(const int &position) const
+{
+    type_->store(position);
+}
+
 
 // Pointer definition
 
@@ -83,7 +101,7 @@ void Pointer::print() const
 void Pointer::printXml() const
 {}
 
-VariableStackBindings Pointer::printAsm(VariableStackBindings bindings, unsigned &label_count) const
+VariableStackBindings Pointer::printAsm(VariableStackBindings bindings, unsigned &) const
 {
     return bindings;
 }
@@ -106,7 +124,20 @@ TypePtr Pointer::type(TypePtr type_ptr)
     return type_;
 }
 
+void Pointer::increaseStackPosition(VariableStackBindings &bindings) const
+{
+    bindings.increaseStackPosition(4);
+}
 
+void Pointer::load(const int &reg, const int &position) const
+{
+    printf("\tlw\t$%d,%d($fp)\n", reg, position);
+}
+
+void Pointer::store(const int &position) const
+{
+    type_->store(position);
+}
 
 
 // TypeContainer definition
@@ -124,7 +155,7 @@ void TypeContainer::print() const
 void TypeContainer::printXml() const
 {}
 
-VariableStackBindings TypeContainer::printAsm(VariableStackBindings bindings, unsigned &label_count) const
+VariableStackBindings TypeContainer::printAsm(VariableStackBindings bindings, unsigned &) const
 {
     return bindings;
 }
@@ -147,6 +178,21 @@ TypePtr TypeContainer::type(TypePtr type_ptr)
     type_ = type_ptr;
     
     return type_;
+}
+
+void TypeContainer::increaseStackPosition(VariableStackBindings &bindings) const
+{
+    type_->increaseStackPosition(bindings);
+}
+
+void TypeContainer::load(const int &reg, const int &position) const
+{
+    type_->load(reg, position);
+}
+
+void TypeContainer::store(const int &position) const
+{
+    type_->store(position);
 }
 
 void TypeContainer::setSigned(bool _signed)
@@ -206,9 +252,24 @@ void Int::print() const
 void Int::printXml() const
 {}
 
-VariableStackBindings Int::printAsm(VariableStackBindings bindings, unsigned &label_count) const
+VariableStackBindings Int::printAsm(VariableStackBindings bindings, unsigned &) const
 {
     return bindings;
+}
+
+void Int::increaseStackPosition(VariableStackBindings &bindings) const
+{
+    bindings.increaseStackPosition(4);
+}
+
+void Int::load(const int &reg, const int &position) const
+{
+    printf("\tlw\t$%d,%d($fp)\n", reg, position);
+}
+
+void Int::store(const int &position) const
+{
+    printf("\tsw\t$2,%d($fp)\n", position);
 }
 
 
@@ -225,9 +286,52 @@ void Void::print() const
 void Void::printXml() const
 {}
 
-VariableStackBindings Void::printAsm(VariableStackBindings bindings, unsigned &label_count) const
+VariableStackBindings Void::printAsm(VariableStackBindings bindings, unsigned &) const
 {
     return bindings;
+}
+
+void Void::increaseStackPosition(VariableStackBindings &) const
+{}
+
+void Void::load(const int &, const int &) const
+{}
+
+void Void::store(const int &) const
+{}
+
+
+// Short definition
+
+Short::Short()
+{}
+
+void Short::print() const
+{
+    printf("Short\n");
+}
+
+void Short::printXml() const
+{}
+
+VariableStackBindings Short::printAsm(VariableStackBindings bindings, unsigned &) const
+{
+    return bindings;
+}
+
+void Short::increaseStackPosition(VariableStackBindings &bindings) const
+{
+    bindings.increaseStackPosition(2);
+}
+
+void Short::load(const int &reg, const int &position) const
+{
+    printf("\tlh\t$%d,%d($fp)\n", reg, position);
+}
+
+void Short::store(const int &position) const
+{
+    printf("\tsh\t$2,%d($fp)\n", position);
 }
 
 
@@ -244,9 +348,24 @@ void Char::print() const
 void Char::printXml() const
 {}
 
-VariableStackBindings Char::printAsm(VariableStackBindings bindings, unsigned &label_count) const
+VariableStackBindings Char::printAsm(VariableStackBindings bindings, unsigned &) const
 {
     return bindings;
+}
+
+void Char::increaseStackPosition(VariableStackBindings &bindings) const
+{
+    bindings.increaseStackPosition(1);
+}
+
+void Char::load(const int &reg, const int &position) const
+{
+    printf("\tlb\t$%d,%d($fp)\n", reg, position);
+}
+
+void Char::store(const int &position) const
+{
+    printf("\tsb\t$2,%d($fp)\n", position);
 }
 
 
@@ -263,7 +382,22 @@ void Float::print() const
 void Float::printXml() const
 {}
 
-VariableStackBindings Float::printAsm(VariableStackBindings bindings, unsigned &label_count) const
+VariableStackBindings Float::printAsm(VariableStackBindings bindings, unsigned &) const
 {
     return bindings;
+}
+
+void Float::increaseStackPosition(VariableStackBindings &bindings) const
+{
+    bindings.increaseStackPosition(4);
+}
+
+void Float::load(const int &, const int &) const
+{
+    throw std::runtime_error("Error : Cannot load float yet");    
+}
+
+void Float::store(const int &) const
+{
+    throw std::runtime_error("Error : Cannot store float yet");
 }

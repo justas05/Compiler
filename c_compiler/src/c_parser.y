@@ -473,12 +473,11 @@ void setTypeInformation(Type* type_ptr, std::string type_str)
 	type_ptr->type(new Void());
     } else if(type_str == "char") {
 	type_ptr->type(new Char());
-	type_ptr->setSize(8);
     } else if(type_str == "short") {
-	type_ptr->type(new Int());
-	type_ptr->setSize(16);
+	type_ptr->type(new Short());
     } else if(type_str == "int") {
-	type_ptr->type(new Int());
+	if(type_ptr->type() == nullptr)
+	    type_ptr->type(new Int());
     } else if(type_str == "long") {
 	type_ptr->type(new Int());
     } else if(type_str == "float") {
@@ -486,22 +485,30 @@ void setTypeInformation(Type* type_ptr, std::string type_str)
     } else if(type_str == "double") {
 	type_ptr->type(new Float());
     } else if(type_str == "signed") {
-	type_ptr->type(new Int());
+	if(type_ptr->type() == nullptr)
+	    type_ptr->type(new Int());
 	type_ptr->setSigned(true);
     } else if(type_str == "unsigned") {
-	type_ptr->type(new Int());
+	if(type_ptr->type() == nullptr)
+	    type_ptr->type(new Int());
 	type_ptr->setSigned(false);
     } else if(type_str == "typedef") {
 	// TODO do typedef
     } else if(type_str == "extern") {
+	if(type_ptr == nullptr)
+	    type_ptr->type(new Int());
 	type_ptr->setExtern(true);
     } else if(type_str == "static") {
+	if(type_ptr == nullptr)
+	    type_ptr->type(new Int());
 	type_ptr->setStatic(true);
     } else if(type_str == "auto") {
 	// TODO do auto
     } else if(type_str == "register") {
 	// TODO do register
     } else if(type_str == "const") {
+	if(type_ptr == nullptr)
+	    type_ptr->type(new Int());
 	type_ptr->setConst(true);
     } else if(type_str == "volatile") {
 	// TODO do volatile
