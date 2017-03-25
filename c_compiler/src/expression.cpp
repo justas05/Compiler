@@ -689,12 +689,13 @@ VariableStackBindings AssignmentExpression::printAsm(VariableStackBindings bindi
     // evaluate rhs and get the result back at the stack position I assigned
     // don't have to change the stack position as there is no lhs to evaluate
     rhs_->printAsm(bindings, label_count);
-
-    // now the result of the rhs will be in that stack position, so we can load it into $2
-    printf("\tlw\t$2,%d($fp)\n", expression_stack_position);
+    bindings.nextExpressionStackPosition();
 
     // we are assigning so we don't have to evaluate the lhs as it will be overwritten anyways
     lhs_postfix->stackPosition(bindings, label_count);
+    
+    // now the result of the rhs will be in that stack position, so we can load it into $2    
+    printf("\tlw\t$2,%d($fp)\n", expression_stack_position);    
     printf("\tsw\t$2,0($t0)\n");
     return bindings;
 }
