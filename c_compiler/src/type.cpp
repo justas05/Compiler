@@ -102,6 +102,11 @@ void Array::store(const int &reg, const int &position) const
     type_->store(reg, position);
 }
 
+int Array::getSize() const
+{
+    return type_->getSize();
+}
+
 
 // Pointer definition
 
@@ -167,6 +172,37 @@ void Pointer::store(const int &position) const
 void Pointer::store(const int &reg, const int &position) const
 {
     printf("\tsw\t$%d,%d($fp)\n", reg, position);
+}
+
+int Pointer::getSize() const
+{
+    return type_->getSize();
+}
+
+void Pointer::pointerLoad() const
+{
+    type_->load();
+}
+
+void Pointer::pointerLoad(const int &reg, const int &position) const
+{
+    type_->load(reg, position);
+}
+
+void Pointer::pointerStore() const
+{
+
+    type_->store();
+}
+
+void Pointer::pointerStore(const int &position) const
+{
+    type_->store(position);
+}
+
+void Pointer::pointerStore(const int &reg, const int &position) const
+{
+    type_->store(reg, position);
 }
 
 
@@ -238,6 +274,11 @@ void TypeContainer::store(const int &position) const
 void TypeContainer::store(const int &reg, const int &position) const
 {
     type_->store(reg, position);
+}
+
+int TypeContainer::getSize() const
+{
+    return type_->getSize();
 }
 
 void TypeContainer::setSigned(bool _signed)
@@ -332,6 +373,11 @@ void Int::store(const int &reg, const int &position) const
     printf("\tsw\t$%d,%d($fp)\n", reg, position);
 }
 
+int Int::getSize() const
+{
+    return 4;
+}
+
 
 // Void definition
 
@@ -368,6 +414,11 @@ void Void::store(const int &) const
 
 void Void::store(const int &, const int &) const
 {}
+
+int Void::getSize() const
+{
+    return 0;
+}
 
 
 // Short definition
@@ -416,6 +467,11 @@ void Short::store(const int &position) const
 void Short::store(const int &reg, const int &position) const
 {
     printf("\tsh\t$%d,%d($fp)\n", reg, position);
+}
+
+int Short::getSize() const
+{
+    return 2;
 }
 
 
@@ -467,6 +523,11 @@ void Char::store(const int &reg, const int &position) const
     printf("\tsb\t$%d,%d($fp)\n", reg, position);
 }
 
+int Char::getSize() const
+{
+    return 1;
+}
+
 
 // Float definition
 
@@ -514,4 +575,9 @@ void Float::store(const int &) const
 void Float::store(const int &, const int &) const
 {
     throw std::runtime_error("Error : Cannot store float yet");
+}
+
+int Float::getSize() const
+{
+    return 4;
 }

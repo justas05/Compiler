@@ -26,7 +26,8 @@ public:
     virtual void load(const int &reg, const int &position) const = 0;
     virtual void store() const = 0;    
     virtual void store(const int &position) const = 0;
-    virtual void store(const int &reg, const int &position) const = 0;    
+    virtual void store(const int &reg, const int &position) const = 0;
+    virtual int getSize() const = 0;
     
     virtual void setSigned(bool _signed);
     virtual void setExtern(bool _extern);
@@ -56,7 +57,8 @@ public:
     virtual void load(const int &reg, const int &position) const;
     virtual void store() const;    
     virtual void store(const int &position) const;
-    virtual void store(const int &reg, const int &position) const;    
+    virtual void store(const int &reg, const int &position) const;
+    virtual int getSize() const;
 };
 
 class Pointer : public Type
@@ -80,6 +82,13 @@ public:
     virtual void store() const;
     virtual void store(const int &position) const;
     virtual void store(const int &reg, const int &position) const;
+    virtual int getSize() const;
+
+    void pointerLoad() const;
+    void pointerLoad(const int &reg, const int &position) const;
+    void pointerStore() const;
+    void pointerStore(const int &position) const;
+    void pointerStore(const int &reg, const int &position) const;
 };
 
 class TypeContainer : public Type
@@ -108,7 +117,8 @@ public:
     virtual void load(const int &reg, const int &position) const;
     virtual void store() const;    
     virtual void store(const int &position) const;
-    virtual void store(const int &reg, const int &position) const;    
+    virtual void store(const int &reg, const int &position) const;
+    virtual int getSize() const;
     
     virtual void setSigned(bool _signed);
     virtual void setExtern(bool _extern);
@@ -129,7 +139,8 @@ public:
     virtual void load(const int &reg, const int &position) const = 0;
     virtual void store() const = 0;    
     virtual void store(const int &position) const = 0;
-    virtual void store(const int &reg, const int &position) const = 0;    
+    virtual void store(const int &reg, const int &position) const = 0;
+    virtual int getSize() const = 0;
     
     virtual TypePtr type();
     virtual TypePtr type(Type *type_ptr);
@@ -149,7 +160,8 @@ public:
     virtual void load(const int &reg, const int &position) const;
     virtual void store() const;
     virtual void store(const int &position) const;
-    virtual void store(const int &reg, const int &position) const;    
+    virtual void store(const int &reg, const int &position) const;
+    virtual int getSize() const;
 };
 
 class Short : public Specifier
@@ -165,7 +177,8 @@ public:
     virtual void load(const int &reg, const int &position) const;
     virtual void store() const;
     virtual void store(const int &position) const;
-    virtual void store(const int &reg, const int &position) const;    
+    virtual void store(const int &reg, const int &position) const;
+    virtual int getSize() const;
 };
 
 class Void : public Specifier
@@ -181,7 +194,8 @@ public:
     virtual void load(const int &reg, const int &position) const;
     virtual void store() const;
     virtual void store(const int &position) const;
-    virtual void store(const int &reg, const int &position) const;    
+    virtual void store(const int &reg, const int &position) const;
+    virtual int getSize() const;
 };
 
 class Char : public Specifier
@@ -198,6 +212,7 @@ public:
     virtual void store() const;
     virtual void store(const int &position) const;
     virtual void store(const int &reg, const int &position) const;
+    virtual int getSize() const;
 };
 
 class Float : public Specifier
@@ -213,7 +228,8 @@ public:
     virtual void load(const int &reg, const int &position) const;
     virtual void store() const;
     virtual void store(const int &position) const;
-    virtual void store(const int &reg, const int &position) const;    
+    virtual void store(const int &reg, const int &position) const;
+    virtual int getSize() const;
 };
 
 #endif

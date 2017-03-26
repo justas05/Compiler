@@ -151,7 +151,8 @@ void PostfixArrayElement::stackPosition(VariableStackBindings bindings, int &lab
     unary_expression = std::static_pointer_cast<UnaryExpression>(postfix_expression_);
     unary_expression->stackPosition(bindings, label_count);
 
-    printf("\tli\t$3,4\n\tmul\t$2,$2,$3\n\taddu\t$t0,$t0,$2\n");
+    printf("\tli\t$3,%d\n\tmul\t$2,$2,$3\n\taddu\t$t0,$t0,$2\n",
+	   unary_expression->getType(bindings)->getSize());
 }
 
 void PostfixArrayElement::expressionDepth(int &depth_count) const
@@ -355,7 +356,6 @@ void OperatorUnaryExpression::stackPosition(VariableStackBindings bindings, int 
 	std::shared_ptr<UnaryExpression> unary_expression;
 	unary_expression = std::static_pointer_cast<UnaryExpression>(cast_expression_);
 	unary_expression->stackPosition(bindings, label_count);
-	printf("\tlw\t$t0,0($t0)\n");
     }
 }
 
@@ -754,9 +754,30 @@ VariableStackBindings AssignmentExpression::printAsm(VariableStackBindings bindi
     lhs_postfix->stackPosition(bindings, label_count);
     
     // now the result of the rhs will be in that stack position, so we can load it into $2
-    TypePtr tmp_ptr = lhs_->getType(bindings);
-    tmp_ptr->load(2, expression_stack_position);
-    tmp_ptr->store();
+    TypePtr lhs_type = lhs_->getType(bindings);
+    lhs_type->load(2, expression_stack_position);
+
+    // check if lhs is trying to access an array
+    std::shared_ptr<PostfixArrayElement> lhs_tmp;
+    lhs_tmp = std::dynamic_pointer_cast<PostfixArrayElement>(lhs_);
+    if(lhs_tmp != nullptr)
+    {
+	std::shared_ptr<Pointer> lhs_pointer_type;
+	lhs_pointer_type = std::dynamic_pointer_cast<Pointer>(lhs_type);
+	if(lhs_pointer_type != nullptr)
+	{
+	    lhs_pointer_type->pointerStore();
+	}
+	else
+	{
+	    lhs_type->store();
+	}
+    }
+    else
+    {
+	lhs_type->store();
+    }
+
     return bindings;
 }
 
@@ -802,7 +823,10 @@ void Identifier::stackPosition(VariableStackBindings bindings, int &) const
 {
     if(bindings.bindingExists(id_))
     {
-	printf("\taddiu\t$t0,$fp,%d\n", bindings.stackPosition(id_));
+	if(std::dynamic_pointer_cast<Pointer>(bindings.getType(id_)) != nullptr)
+	    printf("\tlw\t$3,%d($fp)\n\tmove\t$t0,$3\n", bindings.stackPosition(id_));
+	else
+	    printf("\taddiu\t$t0,$fp,%d\n", bindings.stackPosition(id_));
 	return;
     }
 
