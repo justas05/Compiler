@@ -37,8 +37,8 @@ for DRIVER in test_deliverable/testcases/*_driver.c ; do
     # Compile test function with compiler under test to assembly
     cat $TESTCODE | $COMPILER > working/$NAME.s  2> working/${NAME}.compile.stderr
     if [[ $? -ne 0 ]]; then
-        printf "\e[1;31mError\e[0m : Compiler returned error message.\n"
-        continue
+    	printf "\e[1;31mError\e[0m : Compiler returned error message.\n"
+    	continue
     fi
     
     # Link driver object and assembly into executable

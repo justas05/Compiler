@@ -38,7 +38,7 @@ void Declaration::printXml() const
 	printf("<Variable id=\"%s\" />", id_.c_str());
 }
 
-VariableStackBindings Declaration::printAsm(VariableStackBindings bindings, unsigned& label_count) const
+VariableStackBindings Declaration::printAsm(VariableStackBindings bindings, int& label_count) const
 {
     (void)label_count;
     if(!extern_declaration_)
@@ -54,7 +54,7 @@ VariableStackBindings Declaration::printAsm(VariableStackBindings bindings, unsi
     return bindings;
 }
 
-VariableStackBindings Declaration::localAsm(VariableStackBindings bindings, unsigned& label_count) const
+VariableStackBindings Declaration::localAsm(VariableStackBindings bindings, int& label_count) const
 {
     if(next_declaration_ != nullptr)
 	bindings = next_declaration_->localAsm(bindings, label_count);
@@ -77,7 +77,7 @@ VariableStackBindings Declaration::localAsm(VariableStackBindings bindings, unsi
     return bindings;
 }
 
-void Declaration::countDeclarations(unsigned &declaration_count) const
+void Declaration::countDeclarations(int &declaration_count) const
 {
     if(next_declaration_ != nullptr)
 	next_declaration_->countDeclarations(declaration_count);
@@ -144,16 +144,16 @@ TypePtr Declaration::getType() const
 
 // Array declaration class
 
-ArrayDeclaration::ArrayDeclaration(const std::string &id, ExpressionPtr initializer, const unsigned &size)
+ArrayDeclaration::ArrayDeclaration(const std::string &id, ExpressionPtr initializer, const int &size)
     : Declaration(id, initializer), size_(size)
 {}
 
-VariableStackBindings ArrayDeclaration::printAsm(VariableStackBindings bindings, unsigned &label_count) const
+VariableStackBindings ArrayDeclaration::printAsm(VariableStackBindings bindings, int &label_count) const
 {
     return bindings;
 }
 
-VariableStackBindings ArrayDeclaration::localAsm(VariableStackBindings bindings, unsigned &label_count) const
+VariableStackBindings ArrayDeclaration::localAsm(VariableStackBindings bindings, int &label_count) const
 {
     if(next_declaration_ != nullptr)
 	bindings = next_declaration_->localAsm(bindings, label_count);
@@ -190,7 +190,7 @@ VariableStackBindings ArrayDeclaration::localAsm(VariableStackBindings bindings,
     return bindings;
 }
 
-void ArrayDeclaration::countDeclarations(unsigned &declaration_count) const
+void ArrayDeclaration::countDeclarations(int &declaration_count) const
 {
     if(next_declaration_ != nullptr)
 	next_declaration_->countDeclarations(declaration_count);

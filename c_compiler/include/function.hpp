@@ -27,10 +27,10 @@ public:
 
     virtual void print() const;
     virtual void printXml() const;
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings, unsigned& label_count) const;
+    virtual VariableStackBindings printAsm(VariableStackBindings bindings, int& label_count) const;
 
-    void printParameterAsm(VariableStackBindings& bindings, unsigned& frame_offset) const;
-    void countParameters(unsigned& parameter_count) const;
+    void printParameterAsm(VariableStackBindings& bindings, int& frame_offset) const;
+    void countParameters(int& parameter_count) const;
 };
 
 

@@ -109,9 +109,21 @@ ParameterList:
 	|       ParameterList T_CMA Parameter { $3->linkDeclaration($$); $$ = $3; }
 		;
 
-Parameter:	DeclarationSpecifierList Declarator { $$ = new Declaration($2->getId()); delete $1; }
-	|	DeclarationSpecifierList { $$ = new Declaration(""); }
-	|	DeclarationSpecifierList T_MULT { $$ = new Declaration(""); delete $2; }
+Parameter:	DeclarationSpecifierList Declarator
+		{
+		    $$ = $2;
+		    std::shared_ptr<Type> tmp_type;
+		    if($$->getType() == nullptr)
+			tmp_type = std::make_shared<TypeContainer>();
+		    else
+			tmp_type = $$->getType();
+
+		    tmp_type->type($1->type());
+		    $$->setType(tmp_type);
+		    delete $1;
+		}
+	|	DeclarationSpecifierList { $$ = new Declaration(); delete $1; }
+	|	DeclarationSpecifierList T_MULT { $$ = new Declaration(); delete $2; delete $1; }
 		;
 
 // Declaration

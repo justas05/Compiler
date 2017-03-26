@@ -58,7 +58,7 @@ void LabelStatement::printXml() const
 	next_statement_->printXml();
 }
 
-VariableStackBindings LabelStatement::printAsm(VariableStackBindings bindings, unsigned &label_count) const
+VariableStackBindings LabelStatement::printAsm(VariableStackBindings bindings, int &label_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->printAsm(bindings, label_count);
@@ -70,7 +70,7 @@ VariableStackBindings LabelStatement::printAsm(VariableStackBindings bindings, u
     return bindings;
 }
 
-void LabelStatement::countVariables(unsigned &var_count) const
+void LabelStatement::countVariables(int &var_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->countVariables(var_count);
@@ -78,7 +78,7 @@ void LabelStatement::countVariables(unsigned &var_count) const
     statement_->countVariables(var_count);
 }
 
-void LabelStatement::countArguments(unsigned &argument_count) const
+void LabelStatement::countArguments(int &argument_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->countArguments(argument_count);
@@ -86,9 +86,9 @@ void LabelStatement::countArguments(unsigned &argument_count) const
     statement_->countArguments(argument_count);
 }
 
-void LabelStatement::countExpressionDepth(unsigned &depth_count) const
+void LabelStatement::countExpressionDepth(int &depth_count) const
 {
-    unsigned previous_depth_count = depth_count;
+    int previous_depth_count = depth_count;
     if(next_statement_ != nullptr)
     {
 	next_statement_->countExpressionDepth(depth_count);
@@ -123,7 +123,7 @@ void CaseStatement::printXml() const
 	next_statement_->printXml();
 }
 
-VariableStackBindings CaseStatement::printAsm(VariableStackBindings bindings, unsigned &label_count) const
+VariableStackBindings CaseStatement::printAsm(VariableStackBindings bindings, int &label_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->printAsm(bindings, label_count);
@@ -133,7 +133,7 @@ VariableStackBindings CaseStatement::printAsm(VariableStackBindings bindings, un
     return bindings;
 }
 
-void CaseStatement::countVariables(unsigned &var_count) const
+void CaseStatement::countVariables(int &var_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->countVariables(var_count);
@@ -141,7 +141,7 @@ void CaseStatement::countVariables(unsigned &var_count) const
     statement_->countVariables(var_count);
 }
 
-void CaseStatement::countArguments(unsigned &argument_count) const
+void CaseStatement::countArguments(int &argument_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->countArguments(argument_count);
@@ -149,9 +149,9 @@ void CaseStatement::countArguments(unsigned &argument_count) const
     statement_->countArguments(argument_count);
 }
 
-void CaseStatement::countExpressionDepth(unsigned &depth_count) const
+void CaseStatement::countExpressionDepth(int &depth_count) const
 {
-    unsigned previous_depth_count = depth_count;
+    int previous_depth_count = depth_count;
     if(next_statement_ != nullptr)
     {
 	next_statement_->countExpressionDepth(depth_count);
@@ -216,7 +216,7 @@ void CompoundStatement::printXml() const
     printf("</Scope>\n");
 }
 
-VariableStackBindings CompoundStatement::printAsm(VariableStackBindings bindings, unsigned &label_count) const
+VariableStackBindings CompoundStatement::printAsm(VariableStackBindings bindings, int &label_count) const
 {
     VariableStackBindings outer_scope_bindings = bindings;
     
@@ -232,7 +232,7 @@ VariableStackBindings CompoundStatement::printAsm(VariableStackBindings bindings
     return outer_scope_bindings;
 }
 
-void CompoundStatement::countVariables(unsigned &var_count) const
+void CompoundStatement::countVariables(int &var_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->countVariables(var_count);
@@ -244,7 +244,7 @@ void CompoundStatement::countVariables(unsigned &var_count) const
 	statement_->countVariables(var_count);
 }
 
-void CompoundStatement::countArguments(unsigned &argument_count) const
+void CompoundStatement::countArguments(int &argument_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->countArguments(argument_count);
@@ -253,9 +253,9 @@ void CompoundStatement::countArguments(unsigned &argument_count) const
 	statement_->countArguments(argument_count);
 }
 
-void CompoundStatement::countExpressionDepth(unsigned &depth_count) const
+void CompoundStatement::countExpressionDepth(int &depth_count) const
 {
-    unsigned previous_depth_count = depth_count;
+    int previous_depth_count = depth_count;
     if(next_statement_ != nullptr)
     {
 	next_statement_->countExpressionDepth(depth_count);
@@ -303,12 +303,12 @@ void IfElseStatement::printXml() const
 	else_->printXml();
 }
 
-VariableStackBindings IfElseStatement::printAsm(VariableStackBindings bindings, unsigned &label_count) const
+VariableStackBindings IfElseStatement::printAsm(VariableStackBindings bindings, int &label_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->printAsm(bindings, label_count);
     
-    unsigned if_label = label_count++;
+    int if_label = label_count++;
 	
     condition_->printAsm(bindings, label_count);
     printf("\tbeq\t$2,$0,$%d_else\n\tnop\n", if_label);
@@ -325,7 +325,7 @@ VariableStackBindings IfElseStatement::printAsm(VariableStackBindings bindings, 
     return bindings;
 }
 
-void IfElseStatement::countVariables(unsigned &var_count) const
+void IfElseStatement::countVariables(int &var_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->countVariables(var_count);
@@ -337,7 +337,7 @@ void IfElseStatement::countVariables(unsigned &var_count) const
 	else_->countVariables(var_count);
 }
 
-void IfElseStatement::countArguments(unsigned &argument_count) const
+void IfElseStatement::countArguments(int &argument_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->countArguments(argument_count);
@@ -349,9 +349,9 @@ void IfElseStatement::countArguments(unsigned &argument_count) const
 	else_->countArguments(argument_count);
 }
 
-void IfElseStatement::countExpressionDepth(unsigned &depth_count) const
+void IfElseStatement::countExpressionDepth(int &depth_count) const
 {
-    unsigned previous_depth_count = depth_count;
+    int previous_depth_count = depth_count;
 
     if(next_statement_ != nullptr)
     {
@@ -406,9 +406,9 @@ void SwitchStatement::printXml() const
     statement_->printXml();
 }
 
-VariableStackBindings SwitchStatement::printAsm(VariableStackBindings bindings, unsigned &label_count) const
+VariableStackBindings SwitchStatement::printAsm(VariableStackBindings bindings, int &label_count) const
 {
-    unsigned switch_count = label_count++;
+    int switch_count = label_count++;
     std::shared_ptr<CompoundStatement> comp_statement;
     StatementPtr case_statement_list;
     std::vector<StatementPtr> case_statement_vector;
@@ -465,7 +465,7 @@ VariableStackBindings SwitchStatement::printAsm(VariableStackBindings bindings, 
     return bindings;
 }
 
-void SwitchStatement::countVariables(unsigned &label_count) const
+void SwitchStatement::countVariables(int &label_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->countVariables(label_count);
@@ -473,22 +473,22 @@ void SwitchStatement::countVariables(unsigned &label_count) const
     statement_->countVariables(label_count);
 }
 
-void SwitchStatement::countArguments(unsigned &argument_count) const
+void SwitchStatement::countArguments(int &argument_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->countArguments(argument_count);
 
     statement_->countArguments(argument_count);
-    unsigned previous_argument_count = argument_count;
+    int previous_argument_count = argument_count;
     condition_->countArguments(argument_count);
 
     if(previous_argument_count > argument_count)
 	argument_count = previous_argument_count;
 }
 
-void SwitchStatement::countExpressionDepth(unsigned &depth_count) const
+void SwitchStatement::countExpressionDepth(int &depth_count) const
 {
-    unsigned previous_depth_count = depth_count;
+    int previous_depth_count = depth_count;
 
     if(next_statement_ != nullptr)
     {
@@ -533,7 +533,7 @@ void ExpressionStatement::printXml() const
 	next_statement_->printXml();
 }
 
-VariableStackBindings ExpressionStatement::printAsm(VariableStackBindings bindings, unsigned &label_count) const
+VariableStackBindings ExpressionStatement::printAsm(VariableStackBindings bindings, int &label_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->printAsm(bindings, label_count);
@@ -544,18 +544,18 @@ VariableStackBindings ExpressionStatement::printAsm(VariableStackBindings bindin
     return bindings;
 }
 
-void ExpressionStatement::countVariables(unsigned &var_count) const
+void ExpressionStatement::countVariables(int &var_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->countVariables(var_count);
 }
 
-void ExpressionStatement::countArguments(unsigned &argument_count) const
+void ExpressionStatement::countArguments(int &argument_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->countArguments(argument_count);
 
-    unsigned tmp_argument_count = argument_count;
+    int tmp_argument_count = argument_count;
 
     if(expression_ != nullptr)
 	expression_->countArguments(argument_count);
@@ -564,9 +564,9 @@ void ExpressionStatement::countArguments(unsigned &argument_count) const
 	argument_count = tmp_argument_count;
 }
 
-void ExpressionStatement::countExpressionDepth(unsigned &depth_count) const
+void ExpressionStatement::countExpressionDepth(int &depth_count) const
 {
-    unsigned previous_depth_count = depth_count;
+    int previous_depth_count = depth_count;
 
     if(next_statement_ != nullptr)
     {
@@ -597,19 +597,19 @@ void JumpStatement::printXml() const
 	next_statement_->printXml();
 }
 
-void JumpStatement::countVariables(unsigned &var_count) const
+void JumpStatement::countVariables(int &var_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->countVariables(var_count);
 }
 
-void JumpStatement::countArguments(unsigned &argument_count) const
+void JumpStatement::countArguments(int &argument_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->countArguments(argument_count);
 }
 
-void JumpStatement::countExpressionDepth(unsigned &depth_count) const
+void JumpStatement::countExpressionDepth(int &depth_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->countExpressionDepth(depth_count);
@@ -622,7 +622,7 @@ ReturnStatement::ReturnStatement(Expression *expression)
     : expression_(expression)
 {}
 
-VariableStackBindings ReturnStatement::printAsm(VariableStackBindings bindings, unsigned &label_count) const
+VariableStackBindings ReturnStatement::printAsm(VariableStackBindings bindings, int &label_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->printAsm(bindings, label_count);
@@ -635,18 +635,18 @@ VariableStackBindings ReturnStatement::printAsm(VariableStackBindings bindings, 
     return bindings;
 }
 
-void ReturnStatement::countVariables(unsigned &var_count) const
+void ReturnStatement::countVariables(int &var_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->countVariables(var_count);
 }
 
-void ReturnStatement::countArguments(unsigned &argument_count) const
+void ReturnStatement::countArguments(int &argument_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->countArguments(argument_count);
 
-    unsigned tmp_argument_count = argument_count;
+    int tmp_argument_count = argument_count;
 
     if(expression_ != nullptr)
 	expression_->countArguments(argument_count);
@@ -655,9 +655,9 @@ void ReturnStatement::countArguments(unsigned &argument_count) const
 	argument_count = tmp_argument_count;
 }
 
-void ReturnStatement::countExpressionDepth(unsigned &depth_count) const
+void ReturnStatement::countExpressionDepth(int &depth_count) const
 {
-    unsigned previous_depth_count = depth_count;
+    int previous_depth_count = depth_count;
 
     if(next_statement_ != nullptr)
     {
@@ -682,7 +682,7 @@ void ReturnStatement::countExpressionDepth(unsigned &depth_count) const
 BreakStatement::BreakStatement()
 {}
 
-VariableStackBindings BreakStatement::printAsm(VariableStackBindings bindings, unsigned &label_count) const
+VariableStackBindings BreakStatement::printAsm(VariableStackBindings bindings, int &label_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->printAsm(bindings, label_count);
@@ -697,7 +697,7 @@ VariableStackBindings BreakStatement::printAsm(VariableStackBindings bindings, u
 ContinueStatement::ContinueStatement()
 {}
 
-VariableStackBindings ContinueStatement::printAsm(VariableStackBindings bindings, unsigned &label_count) const
+VariableStackBindings ContinueStatement::printAsm(VariableStackBindings bindings, int &label_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->printAsm(bindings, label_count);
@@ -713,7 +713,7 @@ GotoStatement::GotoStatement(const std::string &label)
     : label_(label)
 {}
 
-VariableStackBindings GotoStatement::printAsm(VariableStackBindings bindings, unsigned &label_count) const
+VariableStackBindings GotoStatement::printAsm(VariableStackBindings bindings, int &label_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->printAsm(bindings, label_count);
@@ -741,7 +741,7 @@ void IterationStatement::printXml() const
 	statement_->printXml();
 }
 
-void IterationStatement::countVariables(unsigned &var_count) const
+void IterationStatement::countVariables(int &var_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->countVariables(var_count);
@@ -750,7 +750,7 @@ void IterationStatement::countVariables(unsigned &var_count) const
 	statement_->countVariables(var_count);
 }
 
-void IterationStatement::countArguments(unsigned &argument_count) const
+void IterationStatement::countArguments(int &argument_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->countArguments(argument_count);
@@ -759,9 +759,9 @@ void IterationStatement::countArguments(unsigned &argument_count) const
 	statement_->countArguments(argument_count);
 }
 
-void IterationStatement::countExpressionDepth(unsigned &depth_count) const
+void IterationStatement::countExpressionDepth(int &depth_count) const
 {
-    unsigned previous_depth_count = depth_count;
+    int previous_depth_count = depth_count;
 
     if(next_statement_ != nullptr)
     {
@@ -789,7 +789,7 @@ WhileLoop::WhileLoop(Expression *condition, Statement *statement, const bool &is
     : IterationStatement(condition, statement), is_while_(is_while)
 {}
 
-VariableStackBindings WhileLoop::printAsm(VariableStackBindings bindings, unsigned &label_count) const
+VariableStackBindings WhileLoop::printAsm(VariableStackBindings bindings, int &label_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->printAsm(bindings, label_count);
@@ -816,7 +816,7 @@ ForLoop::ForLoop(Expression *initializer, Expression *condition, Expression *inc
     : IterationStatement(condition, statement), initializer_(initializer), incrementer_(incrementer)
 {}
 
-VariableStackBindings ForLoop::printAsm(VariableStackBindings bindings, unsigned &label_count) const
+VariableStackBindings ForLoop::printAsm(VariableStackBindings bindings, int &label_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->printAsm(bindings, label_count);

@@ -47,29 +47,29 @@ void Function::printXml() const
     printf("</Function>\n");
 }
 
-VariableStackBindings Function::printAsm(VariableStackBindings bindings, unsigned& label_count) const
+VariableStackBindings Function::printAsm(VariableStackBindings bindings, int& label_count) const
 {
     VariableStackBindings original_bindings = bindings;
     // Counting all the variables being declared in the function
-    unsigned variable_count = 0;
+    int variable_count = 0;
     if(statement_ != nullptr)
 	statement_->countVariables(variable_count);
 
-    unsigned max_argument_count = 0;
+    int max_argument_count = 0;
     // Count the maximum number of arguments
     statement_->countArguments(max_argument_count);
 
-    unsigned max_depth = 0;
+    int max_depth = 0;
     statement_->countExpressionDepth(max_depth);
 
     if(max_argument_count < 4)
 	max_argument_count = 4;
 
-    unsigned parameter_count = 0;
+    int parameter_count = 0;
     countParameters(parameter_count);
     
     // This adds 2 to store the frame pointer and the return address
-    unsigned memory_needed = 4*(variable_count+max_argument_count+max_depth+2);
+    int memory_needed = 4*(variable_count+max_argument_count+max_depth+2);
     
     // make frame double word aligned
     if(memory_needed % 8 != 0)
@@ -94,7 +94,7 @@ VariableStackBindings Function::printAsm(VariableStackBindings bindings, unsigne
     return original_bindings;
 }
 
-void Function::printParameterAsm(VariableStackBindings& bindings, unsigned& frame_offset) const
+void Function::printParameterAsm(VariableStackBindings& bindings, int& frame_offset) const
 {
     std::vector<DeclarationPtr> parameter_vector;
     DeclarationPtr parameter_list = parameter_list_;
@@ -107,14 +107,33 @@ void Function::printParameterAsm(VariableStackBindings& bindings, unsigned& fram
 
     for(auto itr = parameter_vector.rbegin(); itr != parameter_vector.rend(); ++itr)
     {
-	unsigned i = itr-parameter_vector.rbegin();
+	int i = itr-parameter_vector.rbegin();
 	bindings.insertBinding((*itr)->getId(), (*itr)->getType(), i*4+frame_offset);
+	TypePtr parameter_type = (*itr)->getType();
 	if(i < 4)
-	    printf("\tsw\t$%d,%d($fp)\n", 4+i, i*4+frame_offset);
+	{    
+	    parameter_type->store(4+i, 4*i+frame_offset);
+	}
+	else
+	{
+	    if(std::dynamic_pointer_cast<TypeContainer>(parameter_type) != nullptr)
+	    {
+		if(std::dynamic_pointer_cast<Char>(parameter_type->type()) != nullptr)
+		{    
+		    printf("\tlw\t$2,%d($fp)\n", i*4+frame_offset);
+		    printf("\tsb\t$2,%d($fp)\n", i*4+frame_offset);
+		}
+		else if(std::dynamic_pointer_cast<Short>(parameter_type->type()) != nullptr)
+		{
+		    printf("\tlw\t$2,%d($fp)\n", i*4+frame_offset);
+		    printf("\tsh\t$2,%d($fp)\n", i*4+frame_offset);
+		}
+	    }
+	}
     }
 }
 
-void Function::countParameters(unsigned& parameter_count) const
+void Function::countParameters(int& parameter_count) const
 {
     DeclarationPtr parameter_list = parameter_list_;
 

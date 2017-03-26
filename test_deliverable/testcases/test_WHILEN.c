@@ -1,4 +1,4 @@
-int whilen(int a, int b)
+ int whilen(int a, int b)
 {
     while(a <= b)
     {
