@@ -41,7 +41,7 @@ void yyerror(const char *);
 			T_VOID T_CHAR T_SHORT T_INT T_LONG T_FLOAT T_DOUBLE T_SIGNED T_UNSIGNED
 			T_TYPEDEF T_EXTERN T_STATIC T_AUTO T_REGISTER
 			T_CONST T_VOLATILE T_GOTO T_BREAK T_CONTINUE
-			T_CASE T_DEFAULT T_SWITCH
+			T_CASE T_DEFAULT T_SWITCH T_ELLIPSIS
 			
 %nonassoc		T_RRB
 %nonassoc		T_ELSE
@@ -57,7 +57,7 @@ void yyerror(const char *);
 			SelectionStatement
 			ExpressionStatement JumpStatement IterationStatement LabeledStatement
 
-%type	<declaration>	ParameterList Parameter DeclarationList Declaration InitDeclaratorList
+%type	<declaration>	ParameterTypeList ParameterList Parameter DeclarationList Declaration InitDeclaratorList
 			InitDeclarator
 			IdentifierList
 			Declarator DirectDeclarator
@@ -104,6 +104,10 @@ FunctionDefinition:
 		{ $$ = new Function($2->getId(), $3, $2->getNext()); delete $1; }
 		;
 
+ParameterTypeList:
+		ParameterList { $$ = $1; }
+	|	ParameterList T_CMA T_ELLIPSIS { $$ = $1; }
+	;
 ParameterList:
 		Parameter { $$ = $1; }
 	|       ParameterList T_CMA Parameter { $3->linkDeclaration($$); $$ = $3; }
@@ -222,7 +226,8 @@ DirectDeclarator:
 		}
 	|	DirectDeclarator T_LSB T_RSB { $$ = $1; }
 	|	DirectDeclarator T_LRB T_RRB { $$ = $1; $$->setExternDeclaration(true); }
-	|	DirectDeclarator T_LRB ParameterList T_RRB { $1->linkDeclaration($3); $$ = $1; $$->setExternDeclaration(true); }
+	|	DirectDeclarator T_LRB ParameterTypeList T_RRB
+		{ $1->linkDeclaration($3); $$ = $1; $$->setExternDeclaration(true); }
 	|	DirectDeclarator T_LRB IdentifierList T_RRB { $$ = $1; $$->setExternDeclaration(true); }
 		;
 

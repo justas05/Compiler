@@ -179,7 +179,7 @@ VariableStackBindings ArrayDeclaration::localAsm(VariableStackBindings bindings,
 	    {
 		int initializer_count = itr-initializer_vector.rbegin();
 		(*itr)->printAsm(bindings, label_count);
-		type_->store(stack_position+4*initializer_count);
+		type_->store(stack_position+type_->getSize()*initializer_count);
 	    }
 	}
 	

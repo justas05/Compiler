@@ -138,7 +138,12 @@ VariableStackBindings PostfixArrayElement::printAsm(VariableStackBindings bindin
 {
     stackPosition(bindings, label_count);
     TypePtr type_ptr = postfix_expression_->getType(bindings);
-    type_ptr->load();
+    std::shared_ptr<Pointer> pointer_type_ptr;
+    pointer_type_ptr = std::dynamic_pointer_cast<Pointer>(type_ptr);
+    if(pointer_type_ptr != nullptr)
+	pointer_type_ptr->pointerLoad();
+    else
+	type_ptr->load();
     printf("\tsw\t$2,%d($fp)\n", bindings.currentExpressionStackPosition());
     return bindings;
 }

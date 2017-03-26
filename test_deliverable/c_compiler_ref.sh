@@ -1,4 +1,4 @@
 #!/bin/bash
 
-mips-linux-gnu-gcc -c -S -x c - -o -
+mips-linux-gnu-gcc -std=c89 -c -S -x c - -o -
 exit $?

@@ -54,6 +54,7 @@ ALL .
 (default)	{ return T_DEFAULT; }
 (switch)	{ return T_SWITCH; }
 
+[.][.][.]	{ return T_ELLIPSIS; }
 [;]		{ return T_SC; }
 [,]		{ return T_CMA; }
 [(]		{ return T_LRB; }
