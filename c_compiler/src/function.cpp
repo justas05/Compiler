@@ -34,12 +34,10 @@ void Function::printXml() const
 	parameter = parameter->getNext();
     }
 
-    for(std::vector<std::string>::reverse_iterator itr = parameter_vec.rbegin();
-	itr != parameter_vec.rend(); ++itr)
+    for(auto itr = parameter_vec.rbegin(); itr != parameter_vec.rend(); ++itr)
     {
 	printf("<Parameter id=\"%s\" />", (*itr).c_str());	
     }
-
     
     if(statement_ != nullptr)
 	statement_->printXml();
@@ -84,7 +82,8 @@ Bindings Function::printAsm(Bindings bindings, int& label_count) const
     // Prints the asm for the compound statement in the function
     statement_->printAsm(bindings, label_count);
     
-    printf("\tmove\t$2,$0\n0:\n\tmove\t$sp,$fp\n\tlw\t$31,%d($sp)\n\tlw\t$fp,%d", memory_needed-4, memory_needed-8);
+    printf("\tmove\t$2,$0\n0:\n\tmove\t$sp,$fp\n\tlw\t$31,%d($sp)\n", memory_needed-4);
+    printf("\tlw\t$fp,%d", memory_needed-8);
     printf("($sp)\n\taddiu\t$sp,$sp,%d\n\tjr\t$31\n\tnop\n", memory_needed);
 
     auto string_lit_iterator = bindings.getStringLiteralIterator();
@@ -93,7 +92,8 @@ Bindings Function::printAsm(Bindings bindings, int& label_count) const
 	printf("\n\t.rdata\n\t.align\t2\n");
 	for(auto itr = string_lit_iterator.first; itr != string_lit_iterator.second; ++itr)
 	{
-	    printf("$%d_string:\n\t.ascii\t\"%s\\000\"", int(itr-string_lit_iterator.first), (*itr).c_str());
+	    printf("$%d_string:\n\t.ascii\t", int(itr-string_lit_iterator.first));
+	    printf("\"%s\\000\"", (*itr).c_str());
 	}
     }
 

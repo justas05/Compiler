@@ -127,8 +127,8 @@ Parameter:	DeclarationSpecifierList Declarator
 		    $$->setType(tmp_type);
 		    delete $1;
 		}
-	|	DeclarationSpecifierList { $$ = new Declaration(); delete $1; }
-	|	DeclarationSpecifierList T_MULT { $$ = new Declaration(); delete $2; delete $1; }
+	|	DeclarationSpecifierList { $$ = new IdentifierDeclaration(); delete $1; }
+	|	DeclarationSpecifierList T_MULT { $$ = new IdentifierDeclaration(); delete $2; delete $1; }
 		;
 
 // Declaration
@@ -202,8 +202,9 @@ Declarator:	DirectDeclarator { $$ = $1; }
 
 Pointer:
 		T_MULT { $$ = new Pointer(); delete $1; }
-	| 	T_MULT Pointer { $$ = $2; delete $1; }
-	| 	T_MULT TypeQualifierList Pointer { $$ = $3; delete $1; delete $2; }
+	| 	T_MULT Pointer { $$ = $2; delete $1; $$->type(new Pointer()); }
+	| 	T_MULT TypeQualifierList Pointer
+		{ $$ = $3; delete $1; delete $2; $$->type(new Pointer()); }
 		;
 
 TypeQualifierList:
@@ -217,23 +218,36 @@ TypeQualifier:
 		;
 
 DirectDeclarator:
-		T_IDENTIFIER { $$ = new Declaration(*$1); delete $1; }
+		T_IDENTIFIER { $$ = new IdentifierDeclaration(*$1); delete $1; }
 	|	T_LRB Declarator T_RRB { $$ = $2; }
 	|	DirectDeclarator T_LSB ConditionalExpression T_RSB
 		{
-		    $$ = new ArrayDeclaration($1->getId(), $1->getInitializer(), $3->constantFold());
+		    $$ = new ArrayDeclaration($1, $1->getInitializer(), $3->constantFold());
 		    TypePtr tmp_ptr = std::make_shared<Array>($3->constantFold());
-		    $$->setType(tmp_ptr);
+		    if($$->getType() == nullptr)
+			$$->setType(tmp_ptr);
+		    else
+			$$->getType()->type(tmp_ptr);
 		}
-	|	DirectDeclarator T_LSB T_RSB { $$ = $1; }
+		
+	|	DirectDeclarator T_LSB T_RSB
+		{
+		    $$ = new ArrayDeclaration($1, $1->getInitializer());
+		    TypePtr tmp_ptr = std::make_shared<Array>(0);
+		    if($$->getType() == nullptr)
+			$$->setType(tmp_ptr);
+		    else
+			$$->getType()->type(tmp_ptr);
+		}
+		
 	|	DirectDeclarator T_LRB T_RRB { $$ = $1; $$->setExternDeclaration(true); }
 	|	DirectDeclarator T_LRB ParameterTypeList T_RRB
 		{ $1->linkDeclaration($3); $$ = $1; $$->setExternDeclaration(true); }
 	|	DirectDeclarator T_LRB IdentifierList T_RRB { $$ = $1; $$->setExternDeclaration(true); }
 		;
 
-IdentifierList:	T_IDENTIFIER { $$ = new Declaration(); }
-	|	IdentifierList T_CMA T_IDENTIFIER { $$ = new Declaration(); }
+IdentifierList:	T_IDENTIFIER { $$ = new IdentifierDeclaration(); }
+	|	IdentifierList T_CMA T_IDENTIFIER { $$ = new IdentifierDeclaration(); }
 
 Initializer: 	AssignmentExpression { $$ = $1; }
 	|	T_LCB InitializerList T_RCB { $$ = $2; }
