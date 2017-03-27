@@ -161,11 +161,32 @@ ArrayDeclaration::ArrayDeclaration(Declaration *declarator, ExpressionPtr initia
 
 void ArrayDeclaration::print() const
 {
+    if(next_declaration_ != nullptr)
+	next_declaration_->print();
+    if(next_list_declaration_ != nullptr)
+	next_list_declaration_->print();
+    
     printf("Array Declaration\n");
+    declarator_->print();
 }
 
-Bindings ArrayDeclaration::printAsm(Bindings bindings, int &) const
+void ArrayDeclaration::printXml() const
 {
+    if(next_declaration_ != nullptr)
+	next_declaration_->printXml();
+    if(next_list_declaration_ != nullptr)
+	next_list_declaration_->printXml();
+    declarator_->printXml();
+}
+
+Bindings ArrayDeclaration::printAsm(Bindings bindings, int &label_count) const
+{
+    if(next_declaration_ != nullptr)
+	bindings = next_declaration_->printAsm(bindings, label_count);
+    if(next_list_declaration_ != nullptr)
+	bindings = next_list_declaration_->printAsm(bindings, label_count);
+    bindings = declarator_->printAsm(bindings, label_count);
+    
     return bindings;
 }
 
@@ -173,7 +194,6 @@ Bindings ArrayDeclaration::localAsm(Bindings bindings, int &label_count) const
 {
     if(next_declaration_ != nullptr)
 	bindings = next_declaration_->localAsm(bindings, label_count);
-
     if(next_list_declaration_ != nullptr)
 	bindings = next_list_declaration_->localAsm(bindings, label_count);
 
@@ -210,9 +230,13 @@ void ArrayDeclaration::countDeclarations(int &declaration_count) const
 {
     if(next_declaration_ != nullptr)
 	next_declaration_->countDeclarations(declaration_count);
-
     if(next_list_declaration_ != nullptr)
 	next_list_declaration_->countDeclarations(declaration_count);
+
+    std::shared_ptr<ArrayDeclaration> next_array;
+    next_array = std::dynamic_pointer_cast<ArrayDeclaration>(declarator_);
+    if(next_array != nullptr)
+	next_array->countDeclarations(declaration_count);
 
     declaration_count += size_;
 }

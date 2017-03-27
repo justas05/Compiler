@@ -64,7 +64,7 @@ public:
     ArrayDeclaration(Declaration *declarator, ExpressionPtr initializer, const int &size=0);
 
     virtual void print() const;
-    virtual void printXml() const {}
+    virtual void printXml() const;
     virtual Bindings printAsm(Bindings bindings, int &label_count) const;
     virtual Bindings localAsm(Bindings bindings, int &label_count) const;
     virtual void countDeclarations(int &declaration_count) const;
