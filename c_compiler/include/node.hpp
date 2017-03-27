@@ -6,7 +6,7 @@
 #include <string>
 
 class Type;
-class VariableStackBindings; 
+class Bindings; 
 
 
 // base node class
@@ -17,7 +17,7 @@ public:
 
     virtual void print() const = 0;
     virtual void printXml() const = 0;
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings, int& label_count) const = 0;
+    virtual Bindings printAsm(Bindings bindings, int& label_count) const = 0;
 };
 
     

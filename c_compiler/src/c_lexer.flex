@@ -16,9 +16,9 @@ DECIMALCONSTANT ([1-9][0-9]*)
 OCTALCONSTANT ([0][0-7]*)
 HEXCONSTANT ([0][xX][0-9A-Fa-f]+)
 
-CHARCONSTANT ('(([\\]['])|([^']))+')
+CHARCONSTANT (['](([\\]['])|([^']))*['])
 
-STRINGLITERAL ["](([\\]["])|([^"]))*["]
+STRINGLITERAL (["](([\\]["])|([^"]))*["])
 
 WHITESPACE [ \t\r\n]+
 
@@ -53,6 +53,15 @@ ALL .
 (case)		{ return T_CASE; }
 (default)	{ return T_DEFAULT; }
 (switch)	{ return T_SWITCH; }
+
+{STRINGLITERAL}	{ std::string tmp(yytext); yylval.string = new std::string(tmp.substr(1, yyleng-2));
+		  return T_STRINGLITERAL; }
+L{STRINGLITERAL} { std::string tmp(yytext); yylval.string = new std::string(tmp.substr(2, yyleng-3));
+		  return T_STRINGLITERAL;}
+
+{CHARCONSTANT} { yylval.number = yytext[1]; return T_INT_CONST; }
+L{CHARCONSTANT} { yylval.number = yytext[2]; return T_INT_CONST; }
+
 
 [.][.][.]	{ return T_ELLIPSIS; }
 [;]		{ return T_SC; }

@@ -46,7 +46,7 @@ void Array::print() const
 void Array::printXml() const
 {}
 
-VariableStackBindings Array::printAsm(VariableStackBindings bindings, int &) const
+Bindings Array::printAsm(Bindings bindings, int &) const
 {
     return bindings;
 }
@@ -69,7 +69,7 @@ TypePtr Array::type(TypePtr type_ptr)
     return type_;
 }
 
-void Array::increaseStackPosition(VariableStackBindings &bindings) const
+void Array::increaseStackPosition(Bindings &bindings) const
 {
     for(int i = 0; i < size_; ++i)
     {
@@ -121,7 +121,7 @@ void Pointer::print() const
 void Pointer::printXml() const
 {}
 
-VariableStackBindings Pointer::printAsm(VariableStackBindings bindings, int &) const
+Bindings Pointer::printAsm(Bindings bindings, int &) const
 {
     return bindings;
 }
@@ -144,7 +144,7 @@ TypePtr Pointer::type(TypePtr type_ptr)
     return type_;
 }
 
-void Pointer::increaseStackPosition(VariableStackBindings &bindings) const
+void Pointer::increaseStackPosition(Bindings &bindings) const
 {
     bindings.increaseStackPosition(4);
 }
@@ -221,7 +221,7 @@ void TypeContainer::print() const
 void TypeContainer::printXml() const
 {}
 
-VariableStackBindings TypeContainer::printAsm(VariableStackBindings bindings, int &) const
+Bindings TypeContainer::printAsm(Bindings bindings, int &) const
 {
     return bindings;
 }
@@ -246,7 +246,7 @@ TypePtr TypeContainer::type(TypePtr type_ptr)
     return type_;
 }
 
-void TypeContainer::increaseStackPosition(VariableStackBindings &bindings) const
+void TypeContainer::increaseStackPosition(Bindings &bindings) const
 {
     type_->increaseStackPosition(bindings);
 }
@@ -338,12 +338,12 @@ void Int::print() const
 void Int::printXml() const
 {}
 
-VariableStackBindings Int::printAsm(VariableStackBindings bindings, int &) const
+Bindings Int::printAsm(Bindings bindings, int &) const
 {
     return bindings;
 }
 
-void Int::increaseStackPosition(VariableStackBindings &bindings) const
+void Int::increaseStackPosition(Bindings &bindings) const
 {
     bindings.increaseStackPosition(4);
 }
@@ -392,12 +392,12 @@ void Void::print() const
 void Void::printXml() const
 {}
 
-VariableStackBindings Void::printAsm(VariableStackBindings bindings, int &) const
+Bindings Void::printAsm(Bindings bindings, int &) const
 {
     return bindings;
 }
 
-void Void::increaseStackPosition(VariableStackBindings &) const
+void Void::increaseStackPosition(Bindings &) const
 {}
 
 void Void::load() const
@@ -434,12 +434,12 @@ void Short::print() const
 void Short::printXml() const
 {}
 
-VariableStackBindings Short::printAsm(VariableStackBindings bindings, int &) const
+Bindings Short::printAsm(Bindings bindings, int &) const
 {
     return bindings;
 }
 
-void Short::increaseStackPosition(VariableStackBindings &bindings) const
+void Short::increaseStackPosition(Bindings &bindings) const
 {
     bindings.increaseStackPosition(2);
 }
@@ -488,12 +488,12 @@ void Char::print() const
 void Char::printXml() const
 {}
 
-VariableStackBindings Char::printAsm(VariableStackBindings bindings, int &) const
+Bindings Char::printAsm(Bindings bindings, int &) const
 {
     return bindings;
 }
 
-void Char::increaseStackPosition(VariableStackBindings &bindings) const
+void Char::increaseStackPosition(Bindings &bindings) const
 {
     bindings.increaseStackPosition(1);
 }
@@ -542,12 +542,12 @@ void Float::print() const
 void Float::printXml() const
 {}
 
-VariableStackBindings Float::printAsm(VariableStackBindings bindings, int &) const
+Bindings Float::printAsm(Bindings bindings, int &) const
 {
     return bindings;
 }
 
-void Float::increaseStackPosition(VariableStackBindings &bindings) const
+void Float::increaseStackPosition(Bindings &bindings) const
 {
     bindings.increaseStackPosition(4);
 }

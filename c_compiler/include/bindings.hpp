@@ -1,14 +1,14 @@
 #ifndef BINDINGS_HPP
 #define BINDINGS_HPP
 
-#include <map>
 #include <memory>
 #include <string>
+#include <unordered_map>
+#include <vector>
 
 class Type;
 
 typedef std::shared_ptr<Type> TypePtr;
-
 
 // struct containing information on the variable declaration
 struct DeclarationData
@@ -17,21 +17,22 @@ struct DeclarationData
     int stack_position;
 };
 
-
 // stores bindings for the current scope and where they are in the stack
-class VariableStackBindings
+class Bindings
 {
 private:
-    std::map<std::string, DeclarationData> bindings_;
+    static std::vector<std::string> string_literals;
+    
+    std::unordered_map<std::string, DeclarationData> bindings_;
     std::string break_label_;
     std::string continue_label_;
     int stack_counter_;
     int expression_stack_;
-	     
 public:
-    VariableStackBindings();
+    Bindings();
 
     void insertBinding(const std::string &id, TypePtr type, const int &stack_position);
+    int insertStringLiteral(const std::string &string_literal);
     void increaseStackPosition();
     void increaseStackPosition(const int &position);
     void setStackPosition(const int &stack_counter);
@@ -48,6 +49,9 @@ public:
     int currentStackPosition() const;
     int stackPosition(const std::string &id) const;
     int currentExpressionStackPosition() const;
+
+    std::pair<std::vector<std::string>::const_iterator, std::vector<std::string>::const_iterator>
+    getStringLiteralIterator() const;
 
     bool bindingExists(const std::string &id) const;
 };

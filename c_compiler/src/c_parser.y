@@ -41,7 +41,7 @@ void yyerror(const char *);
 			T_VOID T_CHAR T_SHORT T_INT T_LONG T_FLOAT T_DOUBLE T_SIGNED T_UNSIGNED
 			T_TYPEDEF T_EXTERN T_STATIC T_AUTO T_REGISTER
 			T_CONST T_VOLATILE T_GOTO T_BREAK T_CONTINUE
-			T_CASE T_DEFAULT T_SWITCH T_ELLIPSIS
+			T_CASE T_DEFAULT T_SWITCH T_ELLIPSIS T_STRINGLITERAL
 			
 %nonassoc		T_RRB
 %nonassoc		T_ELSE
@@ -74,8 +74,9 @@ void yyerror(const char *);
 %type	<number>        T_INT_CONST
 			
 %type	<string>	T_IDENTIFIER ASSIGN_OPER T_ASSIGN_OPER T_EQ T_AND T_ADDSUB_OP T_TILDE T_NOT
-			T_MULT T_DIV T_REM T_EQUALITY_OP T_REL_OP T_SHIFT_OP T_INCDEC MultDivRemOP
-			UnaryOperator DeclarationSpecifier TypeQualifier TypeQualifierList
+			T_MULT T_DIV T_REM T_EQUALITY_OP T_REL_OP T_SHIFT_OP T_INCDEC T_STRINGLITERAL
+			MultDivRemOP UnaryOperator DeclarationSpecifier TypeQualifier
+			TypeQualifierList
                         
 %start ROOT
                         
@@ -467,6 +468,7 @@ ArgumentExpressionList:
 PrimaryExpression:
 		T_IDENTIFIER { $$ = new Identifier(*$1); delete $1; }
 	|       Constant { $$ = $1; }
+	|	T_STRINGLITERAL { $$ = new StringLiteral(*$1); delete $1; }
 	|	T_LRB Expression T_RRB { $$ = $2; }
 		;
 

@@ -26,8 +26,8 @@ public:
 
     virtual void print() const;
     virtual void printXml() const;
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings, int &label_count) const;
-    virtual VariableStackBindings localAsm(VariableStackBindings bindings, int &label_count) const;
+    virtual Bindings printAsm(Bindings bindings, int &label_count) const;
+    virtual Bindings localAsm(Bindings bindings, int &label_count) const;
     virtual void countDeclarations(int &declaration_count) const;    
 
     void linkDeclaration(Declaration *next_declaration);
@@ -51,8 +51,8 @@ private:
 public:
     ArrayDeclaration(const std::string &id = "", ExpressionPtr initializer = nullptr, const int &size = 0);
     
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings, int &label_count) const;
-    virtual VariableStackBindings localAsm(VariableStackBindings bindings, int &label_count) const;
+    virtual Bindings printAsm(Bindings bindings, int &label_count) const;
+    virtual Bindings localAsm(Bindings bindings, int &label_count) const;
     virtual void countDeclarations(int &declaration_count) const;    
 };
 

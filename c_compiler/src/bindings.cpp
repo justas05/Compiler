@@ -1,13 +1,14 @@
 #include "bindings.hpp"
 
+std::vector<std::string> Bindings::string_literals;
 
-// VariableStackBindings definition
+// Bindings definition
 
-VariableStackBindings::VariableStackBindings()
+Bindings::Bindings()
     : break_label_(""), continue_label_(""), stack_counter_(0), expression_stack_(16)
 {}
 
-void VariableStackBindings::insertBinding(const std::string &id, TypePtr type, const int &stack_position)
+void Bindings::insertBinding(const std::string &id, TypePtr type, const int &stack_position)
 {
     auto binding = bindings_.find(id);
 
@@ -16,7 +17,7 @@ void VariableStackBindings::insertBinding(const std::string &id, TypePtr type, c
 	DeclarationData decl_data;
 	decl_data.type = type;
 	decl_data.stack_position = stack_position;
-	bindings_.insert(std::pair<std::string, DeclarationData>(id, decl_data));
+	bindings_.insert(std::make_pair(id, decl_data));
     }
     else
     {
@@ -25,65 +26,71 @@ void VariableStackBindings::insertBinding(const std::string &id, TypePtr type, c
     }
 }
 
-void VariableStackBindings::increaseStackPosition()
+int Bindings::insertStringLiteral(const std::string &string_literal)
+{
+    string_literals.push_back(string_literal);
+    return (int)string_literals.size()-1;
+}
+
+void Bindings::increaseStackPosition()
 {
     stack_counter_ += 4;
 }
 
-void VariableStackBindings::increaseStackPosition(const int &position)
+void Bindings::increaseStackPosition(const int &position)
 {
     stack_counter_ += position;
 }
 
-void VariableStackBindings::setStackPosition(const int &stack_counter)
+void Bindings::setStackPosition(const int &stack_counter)
 {
     stack_counter_ = stack_counter;
 }
 
-void VariableStackBindings::nextExpressionStackPosition()
+void Bindings::nextExpressionStackPosition()
 {
     expression_stack_ += 4;
 }
 
-void VariableStackBindings::setExpressionStackPosition(const int &stack_counter)
+void Bindings::setExpressionStackPosition(const int &stack_counter)
 {
     expression_stack_ = stack_counter;
 }
 
-TypePtr VariableStackBindings::getType(const std::string &id) const
+TypePtr Bindings::getType(const std::string &id) const
 {
     auto binding = bindings_.find(id);
     return (*binding).second.type;
 }
 
-std::string VariableStackBindings::breakLabel()
+std::string Bindings::breakLabel()
 {
     return break_label_;
 }
 
-std::string VariableStackBindings::breakLabel(const std::string &label)
+std::string Bindings::breakLabel(const std::string &label)
 {
     break_label_ = label;
     return break_label_;
 }
 
-std::string VariableStackBindings::continueLabel()
+std::string Bindings::continueLabel()
 {
     return continue_label_;
 }
 
-std::string VariableStackBindings::continueLabel(const std::string &label)
+std::string Bindings::continueLabel(const std::string &label)
 {
     continue_label_ = label;
     return continue_label_;
 }
 
-int VariableStackBindings::currentStackPosition() const
+int Bindings::currentStackPosition() const
 {
     return stack_counter_;
 }
 
-int VariableStackBindings::stackPosition(const std::string &id) const
+int Bindings::stackPosition(const std::string &id) const
 {
     auto binding = bindings_.find(id);
 
@@ -93,12 +100,18 @@ int VariableStackBindings::stackPosition(const std::string &id) const
     else return 0;
 }
 
-int VariableStackBindings::currentExpressionStackPosition() const
+int Bindings::currentExpressionStackPosition() const
 {
     return expression_stack_;
 }
 
-bool VariableStackBindings::bindingExists(const std::string &id) const
+std::pair<std::vector<std::string>::const_iterator, std::vector<std::string>::const_iterator>
+Bindings::getStringLiteralIterator() const
+{
+    return std::make_pair(string_literals.begin(), string_literals.end());
+}
+
+bool Bindings::bindingExists(const std::string &id) const
 {
     auto binding = bindings_.find(id);
 

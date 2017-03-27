@@ -23,7 +23,7 @@ public:
 
     virtual void print() const = 0;
     virtual void printXml() const = 0;
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings, int &label_count) const = 0;
+    virtual Bindings printAsm(Bindings bindings, int &label_count) const = 0;
 
     virtual void countVariables(int &var_count) const = 0;
     virtual void countArguments(int &argument_count) const = 0;
@@ -48,7 +48,7 @@ public:
 
     virtual void print() const;
     virtual void printXml() const;
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings, int &label_count) const;
+    virtual Bindings printAsm(Bindings bindings, int &label_count) const;
 
     virtual void countVariables(int &var_count) const;
     virtual void countArguments(int &argument_count) const;
@@ -67,7 +67,7 @@ public:
 
     virtual void print() const;
     virtual void printXml() const;
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings, int &label_count) const;
+    virtual Bindings printAsm(Bindings bindings, int &label_count) const;
 
     virtual void countVariables(int &var_count) const;
     virtual void countArguments(int &argument_count) const;
@@ -89,7 +89,7 @@ public:
 
     virtual void print() const;
     virtual void printXml() const;
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings, int &label_count) const;
+    virtual Bindings printAsm(Bindings bindings, int &label_count) const;
 
     virtual void countVariables(int &var_count) const;
     virtual void countArguments(int &argument_count) const;
@@ -109,7 +109,7 @@ public:
 
     virtual void print() const;
     virtual void printXml() const;
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings, int &label_count) const;
+    virtual Bindings printAsm(Bindings bindings, int &label_count) const;
 
     virtual void countVariables(int &var_count) const;
     virtual void countArguments(int &argument_count) const;
@@ -125,7 +125,7 @@ public:
     SwitchStatement(Expression *condition, Statement *statement);
     virtual void print() const;
     virtual void printXml() const;
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings, int &label_count) const;
+    virtual Bindings printAsm(Bindings bindings, int &label_count) const;
 
     virtual void countVariables(int &var_count) const;
     virtual void countArguments(int &argument_count) const;
@@ -141,7 +141,7 @@ public:
 
     virtual void print() const;
     virtual void printXml() const;
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings, int &label_count) const;
+    virtual Bindings printAsm(Bindings bindings, int &label_count) const;
 
     virtual void countVariables(int &var_count) const;
     virtual void countArguments(int &argument_count) const;
@@ -151,7 +151,7 @@ public:
 class JumpStatement : public Statement
 {
 public:
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings, int &label_count) const = 0;
+    virtual Bindings printAsm(Bindings bindings, int &label_count) const = 0;
     
     virtual void print() const;
     virtual void printXml() const;
@@ -168,7 +168,7 @@ private:
 public:
     ReturnStatement(Expression *expression = nullptr);
 
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings, int &label_count) const;
+    virtual Bindings printAsm(Bindings bindings, int &label_count) const;
 
     virtual void countVariables(int &var_count) const;
     virtual void countArguments(int &argument_count) const;
@@ -180,7 +180,7 @@ class BreakStatement : public JumpStatement
 public:
     BreakStatement();
 
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings, int &) const;
+    virtual Bindings printAsm(Bindings bindings, int &) const;
 };
 
 class ContinueStatement : public JumpStatement
@@ -188,7 +188,7 @@ class ContinueStatement : public JumpStatement
 public:
     ContinueStatement();
 
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings, int &) const;
+    virtual Bindings printAsm(Bindings bindings, int &) const;
 };
 
 class GotoStatement : public JumpStatement
@@ -198,7 +198,7 @@ private:
 public:
     GotoStatement(const std::string &label);
 
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings, int &) const;
+    virtual Bindings printAsm(Bindings bindings, int &) const;
 };
 
 class IterationStatement : public Statement
@@ -211,7 +211,7 @@ public:
 
     virtual void print() const;
     virtual void printXml() const;
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings, int &label_count) const = 0;
+    virtual Bindings printAsm(Bindings bindings, int &label_count) const = 0;
 
     virtual void countVariables(int &var_count) const;
     virtual void countArguments(int &argument_count) const;
@@ -225,7 +225,7 @@ private:
 public:
     WhileLoop(Expression *condition, Statement *statement, const bool &is_while = true);
 
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings, int &label_count) const;
+    virtual Bindings printAsm(Bindings bindings, int &label_count) const;
 };
 
 class ForLoop : public IterationStatement
@@ -236,7 +236,7 @@ private:
 public:
     ForLoop(Expression *initializer, Expression *condition, Expression *incrementer, Statement *statement);
 
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings, int &label_count) const;
+    virtual Bindings printAsm(Bindings bindings, int &label_count) const;
 };
 
 

@@ -38,7 +38,7 @@ void Declaration::printXml() const
 	printf("<Variable id=\"%s\" />", id_.c_str());
 }
 
-VariableStackBindings Declaration::printAsm(VariableStackBindings bindings, int& label_count) const
+Bindings Declaration::printAsm(Bindings bindings, int& label_count) const
 {
     (void)label_count;
     if(!extern_declaration_)
@@ -54,7 +54,7 @@ VariableStackBindings Declaration::printAsm(VariableStackBindings bindings, int&
     return bindings;
 }
 
-VariableStackBindings Declaration::localAsm(VariableStackBindings bindings, int& label_count) const
+Bindings Declaration::localAsm(Bindings bindings, int& label_count) const
 {
     if(next_declaration_ != nullptr)
 	bindings = next_declaration_->localAsm(bindings, label_count);
@@ -148,12 +148,12 @@ ArrayDeclaration::ArrayDeclaration(const std::string &id, ExpressionPtr initiali
     : Declaration(id, initializer), size_(size)
 {}
 
-VariableStackBindings ArrayDeclaration::printAsm(VariableStackBindings bindings, int &label_count) const
+Bindings ArrayDeclaration::printAsm(Bindings bindings, int &label_count) const
 {
     return bindings;
 }
 
-VariableStackBindings ArrayDeclaration::localAsm(VariableStackBindings bindings, int &label_count) const
+Bindings ArrayDeclaration::localAsm(Bindings bindings, int &label_count) const
 {
     if(next_declaration_ != nullptr)
 	bindings = next_declaration_->localAsm(bindings, label_count);

@@ -58,7 +58,7 @@ void LabelStatement::printXml() const
 	next_statement_->printXml();
 }
 
-VariableStackBindings LabelStatement::printAsm(VariableStackBindings bindings, int &label_count) const
+Bindings LabelStatement::printAsm(Bindings bindings, int &label_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->printAsm(bindings, label_count);
@@ -123,7 +123,7 @@ void CaseStatement::printXml() const
 	next_statement_->printXml();
 }
 
-VariableStackBindings CaseStatement::printAsm(VariableStackBindings bindings, int &label_count) const
+Bindings CaseStatement::printAsm(Bindings bindings, int &label_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->printAsm(bindings, label_count);
@@ -216,9 +216,9 @@ void CompoundStatement::printXml() const
     printf("</Scope>\n");
 }
 
-VariableStackBindings CompoundStatement::printAsm(VariableStackBindings bindings, int &label_count) const
+Bindings CompoundStatement::printAsm(Bindings bindings, int &label_count) const
 {
-    VariableStackBindings outer_scope_bindings = bindings;
+    Bindings outer_scope_bindings = bindings;
     
     if(next_statement_ != nullptr)
 	next_statement_->printAsm(bindings, label_count);
@@ -303,7 +303,7 @@ void IfElseStatement::printXml() const
 	else_->printXml();
 }
 
-VariableStackBindings IfElseStatement::printAsm(VariableStackBindings bindings, int &label_count) const
+Bindings IfElseStatement::printAsm(Bindings bindings, int &label_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->printAsm(bindings, label_count);
@@ -406,7 +406,7 @@ void SwitchStatement::printXml() const
     statement_->printXml();
 }
 
-VariableStackBindings SwitchStatement::printAsm(VariableStackBindings bindings, int &label_count) const
+Bindings SwitchStatement::printAsm(Bindings bindings, int &label_count) const
 {
     int switch_count = label_count++;
     std::shared_ptr<CompoundStatement> comp_statement;
@@ -533,7 +533,7 @@ void ExpressionStatement::printXml() const
 	next_statement_->printXml();
 }
 
-VariableStackBindings ExpressionStatement::printAsm(VariableStackBindings bindings, int &label_count) const
+Bindings ExpressionStatement::printAsm(Bindings bindings, int &label_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->printAsm(bindings, label_count);
@@ -622,7 +622,7 @@ ReturnStatement::ReturnStatement(Expression *expression)
     : expression_(expression)
 {}
 
-VariableStackBindings ReturnStatement::printAsm(VariableStackBindings bindings, int &label_count) const
+Bindings ReturnStatement::printAsm(Bindings bindings, int &label_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->printAsm(bindings, label_count);
@@ -682,7 +682,7 @@ void ReturnStatement::countExpressionDepth(int &depth_count) const
 BreakStatement::BreakStatement()
 {}
 
-VariableStackBindings BreakStatement::printAsm(VariableStackBindings bindings, int &label_count) const
+Bindings BreakStatement::printAsm(Bindings bindings, int &label_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->printAsm(bindings, label_count);
@@ -697,7 +697,7 @@ VariableStackBindings BreakStatement::printAsm(VariableStackBindings bindings, i
 ContinueStatement::ContinueStatement()
 {}
 
-VariableStackBindings ContinueStatement::printAsm(VariableStackBindings bindings, int &label_count) const
+Bindings ContinueStatement::printAsm(Bindings bindings, int &label_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->printAsm(bindings, label_count);
@@ -713,7 +713,7 @@ GotoStatement::GotoStatement(const std::string &label)
     : label_(label)
 {}
 
-VariableStackBindings GotoStatement::printAsm(VariableStackBindings bindings, int &label_count) const
+Bindings GotoStatement::printAsm(Bindings bindings, int &label_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->printAsm(bindings, label_count);
@@ -789,12 +789,12 @@ WhileLoop::WhileLoop(Expression *condition, Statement *statement, const bool &is
     : IterationStatement(condition, statement), is_while_(is_while)
 {}
 
-VariableStackBindings WhileLoop::printAsm(VariableStackBindings bindings, int &label_count) const
+Bindings WhileLoop::printAsm(Bindings bindings, int &label_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->printAsm(bindings, label_count);
 
-    VariableStackBindings initial_bindings = bindings;
+    Bindings initial_bindings = bindings;
     
     int while_label = label_count++;
 
@@ -816,12 +816,12 @@ ForLoop::ForLoop(Expression *initializer, Expression *condition, Expression *inc
     : IterationStatement(condition, statement), initializer_(initializer), incrementer_(incrementer)
 {}
 
-VariableStackBindings ForLoop::printAsm(VariableStackBindings bindings, int &label_count) const
+Bindings ForLoop::printAsm(Bindings bindings, int &label_count) const
 {
     if(next_statement_ != nullptr)
 	next_statement_->printAsm(bindings, label_count);
 
-    VariableStackBindings initial_bindings = bindings;
+    Bindings initial_bindings = bindings;
     
     int for_label = label_count++;
 

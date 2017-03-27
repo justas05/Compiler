@@ -11,7 +11,7 @@ int main(int, char**)
     try
     {
 	std::unique_ptr<Node> ast(parseAST());
-	VariableStackBindings bindings;
+	Bindings bindings;
 	int label_count = 0;
 	ast->printAsm(bindings, label_count);	
     }

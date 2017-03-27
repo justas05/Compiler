@@ -47,9 +47,9 @@ void Function::printXml() const
     printf("</Function>\n");
 }
 
-VariableStackBindings Function::printAsm(VariableStackBindings bindings, int& label_count) const
+Bindings Function::printAsm(Bindings bindings, int& label_count) const
 {
-    VariableStackBindings original_bindings = bindings;
+    Bindings original_bindings = bindings;
     // Counting all the variables being declared in the function
     int variable_count = 0;
     if(statement_ != nullptr)
@@ -71,11 +71,7 @@ VariableStackBindings Function::printAsm(VariableStackBindings bindings, int& la
     // This adds 2 to store the frame pointer and the return address
     int memory_needed = 4*(variable_count+max_argument_count+max_depth+2);
     
-    // make frame double word aligned
-    if(memory_needed % 8 != 0)
-	memory_needed += 4;
-    
-    printf("\t.text\n\t.globl\t%s\n%s:\n\taddiu\t$sp,$sp,-%d\n\tsw\t",
+    printf("\t.text\n\t.align\t2\n\t.globl\t%s\n%s:\n\taddiu\t$sp,$sp,-%d\n\tsw\t",
 	   id_.c_str(), id_.c_str(), memory_needed);
     printf("$31,%d($sp)\n\tsw\t$fp,%d($sp)\n\tmove\t$fp,$sp\n", memory_needed-4, memory_needed-8);
 
@@ -91,10 +87,20 @@ VariableStackBindings Function::printAsm(VariableStackBindings bindings, int& la
     printf("\tmove\t$2,$0\n0:\n\tmove\t$sp,$fp\n\tlw\t$31,%d($sp)\n\tlw\t$fp,%d", memory_needed-4, memory_needed-8);
     printf("($sp)\n\taddiu\t$sp,$sp,%d\n\tjr\t$31\n\tnop\n", memory_needed);
 
+    auto string_lit_iterator = bindings.getStringLiteralIterator();
+    if(string_lit_iterator.first != string_lit_iterator.second)
+    {
+	printf("\n\t.rdata\n\t.align\t2\n");
+	for(auto itr = string_lit_iterator.first; itr != string_lit_iterator.second; ++itr)
+	{
+	    printf("$%d_string:\n\t.ascii\t\"%s\\000\"", int(itr-string_lit_iterator.first), (*itr).c_str());
+	}
+    }
+
     return original_bindings;
 }
 
-void Function::printParameterAsm(VariableStackBindings& bindings, int& frame_offset) const
+void Function::printParameterAsm(Bindings& bindings, int& frame_offset) const
 {
     std::vector<DeclarationPtr> parameter_vector;
     DeclarationPtr parameter_list = parameter_list_;

@@ -35,11 +35,11 @@ for DRIVER in test_deliverable/testcases/*_driver.c ; do
     fi
     
     # Compile test function with compiler under test to assembly
-    cat $TESTCODE | $COMPILER > working/$NAME.s  2> working/${NAME}.compile.stderr
-    if [[ $? -ne 0 ]]; then
-    	printf "\e[1;31mError\e[0m : Compiler returned error message.\n"
-    	continue
-    fi
+    # cat $TESTCODE | $COMPILER > working/$NAME.s  2> working/${NAME}.compile.stderr
+    # if [[ $? -ne 0 ]]; then
+    # 	printf "\e[1;31mError\e[0m : Compiler returned error message.\n"
+    # 	continue
+    # fi
     
     # Link driver object and assembly into executable
     mips-linux-gnu-gcc -static working/${NAME}.s working/${NAME}_driver.o -o working/${NAME}.elf 2> working/${NAME}.link.stderr
@@ -49,10 +49,10 @@ for DRIVER in test_deliverable/testcases/*_driver.c ; do
     fi
     
     # Run the actual executable
-    qemu-mips working/${NAME}.elf
+    qemu-mips working/${NAME}.elf > working/$NAME.elf.stdout
     RESULT=$?
     if [[ "$RESULT" -ne 0 ]]; then
-        >&2 printf "\e[1;31mError\e[0m : Testcase returned $RESULT, but expected 0.\n"
+        printf "\e[1;31mError\e[0m : Testcase returned $RESULT, but expected 0.\n"
 	continue
     fi
 

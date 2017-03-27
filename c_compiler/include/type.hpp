@@ -15,13 +15,13 @@ class Type : public Node
 public:
     virtual void print() const = 0;
     virtual void printXml() const = 0;
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings, int &label_count) const = 0;
+    virtual Bindings printAsm(Bindings bindings, int &label_count) const = 0;
     
     virtual TypePtr type() = 0;
     virtual TypePtr type(Type *type_ptr) = 0;
     virtual TypePtr type(TypePtr type_ptr) = 0;
 
-    virtual void increaseStackPosition(VariableStackBindings &bindings) const = 0;
+    virtual void increaseStackPosition(Bindings &bindings) const = 0;
     virtual void load() const = 0;
     virtual void load(const int &reg, const int &position) const = 0;
     virtual void store() const = 0;    
@@ -46,13 +46,13 @@ public:
 
     virtual void print() const;
     virtual void printXml() const;
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings, int &label_count) const;
+    virtual Bindings printAsm(Bindings bindings, int &label_count) const;
     
     virtual TypePtr type();
     virtual TypePtr type(Type *type_ptr);
     virtual TypePtr type(TypePtr type_ptr);
 
-    virtual void increaseStackPosition(VariableStackBindings &bindings) const;
+    virtual void increaseStackPosition(Bindings &bindings) const;
     virtual void load() const;
     virtual void load(const int &reg, const int &position) const;
     virtual void store() const;    
@@ -70,13 +70,13 @@ public:
 
     virtual void print() const;
     virtual void printXml() const;
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings, int &label_count) const;
+    virtual Bindings printAsm(Bindings bindings, int &label_count) const;
     
     virtual TypePtr type();
     virtual TypePtr type(Type *type_ptr);
     virtual TypePtr type(TypePtr type_ptr);
 
-    virtual void increaseStackPosition(VariableStackBindings &bindings) const;
+    virtual void increaseStackPosition(Bindings &bindings) const;
     virtual void load() const;
     virtual void load(const int &reg, const int &position) const;
     virtual void store() const;
@@ -106,13 +106,13 @@ public:
 
     virtual void print() const;
     virtual void printXml() const;
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings, int &label_count) const;
+    virtual Bindings printAsm(Bindings bindings, int &label_count) const;
     
     virtual TypePtr type();    
     virtual TypePtr type(Type *type_ptr);
     virtual TypePtr type(TypePtr type_ptr);
 
-    virtual void increaseStackPosition(VariableStackBindings &bindings) const;
+    virtual void increaseStackPosition(Bindings &bindings) const;
     virtual void load() const;
     virtual void load(const int &reg, const int &position) const;
     virtual void store() const;    
@@ -132,9 +132,9 @@ class Specifier : public Type
 public:
     virtual void print() const = 0;
     virtual void printXml() const = 0;
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings, int &label_count) const = 0;
+    virtual Bindings printAsm(Bindings bindings, int &label_count) const = 0;
 
-    virtual void increaseStackPosition(VariableStackBindings &bindings) const = 0;
+    virtual void increaseStackPosition(Bindings &bindings) const = 0;
     virtual void load() const = 0;
     virtual void load(const int &reg, const int &position) const = 0;
     virtual void store() const = 0;    
@@ -154,8 +154,8 @@ public:
 
     virtual void print() const;
     virtual void printXml() const;
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings, int &label_count) const;
-    virtual void increaseStackPosition(VariableStackBindings &bindings) const;
+    virtual Bindings printAsm(Bindings bindings, int &label_count) const;
+    virtual void increaseStackPosition(Bindings &bindings) const;
     virtual void load() const;
     virtual void load(const int &reg, const int &position) const;
     virtual void store() const;
@@ -171,8 +171,8 @@ public:
 
     virtual void print() const;
     virtual void printXml() const;
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings, int &label_count) const;
-    virtual void increaseStackPosition(VariableStackBindings &bindings) const;
+    virtual Bindings printAsm(Bindings bindings, int &label_count) const;
+    virtual void increaseStackPosition(Bindings &bindings) const;
     virtual void load() const;    
     virtual void load(const int &reg, const int &position) const;
     virtual void store() const;
@@ -188,8 +188,8 @@ public:
 
     virtual void print() const;
     virtual void printXml() const;
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings, int &label_count) const;
-    virtual void increaseStackPosition(VariableStackBindings &bindings) const;
+    virtual Bindings printAsm(Bindings bindings, int &label_count) const;
+    virtual void increaseStackPosition(Bindings &bindings) const;
     virtual void load() const;    
     virtual void load(const int &reg, const int &position) const;
     virtual void store() const;
@@ -205,8 +205,8 @@ public:
 
     virtual void print() const;
     virtual void printXml() const;
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings, int &label_count) const;
-    virtual void increaseStackPosition(VariableStackBindings &bindings) const;
+    virtual Bindings printAsm(Bindings bindings, int &label_count) const;
+    virtual void increaseStackPosition(Bindings &bindings) const;
     virtual void load() const;    
     virtual void load(const int &reg, const int &position) const;
     virtual void store() const;
@@ -222,8 +222,8 @@ public:
 
     virtual void print() const;
     virtual void printXml() const;
-    virtual VariableStackBindings printAsm(VariableStackBindings bindings, int &label_count) const;
-    virtual void increaseStackPosition(VariableStackBindings &bindings) const;
+    virtual Bindings printAsm(Bindings bindings, int &label_count) const;
+    virtual void increaseStackPosition(Bindings &bindings) const;
     virtual void load() const;    
     virtual void load(const int &reg, const int &position) const;
     virtual void store() const;
