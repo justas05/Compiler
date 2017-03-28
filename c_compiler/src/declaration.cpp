@@ -4,6 +4,7 @@
 #include "expression.hpp"
 
 #include <cstdio>
+#include <memory>
 #include <vector>
 
 
@@ -200,27 +201,21 @@ Bindings ArrayDeclaration::localAsm(Bindings bindings, int &label_count) const
     if(getId() != "")
     {
 	int stack_position = bindings.currentStackPosition();
-	if(initializer_ != nullptr)
+	std::shared_ptr<ArrayDeclaration> array_declaration(
+	    std::dynamic_pointer_cast<ArrayDeclaration>(declarator_));
+	std::vector<int> array_sizes = { size_ };
+	while(array_declaration != nullptr)
 	{
-	    ExpressionPtr initializer = initializer_;
-	    std::vector<ExpressionPtr> initializer_vector;
-	    
-	    while(initializer != nullptr)
-	    {
-		initializer_vector.push_back(initializer);
-		initializer = initializer->nextExpression();
-	    }
-
-	    for(auto itr = initializer_vector.rbegin(); itr != initializer_vector.rend(); ++itr)
-	    {
-		int initializer_count = itr-initializer_vector.rbegin();
-		(*itr)->printAsm(bindings, label_count);
-		type_->store(stack_position+type_->getSize()*initializer_count);
-	    }
+	    array_sizes.push_back(array_declaration->getSize());
+	    array_declaration = std::dynamic_pointer_cast<ArrayDeclaration>
+		(array_declaration->getNextArrayDeclaration());
 	}
-	
+
+	std::shared_ptr<Initializer> initializer;
+	initializer = std::static_pointer_cast<Initializer>(initializer_);
+	initializer->printInitializerAsm(bindings, label_count, array_sizes.size()-1, array_sizes, type_->type());
+
 	bindings.insertBinding(getId(), type_, stack_position);
-	type_->increaseStackPosition(bindings);
     }
     
     return bindings;
@@ -233,15 +228,30 @@ void ArrayDeclaration::countDeclarations(int &declaration_count) const
     if(next_list_declaration_ != nullptr)
 	next_list_declaration_->countDeclarations(declaration_count);
 
-    std::shared_ptr<ArrayDeclaration> next_array;
-    next_array = std::dynamic_pointer_cast<ArrayDeclaration>(declarator_);
-    if(next_array != nullptr)
-	next_array->countDeclarations(declaration_count);
+    std::shared_ptr<ArrayDeclaration> array_declaration(
+	std::dynamic_pointer_cast<ArrayDeclaration>(declarator_));
+    int size = size_;
+    while(array_declaration != nullptr)
+    {
+	size *= array_declaration->getSize();
+	array_declaration = std::dynamic_pointer_cast<ArrayDeclaration>(
+	    array_declaration->getNextArrayDeclaration());
+    }
 
-    declaration_count += size_;
+    declaration_count += size;
 }
 
 std::string ArrayDeclaration::getId() const
 {
     return declarator_->getId();
+}
+
+int ArrayDeclaration::getSize() const
+{
+    return size_;
+}
+
+DeclarationPtr ArrayDeclaration::getNextArrayDeclaration() const
+{
+    return declarator_;
 }

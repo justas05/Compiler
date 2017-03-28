@@ -250,8 +250,8 @@ IdentifierList:	T_IDENTIFIER { $$ = new IdentifierDeclaration(); }
 	|	IdentifierList T_CMA T_IDENTIFIER { $$ = new IdentifierDeclaration(); }
 
 Initializer: 	AssignmentExpression { $$ = $1; }
-	|	T_LCB InitializerList T_RCB { $$ = $2; }
-	|	T_LCB InitializerList T_CMA T_RCB { $$ = $2; }
+	|	T_LCB InitializerList T_RCB { $$ = new Initializer($2); }
+	|	T_LCB InitializerList T_CMA T_RCB { $$ = new Initializer($2); }
 		;
 
 InitializerList:

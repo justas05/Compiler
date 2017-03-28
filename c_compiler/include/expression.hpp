@@ -14,7 +14,7 @@ typedef std::shared_ptr<Expression> ExpressionPtr;
 
 class Expression : public Node
 {
-private:
+protected:
     ExpressionPtr next_expression_;
     
 public:
@@ -74,6 +74,8 @@ public:
     virtual void expressionDepth(int &depth_count) const;
     virtual void stackPosition(Bindings bindings, int &depth_count) const;
     virtual TypePtr getType(const Bindings &bindings) const;
+
+    ExpressionPtr getIndex() const;
 };
 
 class PostfixFunctionCall : public UnaryExpression
@@ -310,6 +312,20 @@ public:
     virtual Bindings printAsm(Bindings bindings, int &label_count) const;
     virtual int constantFold() const;
     virtual TypePtr getType(const Bindings &bindings) const;
+};
+
+class Initializer : public Expression
+{
+private:
+    ExpressionPtr next_initializer_;
+public:
+    Initializer(Expression *next_initializer);
+
+    virtual Bindings printAsm(Bindings bindings, int &label_count) const;
+    virtual TypePtr getType(const Bindings &bindings) const;
+
+    void printInitializerAsm(Bindings &bindings, int &label_count, int position, const std::vector<int> &iteration_vector, const TypePtr &type) const;
+    ExpressionPtr getNext() const;
 };
 
 #endif

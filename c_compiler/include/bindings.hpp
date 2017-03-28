@@ -15,6 +15,7 @@ struct DeclarationData
 {
     TypePtr type;
     int stack_position;
+    std::vector<int> array_sizes;
 };
 
 // stores bindings for the current scope and where they are in the stack
@@ -31,7 +32,8 @@ private:
 public:
     Bindings();
 
-    void insertBinding(const std::string &id, TypePtr type, const int &stack_position);
+    void insertBinding(const std::string &id, const TypePtr &type, const int &stack_position);
+    void insertBinding(const std::string &id, const TypePtr &type, const int &stack_position, const std::vector<int> array_sizes);
     int insertStringLiteral(const std::string &string_literal);
     void increaseStackPosition();
     void increaseStackPosition(const int &position);

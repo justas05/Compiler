@@ -8,7 +8,7 @@ Bindings::Bindings()
     : break_label_(""), continue_label_(""), stack_counter_(0), expression_stack_(16)
 {}
 
-void Bindings::insertBinding(const std::string &id, TypePtr type, const int &stack_position)
+void Bindings::insertBinding(const std::string &id,const TypePtr &type, const int &stack_position)
 {
     auto binding = bindings_.find(id);
 
@@ -23,6 +23,26 @@ void Bindings::insertBinding(const std::string &id, TypePtr type, const int &sta
     {
 	(*binding).second.stack_position = stack_position;
 	(*binding).second.type = type;
+    }
+}
+
+void Bindings::insertBinding(const std::string &id, const TypePtr &type, const int &stack_position, const std::vector<int> array_sizes)
+{
+    auto binding = bindings_.find(id);
+
+    if(binding == bindings_.end())
+    {
+	DeclarationData decl_data;
+	decl_data.type = type;
+	decl_data.stack_position = stack_position;
+	decl_data.array_sizes = array_sizes;
+	bindings_.insert(std::make_pair(id, decl_data));
+    }
+    else
+    {
+	(*binding).second.stack_position = stack_position;
+	(*binding).second.type = type;
+	(*binding).second.array_sizes = array_sizes;
     }
 }
 

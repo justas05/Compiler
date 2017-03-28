@@ -1,5 +1,6 @@
 #include "expression.hpp"
 
+#include <algorithm>
 #include <cstdio>
 #include <exception>
 #include <vector>
@@ -166,8 +167,8 @@ void PostfixArrayElement::stackPosition(Bindings bindings, int &label_count) con
     unary_expression = std::static_pointer_cast<UnaryExpression>(postfix_expression_);
     unary_expression->stackPosition(bindings, label_count);
 
-    printf("\tli\t$3,%d\n\tmul\t$2,$2,$3\n\taddu\t$t0,$t0,$2\n",
-	   unary_expression->getType(bindings)->getSize());
+    printf("\tsll\t$2,$2,%d\n\taddu\t$t0,$t0,$2\n",
+	   unary_expression->getType(bindings)->getSize()/2);
 }
 
 void PostfixArrayElement::expressionDepth(int &depth_count) const
@@ -925,4 +926,67 @@ int Constant::constantFold() const
 TypePtr Constant::getType(const Bindings &) const
 {
     return std::make_shared<Int>();
+}
+
+// Initializer definition
+
+Initializer::Initializer(Expression *next_initializer)
+    : next_initializer_(next_initializer)
+{}
+
+Bindings Initializer::printAsm(Bindings bindings, int &) const
+{
+    return bindings;
+}
+
+TypePtr Initializer::getType(const Bindings &bindings) const
+{
+    return next_initializer_->getType(bindings);
+}
+
+void Initializer::printInitializerAsm(Bindings &bindings, int &label_count, int position, const
+				      std::vector<int> &iteration_vector, const TypePtr &type) const
+{
+    std::shared_ptr<Initializer> next_initializer
+	(std::dynamic_pointer_cast<Initializer>(next_initializer_));
+    ExpressionPtr current_expression = next_initializer_;
+    std::vector<ExpressionPtr> expression_vector;
+
+    while(current_expression != nullptr)
+    {
+	expression_vector.push_back(current_expression);
+	current_expression = current_expression->nextExpression();
+    }
+
+    std::reverse(expression_vector.begin(), expression_vector.end());
+    int size = (int)expression_vector.size();
+    for(int i = size; i < iteration_vector[position]; ++i)
+    {
+	expression_vector.emplace_back(nullptr);
+    }
+
+    for(int i = 0; i < iteration_vector[position]; ++i)
+    {
+	next_initializer = std::dynamic_pointer_cast<Initializer>(expression_vector[i]);
+	if(next_initializer != nullptr)
+	{
+	    next_initializer->printInitializerAsm(bindings, label_count,
+						  position-1, iteration_vector, type);
+	}
+	else
+	{
+	    if(expression_vector[i] != nullptr)
+	    {
+		Bindings temp_bindings = bindings;
+		expression_vector[i]->printAsm(temp_bindings, label_count);
+		printf("\tsw\t$2,%d($fp)\n", bindings.currentStackPosition());
+	    }
+	    type->increaseStackPosition(bindings);
+	}
+    }
+}
+
+ExpressionPtr Initializer::getNext() const
+{
+    return next_initializer_;
 }

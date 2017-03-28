@@ -69,6 +69,9 @@ public:
     virtual Bindings localAsm(Bindings bindings, int &label_count) const;
     virtual void countDeclarations(int &declaration_count) const;
     virtual std::string getId() const;
+
+    int getSize() const;
+    DeclarationPtr getNextArrayDeclaration() const;
 };
 
 #endif
