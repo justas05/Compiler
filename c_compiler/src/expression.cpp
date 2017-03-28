@@ -147,6 +147,21 @@ PostfixArrayElement::PostfixArrayElement(Expression *postfix_expression, Express
 
 Bindings PostfixArrayElement::printAsm(Bindings bindings, int &label_count) const
 {
+    stackPosition(bindings, label_count);
+    
+    TypePtr type_ptr = postfix_expression_->getType(bindings);
+    std::shared_ptr<Pointer> pointer_type_ptr;
+    pointer_type_ptr = std::dynamic_pointer_cast<Pointer>(type_ptr);
+    if(pointer_type_ptr != nullptr)
+	pointer_type_ptr->pointerLoad();
+    else
+	type_ptr->load();
+    printf("\tsw\t$2,%d($fp)\n", bindings.currentExpressionStackPosition());
+    return bindings;
+}
+
+void PostfixArrayElement::stackPosition(Bindings bindings, int &label_count) const
+{
     std::shared_ptr<PostfixArrayElement> array_element
 	(std::dynamic_pointer_cast<PostfixArrayElement>(postfix_expression_));
     
@@ -172,28 +187,6 @@ Bindings PostfixArrayElement::printAsm(Bindings bindings, int &label_count) cons
     identifier_expression->stackPosition(bindings, label_count);
     printf("\tsll\t$t1,$t1,%d\n", postfix_expression_->getType(bindings)->getSize()/2);
     printf("\taddu\t$t0,$t0,$t1\n");
-    
-    TypePtr type_ptr = postfix_expression_->getType(bindings);
-    std::shared_ptr<Pointer> pointer_type_ptr;
-    pointer_type_ptr = std::dynamic_pointer_cast<Pointer>(type_ptr);
-    if(pointer_type_ptr != nullptr)
-	pointer_type_ptr->pointerLoad();
-    else
-	type_ptr->load();
-    printf("\tsw\t$2,%d($fp)\n", bindings.currentExpressionStackPosition());
-    return bindings;
-}
-
-void PostfixArrayElement::stackPosition(Bindings bindings, int &label_count) const
-{
-    index_expression_->printAsm(bindings, label_count);
-
-    std::shared_ptr<UnaryExpression> unary_expression;
-    unary_expression = std::static_pointer_cast<UnaryExpression>(postfix_expression_);
-    unary_expression->stackPosition(bindings, label_count);
-
-    printf("\tsll\t$2,$2,%d\n\taddu\t$t0,$t0,$2\n",
-	   unary_expression->getType(bindings)->getSize()/2);
 }
 
 void PostfixArrayElement::expressionDepth(int &depth_count) const
@@ -379,13 +372,15 @@ OperatorUnaryExpression::OperatorUnaryExpression(const std::string &_operator, E
 
 Bindings OperatorUnaryExpression::printAsm(Bindings bindings, int &label_count) const
 {
-    cast_expression_->printAsm(bindings, label_count);
+
     if(operator_ == "!")
     {
+	cast_expression_->printAsm(bindings, label_count);	
 	printf("\tsltu\t$2,$2,1\n\tandi\t$2,$2,0x00ff\n");
     }
     else if(operator_ == "~")
     {
+	cast_expression_->printAsm(bindings, label_count);	
 	printf("\tnor\t$2,$0,$2\n");
     }
     else if(operator_ == "&")
@@ -397,10 +392,12 @@ Bindings OperatorUnaryExpression::printAsm(Bindings bindings, int &label_count) 
     }
     else if(operator_ == "-")
     {
+	cast_expression_->printAsm(bindings, label_count);	
 	printf("\tsubu\t$2,$0,$2\n");
     }
     else if(operator_ == "*")
     {
+	cast_expression_->printAsm(bindings, label_count);	
 	printf("\tlw\t$2,0($2)\n");
     }
 
@@ -422,6 +419,11 @@ void OperatorUnaryExpression::stackPosition(Bindings bindings, int &label_count)
 TypePtr OperatorUnaryExpression::getType(const Bindings &bindings) const
 {
     return cast_expression_->getType(bindings);
+}
+
+std::string OperatorUnaryExpression::getOperator() const
+{
+    return operator_;
 }
 
 
@@ -822,11 +824,17 @@ Bindings AssignmentExpression::printAsm(Bindings bindings, int &label_count) con
     rhs_->printAsm(bindings, label_count);
     bindings.nextExpressionStackPosition();
     
-    std::shared_ptr<StringLiteral> rhs_tmp;
-    rhs_tmp = std::dynamic_pointer_cast<StringLiteral>(rhs_);
+    std::shared_ptr<StringLiteral> rhs_tmp_string;
+    std::shared_ptr<OperatorUnaryExpression> rhs_tmp_address;
+    rhs_tmp_string = std::dynamic_pointer_cast<StringLiteral>(rhs_);
+    rhs_tmp_address = std::dynamic_pointer_cast<OperatorUnaryExpression>(rhs_);
     
     // we are assigning so we don't have to evaluate the lhs as it will be overwritten anyways
-    if(rhs_tmp != nullptr)
+    if(rhs_tmp_string != nullptr)
+    {
+	lhs_postfix->pointerPosition(bindings);
+    }
+    else if(rhs_tmp_address != nullptr && rhs_tmp_address->getOperator() == "&")
     {
 	lhs_postfix->pointerPosition(bindings);
     }

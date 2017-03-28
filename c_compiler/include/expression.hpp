@@ -136,6 +136,7 @@ public:
     virtual Bindings printAsm(Bindings bindings, int &label_count) const;
     virtual void stackPosition(Bindings bindings, int &depth_count) const;
     virtual TypePtr getType(const Bindings &bindings) const;
+    std::string getOperator() const;
 };
 
 
