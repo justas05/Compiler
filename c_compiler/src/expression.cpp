@@ -460,8 +460,20 @@ Bindings AdditiveExpression::printAsm(Bindings bindings, int &label_count) const
 {
     evaluateExpression(bindings, label_count);
     
-    // TODO currently using signed and sub because I only have signed numbers implemented
-    // must update this as I add more types
+    // when its a pointer added to a non pointer, multiply non pointer by pointer type
+    if(std::dynamic_pointer_cast<Pointer>(lhs_->getType(bindings)) != nullptr &&
+       std::dynamic_pointer_cast<Pointer>(rhs_->getType(bindings)) == nullptr &&
+       std::dynamic_pointer_cast<Identifier>(lhs_) != nullptr)
+    {
+	printf("\tsll\t$3,$3,%d\n", lhs_->getType(bindings)->getSize()/2);
+    }
+    else if(std::dynamic_pointer_cast<Pointer>(lhs_->getType(bindings)) == nullptr &&
+	    std::dynamic_pointer_cast<Pointer>(rhs_->getType(bindings)) != nullptr &&
+	    std::dynamic_pointer_cast<Identifier>(rhs_) != nullptr)
+    {
+	printf("\tsll\t$2,$2,%d\n", rhs_->getType(bindings)->getSize()/2);
+    }
+    
     if(operator_ == "+")
 	printf("\taddu\t$2,$2,$3\n");
     else if(operator_ == "-")
@@ -1023,7 +1035,7 @@ void Initializer::printInitializerAsm(Bindings &bindings, int &label_count, int 
 	    {
 		Bindings temp_bindings = bindings;
 		expression_vector[i]->printAsm(temp_bindings, label_count);
-		printf("\tsw\t$2,%d($fp)\n", bindings.currentStackPosition());
+		type->store(bindings.currentStackPosition());
 	    }
 	    type->increaseStackPosition(bindings);
 	}
