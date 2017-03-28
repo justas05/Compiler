@@ -147,7 +147,32 @@ PostfixArrayElement::PostfixArrayElement(Expression *postfix_expression, Express
 
 Bindings PostfixArrayElement::printAsm(Bindings bindings, int &label_count) const
 {
-    stackPosition(bindings, label_count);
+    std::shared_ptr<PostfixArrayElement> array_element
+	(std::dynamic_pointer_cast<PostfixArrayElement>(postfix_expression_));
+    
+    std::vector<int> array_sizes = bindings.getArraySizes(postfix_expression_->id());
+    
+    int counter = 1;
+    printf("\tmove\t$t1,$0\n");
+    index_expression_->printAsm(bindings, label_count);
+    printf("\taddu\t$t1,$t1,$2\n");    
+    while(array_element != nullptr)
+    {
+	array_element->getIndex()->printAsm(bindings, label_count);
+	int sum = 0;
+	std::for_each(array_sizes.end()-counter, array_sizes.end(), [&] (int n) {
+		sum += n;
+	    });
+	printf("\tmul\t$2,$2,%d\n", sum);
+	printf("\taddu\t$t1,$t1,$2\n");
+	array_element = std::dynamic_pointer_cast<PostfixArrayElement>(array_element->getPostfix());
+	counter++;
+    }
+    auto identifier_expression = std::make_shared<Identifier>(postfix_expression_->id());
+    identifier_expression->stackPosition(bindings, label_count);
+    printf("\tsll\t$t1,$t1,%d\n", postfix_expression_->getType(bindings)->getSize()/2);
+    printf("\taddu\t$t0,$t0,$t1\n");
+    
     TypePtr type_ptr = postfix_expression_->getType(bindings);
     std::shared_ptr<Pointer> pointer_type_ptr;
     pointer_type_ptr = std::dynamic_pointer_cast<Pointer>(type_ptr);
@@ -183,6 +208,25 @@ void PostfixArrayElement::expressionDepth(int &depth_count) const
 TypePtr PostfixArrayElement::getType(const Bindings &bindings) const
 {
     return postfix_expression_->getType(bindings);
+}
+
+std::string PostfixArrayElement::id() const
+{
+    return postfix_expression_->id();
+}
+
+ExpressionPtr PostfixArrayElement::getIndex() const
+{
+    if(index_expression_ == nullptr)
+	throw std::runtime_error("Error : No index expression found");
+    return index_expression_;
+}
+
+ExpressionPtr PostfixArrayElement::getPostfix() const
+{
+    if(postfix_expression_ == nullptr)
+	throw std::runtime_error("Error : No index expression postfix");
+    return postfix_expression_;
 }
 
 

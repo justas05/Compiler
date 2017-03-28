@@ -3,6 +3,7 @@
 #include "type.hpp"
 #include "expression.hpp"
 
+#include <algorithm>
 #include <cstdio>
 #include <memory>
 #include <vector>
@@ -214,8 +215,10 @@ Bindings ArrayDeclaration::localAsm(Bindings bindings, int &label_count) const
 	std::shared_ptr<Initializer> initializer;
 	initializer = std::static_pointer_cast<Initializer>(initializer_);
 	initializer->printInitializerAsm(bindings, label_count, array_sizes.size()-1, array_sizes, type_->type());
-
-	bindings.insertBinding(getId(), type_, stack_position);
+	
+	// reverse vector to store in binding
+	std::reverse(array_sizes.begin(), array_sizes.end());
+	bindings.insertBinding(getId(), type_, stack_position, array_sizes);
     }
     
     return bindings;

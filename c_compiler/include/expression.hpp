@@ -74,8 +74,10 @@ public:
     virtual void expressionDepth(int &depth_count) const;
     virtual void stackPosition(Bindings bindings, int &depth_count) const;
     virtual TypePtr getType(const Bindings &bindings) const;
+    virtual std::string id() const;
 
     ExpressionPtr getIndex() const;
+    ExpressionPtr getPostfix() const;    
 };
 
 class PostfixFunctionCall : public UnaryExpression

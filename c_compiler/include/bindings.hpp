@@ -42,6 +42,7 @@ public:
     void setExpressionStackPosition(const int &stack_counter);
 
     TypePtr getType(const std::string &id) const;
+    const std::vector<int> &getArraySizes(const std::string &id) const;
 
     std::string breakLabel();
     std::string breakLabel(const std::string &label);

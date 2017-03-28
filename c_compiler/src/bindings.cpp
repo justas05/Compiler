@@ -83,6 +83,12 @@ TypePtr Bindings::getType(const std::string &id) const
     return (*binding).second.type;
 }
 
+const std::vector<int> &Bindings::getArraySizes(const std::string &id) const
+{
+    auto binding = bindings_.find(id);
+    return (*binding).second.array_sizes;
+}
+
 std::string Bindings::breakLabel()
 {
     return break_label_;
