@@ -201,6 +201,7 @@ Bindings ArrayDeclaration::localAsm(Bindings bindings, int &label_count) const
 
     if(getId() != "")
     {
+	
 	int stack_position = bindings.currentStackPosition();
 	std::shared_ptr<ArrayDeclaration> array_declaration(
 	    std::dynamic_pointer_cast<ArrayDeclaration>(declarator_));
@@ -213,9 +214,20 @@ Bindings ArrayDeclaration::localAsm(Bindings bindings, int &label_count) const
 	}
 
 	std::shared_ptr<Initializer> initializer;
-	initializer = std::static_pointer_cast<Initializer>(initializer_);
-	initializer->printInitializerAsm(bindings, label_count, array_sizes.size()-1, array_sizes, type_->type());
-	
+	if(initializer_ != nullptr)
+	{
+	    initializer = std::static_pointer_cast<Initializer>(initializer_);
+	    initializer->printInitializerAsm(bindings, label_count, array_sizes.size()-1, array_sizes, type_->type());
+	}
+	else
+	{
+	    int sum = 1;
+	    std::for_each(array_sizes.begin(), array_sizes.end(), [&] (int n) {
+		    sum *= n;
+		});
+	    sum *= getType()->getSize();
+	    bindings.increaseStackPosition(sum);
+	}
 	// reverse vector to store in binding
 	std::reverse(array_sizes.begin(), array_sizes.end());
 	bindings.insertBinding(getId(), type_, stack_position, array_sizes);
