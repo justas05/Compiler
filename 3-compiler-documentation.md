@@ -14,11 +14,17 @@ AST
 Overview Diagram
 ----------------
 
+_Add a diagram of your AST, which is designed to *usefully* communicate
+the *important* properties of the AST._
+
 ![my-ast.png](my-ast.png)
 
 
 Description
 -----------
+
+_Describe the structure and organisation of your AST in 200 words
+or fewer_.
 
 I used a pure abstract Node class as an entry point to the AST.
 I then had a TranslationUnit class which contained the external declarations and function
@@ -37,6 +43,8 @@ them.
 
 Strengths
 ---------
+
+_Give two strengths or capabilites of your AST, using 50 words or less for each one_.
 
 ### Strength 1
 
@@ -71,6 +79,10 @@ Variable binding
 
 General approach
 ----------------
+
+_Describe your overall approach to mapping variable, parameters, etc.
+into registers or memory locations at exection time, using 200 words
+or less_.
 
 I did not use many registers because they are a limited resource, and instead I decided
 only to use registers $2 and $3 for performing operations and rarely use registers $t0 and $t1
