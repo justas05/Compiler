@@ -31,22 +31,23 @@ This meant that I could seperate the member functions and not have to declare al
 Node class, as that would lead to a lot of empty definitions. These classes were mostly abstract too
 but contained a few function definitions that would throw exceptions so that I did not have to
 define these functions when I did not need them. I also had a few specific member functions
-(eg. for PostfixArrayElement) for which I had to use dynamic and static pointer casting to access
+(eg. for UnaryExpression) for which I had to use dynamic and static pointer casting to access
 them.
 
 
 Strengths
 ---------
 
-_Give two strengths or capabilites of your AST, using 50 words or less for each one_.
-
 ### Strength 1
 
-
+The class hierarchy and structure is very logical as it closely matches the grammar.
+This also that it was easy to know what member variables a class needed and the
+inheritance was very logical too. All the member functions are well seperated
+and only appear where they are actually used.
 
 ### Strength 2
 
-_50 words or less_
+
 
 Limitations
 -----------
@@ -55,7 +56,10 @@ _Give two limitations of your AST, using 50 words or less for each one_.
 
 ### Limitation 1
 
-_50 words or less_
+The Type class is not very useful as it does not capture arrays correctly and store
+all their information when using a multidimensional array for example. It also does not
+enable me to extract this information correctly as it will only give me the primitive type of
+the array.
 
 ### Limitation 2
 
@@ -76,11 +80,17 @@ or less_.
 - _did you use the stack?_
 - _is there a function or API for managing and looking up bindings?_
 
-The `Bindings`
-class contained the current variables in the scope using a map, together with their type
-and the size if it was an array. It also stored the strings that were used
-in the translation unit in a static vector, because I wanted to print all of them out together
-using the `.ascii` directive at the end of the function in a `.rdata` section.
+I did not use many registers because they are a limited resource, and instead I decided
+only to use registers $2 and $3 for performing operations and rarely use registers $t0 and $t1
+when loading the address of a value, for example for pointers. I also used registers $4, $5, $6, $7
+for passing values to functions. Using a frame pointer for the current function I could use the
+stack. This frame is split into multiple parts, first, enough space to store and pass values
+when making function calls, then space for all declared variables in the function, and lastly enough
+space to store temporary results from expressions. Every time I perform any operations, I store
+the result of that operation in that temporary space in the frame. I keep track of the stack
+position and temporary expression stack position using the Bindings class. This class also includes
+a map of variables bindings, which bindings the identifier to its type and stack position
+relative to the current frame.
 
 Strengths
 ---------
@@ -175,7 +185,8 @@ too general to answer._
 
 ### Feedback 1
 
-_20 words or fewer_
+Using multidimensional arrays should work, however, for some reason I cannot get the address of
+and element inside it
 
 ### Feedback 2
 
