@@ -55,9 +55,11 @@ and only appear where they are actually used.
 
 ### Strength 2
 
+All the general base classes, that are mostly abstract as well, are in the bison union,
+which means that I can use and assign all of those classes directly, and be more
+specific in the member variables of those classes so that they only contain the types I need.
 
-
-Limitations
+Limitations 
 -----------
 
 _Give two limitations of your AST, using 50 words or less for each one_.
@@ -71,7 +73,7 @@ the array.
 
 ### Limitation 2
 
-_50 words or less_
+
 
 
 Variable binding
@@ -128,6 +130,7 @@ stores to access the temporary results of the operations. I also store results o
 when I do not need the result anymore. This means that the code will run much slower.
 
 ### Limitation 2
+
 
 
 
