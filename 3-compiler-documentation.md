@@ -42,6 +42,9 @@ or fewer_.
 
 - _You can use code, but it is included in your budget_.
 
+I used a pure abstract Node class as an entry point to the AST, so that I could print
+it out using the `Bindings printAsm(Bindings, int &)` method. 
+
 Strengths
 ---------
 
@@ -152,15 +155,15 @@ Functionality (not assessed)
 Which of these features does your compiler support (insert
 an `x` to check a box):
 
-1 - [ ] Local variables
-2 - [ ] Integer arithmetic
-3 - [ ] While
-4 - [ ] IfElse
-5 - [ ] For
-6 - [ ] Function calls
-7 - [ ] Arrays
-8 - [ ] Pointers
-9 - [ ] Strings
+1 - [x] Local variables
+2 - [x] Integer arithmetic
+3 - [x] While
+4 - [x] IfElse
+5 - [x] For
+6 - [x] Function calls
+7 - [x] Arrays
+8 - [x] Pointers
+9 - [x] Strings
 10 - [ ] Structures
 11 - [ ] Floating-point
 
