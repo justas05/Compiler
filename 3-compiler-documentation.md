@@ -2,7 +2,7 @@ Documentation
 =============
 
 In total the documentation burden is (at most) 1000 words
-plus one diagram. Assesment of the documentation is not relative
+plus one diagram. Assessment of the documentation is not relative
 to compiler functionality, it just requires a description
 of the compiler as-is, and a realistic assessment of the
 compiler's strengths and weaknesses.
@@ -30,10 +30,10 @@ I used a pure abstract Node class as an entry point to the AST.
 I then had a TranslationUnit class which contained the external declarations and function
 definitions in a vector. All other classes used linked lists instead of vectors to store
 multiple elements, for example, the statement class had a pointer to a next statement instead
-of having a seperate StatementList class. This meant that I did not have to write an extra List
-class and made it easier to inherit from the right classes. I used the grammar to seperated the
+of having a separate StatementList class. This meant that I did not have to write an extra List
+class and made it easier to inherit from the right classes. I used the grammar to separated the
 classes properly, as an Expression is completely different to a Type or a Statement or a Function.
-This meant that I could seperate the member functions and not have to declare all of them in the
+This meant that I could separate the member functions and not have to declare all of them in the
 Node class, as that would lead to a lot of empty definitions. These classes were mostly abstract too
 but contained a few function definitions that would throw exceptions so that I did not have to
 define these functions when I did not need them. I also had a few specific member functions
@@ -44,13 +44,13 @@ them.
 Strengths
 ---------
 
-_Give two strengths or capabilites of your AST, using 50 words or less for each one_.
+_Give two strengths or capabilities of your AST, using 50 words or less for each one_.
 
 ### Strength 1
 
 The class hierarchy and structure is very logical as it closely matches the grammar.
 This also that it was easy to know what member variables a class needed and the
-inheritance was very logical too. All the member functions are well seperated
+inheritance was very logical too. All the member functions are well separated
 and only appear where they are actually used.
 
 ### Strength 2
@@ -85,7 +85,7 @@ General approach
 ----------------
 
 _Describe your overall approach to mapping variable, parameters, etc.
-into registers or memory locations at exection time, using 200 words
+into registers or memory locations at execution time, using 200 words
 or less_.
 
 I did not use many registers because they are a limited resource, and instead I decided
@@ -99,13 +99,13 @@ return address at the end of the frame. Every time I perform any operations, I s
 the result of that operation in that temporary space in the frame. I keep track of the stack
 position and temporary expression stack position using the Bindings class. This class also includes
 a map of variables bindings, which binds the identifier to its type and stack position
-relateive to the frame pointer. The Bindings class is passed by value to account for scopes and
+relative to the frame pointer. The Bindings class is passed by value to account for scopes and
 variable shadowing. 
 
 Strengths
 ---------
 
-_Give two strengths or capabilites of your binding approach, using 50 words or less for each one_.
+_Give two strengths or capabilities of your binding approach, using 50 words or less for each one_.
 
 ### Strength 1
 
@@ -133,7 +133,9 @@ when I do not need the result anymore. This means that the code will run much sl
 
 ### Limitation 2
 
-
+When counting the variables that are being assigned in the current function, I assume that
+they are all integers. I also always store the return value $31 even when there is no function
+call. This means that the frame is always much larger than it needs to be.
 
 
 Reflection
@@ -154,23 +156,28 @@ values in arrays without padding.
 
 ### Strength 2
 
-_50 words or fewer_
+Function calls work well as they follow the MIPS ABI, and leave enough space for the called
+function to store the parameters in the previous frame. The return address is also always stored,
+which make recursive calls possible. Function declarations also work because they do not have
+to emit assembly.
 
-Scope for Improvment
+Scope for Improvement
 ---------------------
 
 _What parts of your compiler do you think could be improved?_
 
-- _This is not looking for things like "It should support more C constructs". What
-  would you need to do or change in order to support those things?_
-
 ### Improvement 1
 
-_50 words or fewer_
+I would like to work on multidimensional arrays as they do not fully work. To do
+that I would have to add information such as the initial array in the type so that I can assign
+arrays inside the array to a pointer and perform the right pointer arithmetic.
 
 ### Improvement 2
 
-_50 words or fewer_
+I would also like to reduce the number of dynamic and static casts by adding more
+intermediate classes. This would also make the whole AST design more extensible and it would
+be easier to possibly add structures in the future. This would also make classes more specialized
+and maintainable.
 
 
 Functionality (not assessed)
@@ -205,11 +212,10 @@ too general to answer._
 
 ### Feedback 1
 
-Using multidimensional arrays should work, however, for some reason I cannot get the address of
-and element inside it
+I would like to know if the Type class could have been improved for dealing with arrays and
+pointers of pointers.
 
 ### Feedback 2
 
-_20 words or fewer_
-
-
+Is using static and dynamic casts to figure out the type of an object a viable method or is
+there a better way?
