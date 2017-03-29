@@ -72,25 +72,19 @@ Variable binding
 General approach
 ----------------
 
-_Describe your overall approach to mapping variable, parameters, etc.
-into registers or memory locations at exection time, using 200 words
-or less_.
-
-- _how did you manage registers?_
-- _did you use the stack?_
-- _is there a function or API for managing and looking up bindings?_
-
 I did not use many registers because they are a limited resource, and instead I decided
 only to use registers $2 and $3 for performing operations and rarely use registers $t0 and $t1
 when loading the address of a value, for example for pointers. I also used registers $4, $5, $6, $7
-for passing values to functions. Using a frame pointer for the current function I could use the
+for passing values to functions. I used a frame pointer for the current function to access the
 stack. This frame is split into multiple parts, first, enough space to store and pass values
 when making function calls, then space for all declared variables in the function, and lastly enough
-space to store temporary results from expressions. Every time I perform any operations, I store
+space to store temporary results from expressions. It also stores the previous frame pointer and the
+return address at the end of the frame. Every time I perform any operations, I store
 the result of that operation in that temporary space in the frame. I keep track of the stack
 position and temporary expression stack position using the Bindings class. This class also includes
-a map of variables bindings, which bindings the identifier to its type and stack position
-relative to the current frame.
+a map of variables bindings, which binds the identifier to its type and stack position
+relateive to the frame pointer. The Bindings class is passed by value to account for scopes and
+variable shadowing. 
 
 Strengths
 ---------
@@ -130,7 +124,10 @@ those identified in the AST and binding parts)?_
 
 ### Strength 1
 
-_50 words or fewer_
+The Type class was not structured well for handling arrays, however, it does work well
+with the other types and makes it easy to store and load variables using the
+right operations. It also made it easy to identify pointers for pointer arithmatic and store
+values in arrays without padding.
 
 ### Strength 2
 
