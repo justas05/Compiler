@@ -105,11 +105,16 @@ _Give two strengths or capabilites of your binding approach, using 50 words or l
 
 ### Strength 1
 
-_50 words or less_
+The Bindings class stores the type of the identifier so that I can look
+it up and perform the right operation in the Expression class. Storing the type, however, also
+means that I do not have to store the type of an Expression, but can just deduce it.
 
 ### Strength 2
 
-_50 words or less_
+By only using two registers for operations, I do not have to worry about having no more
+registers available, and which registers will not be overwritten after a function call.
+The temporary expression result will always be in the current frame of the function even after
+a function call.
 
 Limitations
 -----------
@@ -118,11 +123,12 @@ _Give two limitations of your binding approach, using 50 words or less for each 
 
 ### Limitation 1
 
-_50 words or less_
+As I am only using two registers to perform operations, I have to include loads and
+stores to access the temporary results of the operations. I also store results of an operation
+when I do not need the result anymore. This means that the code will run much slower.
 
 ### Limitation 2
 
-_50 words or less_
 
 
 Reflection
