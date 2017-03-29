@@ -73,7 +73,9 @@ the array.
 
 ### Limitation 2
 
-
+As I did not want all the classes to contain functions that they do not need, classes like
+UnaryOperator have member functions. To access these I have to use dynamic casts and with my
+linked lists, I always have to check for nullptr before doing anything with it.
 
 
 Variable binding
