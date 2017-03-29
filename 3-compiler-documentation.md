@@ -14,36 +14,26 @@ AST
 Overview Diagram
 ----------------
 
-_Add a diagram of your AST, which is designed to *usefully* communicate
-the *important* properties of the AST._
-
-- _Use whatever level of detail you feel is appropriate_.
-
-- _You do not need to include every part of the AST, and you
-  don't need to include every class_.
-
-- _Zooming should not be necessary to understand it_.
-
-The file should be called `my-ast.png`. The software used
-to generate the png is up to you, or you can draw it by hand
-and scan it if you wish (though beware the eventual file-size).
-
 ![my-ast.png](my-ast.png)
+
 
 Description
 -----------
 
-_Describe the structure and organisation of your AST in 200 words
-or fewer_.
+I used a pure abstract Node class as an entry point to the AST.
+I then had a TranslationUnit class which contained the external declarations and function
+definitions in a vector. All other classes used linked lists instead of vectors to store
+multiple elements, for example, the statement class had a pointer to a next statement instead
+of having a seperate StatementList class. This meant that I did not have to write an extra List
+class and made it easier to inherit from the right classes. I used the grammar to seperated the
+classes properly, as an Expression is completely different to a Type or a Statement or a Function.
+This meant that I could seperate the member functions and not have to declare all of them in the
+Node class, as that would lead to a lot of empty definitions. These classes were mostly abstract too
+but contained a few function definitions that would throw exceptions so that I did not have to
+define these functions when I did not need them. I also had a few specific member functions
+(eg. for PostfixArrayElement) for which I had to use dynamic and static pointer casting to access
+them.
 
-- _Feel free to refer to your diagram_.
-
-- _Try to capture the most important properties_.
-
-- _You can use code, but it is included in your budget_.
-
-I used a pure abstract Node class as an entry point to the AST, so that I could print
-it out using the `Bindings printAsm(Bindings, int &)` method. 
 
 Strengths
 ---------
@@ -52,7 +42,7 @@ _Give two strengths or capabilites of your AST, using 50 words or less for each 
 
 ### Strength 1
 
-_50 words or less_
+
 
 ### Strength 2
 
@@ -86,7 +76,11 @@ or less_.
 - _did you use the stack?_
 - _is there a function or API for managing and looking up bindings?_
 
-_200 words or less_
+The `Bindings`
+class contained the current variables in the scope using a map, together with their type
+and the size if it was an array. It also stored the strings that were used
+in the translation unit in a static vector, because I wanted to print all of them out together
+using the `.ascii` directive at the end of the function in a `.rdata` section.
 
 Strengths
 ---------
