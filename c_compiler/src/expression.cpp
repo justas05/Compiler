@@ -301,7 +301,7 @@ Bindings PostfixPostIncDecExpression::printAsm(Bindings bindings, int &label_cou
 	if(operator_ == "++")
 		printf("\taddiu\t$3,$2,1\n");
 	else if(operator_ == "--")
-		printf("\tsubiu\t$3,$2,1\n");
+		printf("\taddiu\t$3,$2,65535\n");
 	else
 		throw std::runtime_error("Error : '"+operator_+"' not recognized");
 
@@ -343,9 +343,9 @@ Bindings UnaryPreIncDecExpression::printAsm(Bindings bindings, int &label_count)
 {
 	unary_expression_->printAsm(bindings, label_count);
 	if(operator_ == "++")
-		printf("\taddi\t$2,$2,1\n");
+		printf("\taddiu\t$2,$2,1\n");
 	else if(operator_ == "--")
-		printf("\taddi\t$2,$2,65535\n");
+		printf("\taddiu\t$2,$2,65535\n");
 	else
 		throw std::runtime_error("Error : '"+operator_+"' not recognized");
 
