@@ -13,11 +13,11 @@ class Bindings;
 class Node
 {
 public:
-    virtual ~Node() {}
+	virtual ~Node() {}
 
-    virtual void print() const = 0;
-    virtual void printXml() const = 0;
-    virtual Bindings printAsm(Bindings bindings, int& label_count) const = 0;
+	virtual void print() const = 0;
+	virtual void printXml() const = 0;
+	virtual Bindings printAsm(Bindings bindings, int& label_count) const = 0;
 };
 
     

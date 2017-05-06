@@ -12,16 +12,16 @@ typedef std::shared_ptr<Node> NodePtr;
 
 class TranslationUnit : public Node {
 protected:
-    std::vector<NodePtr> translation_unit_;
+	std::vector<NodePtr> translation_unit_;
     
 public:
-    TranslationUnit(Node* external_declaration);
+	TranslationUnit(Node* external_declaration);
 
-    virtual void print() const;
-    virtual void printXml() const;
-    virtual Bindings printAsm(Bindings bindings, int& label_count) const;
+	virtual void print() const;
+	virtual void printXml() const;
+	virtual Bindings printAsm(Bindings bindings, int& label_count) const;
 
-    void push(Node* external_declaration);
+	void push(Node* external_declaration);
 };
 
 
