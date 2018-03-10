@@ -51,5 +51,8 @@ Vagrant.configure(2) do |config|
       # QEMU run-time emulator
       sudo apt-get -y install qemu
 
+      # Tidy command
+      sudo apt-get -y install tidy
+
    SHELL
 end

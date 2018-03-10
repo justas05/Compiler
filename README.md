@@ -12,6 +12,27 @@ The project is structured in three directories.
 
 ## Usage
 
+The necessary dependencies are: `make bison flex g++-mips-linux-gnu qemu tidy`.
+
+### Vagrant
+All the necessary dependencies and correct environment can be installed using Vagrant and the
+provided vagrant file. This can be done using the following commands.
+
+``` shell
+# Installing the virtual machine
+vagrant up
+
+# ssh into the machine
+vagrant ssh
+
+# cd into the correct directory
+cd /vagrant
+```
+
+The tests and builds can then be run from there.
+
+### Build
+
 To use the compiler and test it out, together with the lexer and parser, the [`makefile`](/makefile) can
 be used. The main compiler can be built using the following commands.
 
@@ -34,6 +55,9 @@ These can then be tested using the following shell scripts.
 ``` shell
 # Running tests for the compiler
 ./run_test_deliverable.sh
+
+# Running smaller testbench on compiler
+./test_compiler.sh
 
 # Running tests for the parser
 ./test_parser.sh
