@@ -50,11 +50,16 @@ make bin/c_parser
 make bin/c_lexer
 ```
 
+### Testing
+
 These can then be tested using the following shell scripts.
 
 ``` shell
 # Running tests for the compiler
-./run_test_deliverable.sh
+./run_test_deliverable.sh 1
+
+# Running tests agains the gcc reference implementation of the compiler
+./run_test_deliverable.sh 2
 
 # Running smaller testbench on compiler
 ./test_compiler.sh
