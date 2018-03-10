@@ -5,9 +5,9 @@
 
 The project is structured in three directories.
 
-- `c_compiler` contains the main compiler, together with the final parser and lexer.
-- `c_parser` contains the first parser that was written and covered a very simple c-like syntax.
-- `c_lexer` contains the first lexer for the C syntax.
+- [`c_compiler`](/c_compiler) contains the main compiler, together with the final parser and lexer.
+- [`c_parser`](/c_parser) contains the first parser that was written and covered a very simple c-like syntax.
+- [`c_lexer`](/c_lexer) contains the first lexer for the C syntax.
 
 
 ## Usage
