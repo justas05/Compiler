@@ -1,46 +1,52 @@
-Documentation
-=============
-
-In total the documentation burden is (at most) 1000 words
-plus one diagram. Assessment of the documentation is not relative
-to compiler functionality, it just requires a description
-of the compiler as-is, and a realistic assessment of the
-compiler's strengths and weaknesses.
+# Compiler
 
 
-AST
-===
+## Functionality
 
-Overview Diagram
-----------------
+- [x] Local variables
+- [x] Integer arithmetic
+- [x] While
+- [x] IfElse
+- [x] For
+- [x] Function calls
+- [x] Arrays
+- [x] Pointers
+- [x] Strings
+- [ ] Structures
+- [ ] Floating-point
 
-Overview of the ast that is built by the compiler.
+## AST
+
+### Overview Diagram
+
+Overview of the ast that is built by the compiler, this only contains some of the important classes
+in the Compiler.
 
 ![my-ast.png](/res/my-ast.png)
 
+### Description
 
-Description
------------
+#### Description of the structure
 
-### Description of the structure
-
-I used a pure abstract Node class as an entry point to the AST.
-I then had a TranslationUnit class which contained the external declarations and function
+I used a pure abstract [`Node`](/c_compiler/include/node.hpp) class as an entry point to the AST.
+I then had a [`TranslationUnit`](/c_compiler/include/translation_unit.hpp) class which contained 
+the external declarations and function
 definitions in a vector. All other classes used linked lists instead of vectors to store
-multiple elements, for example, the statement class had a pointer to a next statement instead
-of having a separate StatementList class. This meant that I did not have to write an extra List
+multiple elements, for example, the [`Statement`](/c_compiler/include/statement.hpp) class has a 
+pointer to a next statement instead
+of having a separate [`StatementList`](/c_compiler/include/statement.hpp) class. This meant that 
+I did not have to write an extra List
 class and made it easier to inherit from the right classes. I used the grammar to separated the
-classes properly, as an Expression is completely different to a Type or a Statement or a Function.
+classes properly, as an [`Expression`](/c_compiler/include/expression.hpp) is completely different 
+to a Type or a Statement or a Function.
 This meant that I could separate the member functions and not have to declare all of them in the
 Node class, as that would lead to a lot of empty definitions. These classes were mostly abstract too
 but contained a few function definitions that would throw exceptions so that I did not have to
 define these functions when I did not need them. I also had a few specific member functions
-(eg. for UnaryExpression) for which I had to use dynamic and static pointer casting to access
-them.
+(eg. for [`UnaryExpression`](/c_compiler/include/expression.hpp)) for which I had to use dynamic 
+and static pointer casting to access them.
 
-
-Strengths
----------
+#### Strengths
 
 The class hierarchy and structure is very logical as it closely matches the grammar.
 This also that it was easy to know what member variables a class needed and the
@@ -51,8 +57,7 @@ All the general base classes, that are mostly abstract as well, are in the bison
 which means that I can use and assign all of those classes directly, and be more
 specific in the member variables of those classes so that they only contain the types I need.
 
-Limitations 
------------
+#### Limitations 
 
 The Type class is not very useful as it does not capture arrays correctly and store
 all their information when using a multidimensional array for example. It also does not
@@ -63,12 +68,9 @@ As I did not want all the classes to contain functions that they do not need, cl
 UnaryOperator have member functions. To access these I have to use dynamic casts and with my
 linked lists, I always have to check for nullptr before doing anything with it.
 
+### Variable binding
 
-Variable binding
-================
-
-General approach
-----------------
+#### General approach
 
 I did not use many registers because they are a limited resource, and instead I decided
 only to use registers $2 and $3 for performing operations and rarely use registers $t0 and $t1
@@ -84,8 +86,7 @@ a map of variables bindings, which binds the identifier to its type and stack po
 relative to the frame pointer. The Bindings class is passed by value to account for scopes and
 variable shadowing. 
 
-Strengths
----------
+#### Strengths
 
 The Bindings class stores the type of the identifier so that I can look
 it up and perform the right operation in the Expression class. Storing the type, however, also
@@ -96,8 +97,7 @@ registers available, and which registers will not be overwritten after a functio
 The temporary expression result will always be in the current frame of the function even after
 a function call.
 
-Limitations
------------
+#### Limitations
 
 As I am only using two registers to perform operations, I have to include loads and
 stores to access the temporary results of the operations. I also store results of an operation
@@ -107,12 +107,9 @@ When counting the variables that are being assigned in the current function, I a
 they are all integers. I also always store the return value $31 even when there is no function
 call. This means that the frame is always much larger than it needs to be.
 
+### Reflection
 
-Reflection
-==========
-
-Strengths
----------
+#### Strengths
 
 The Type class was not structured well for handling arrays, however, it does work well
 with the other types and makes it easy to store and load variables using the
@@ -124,8 +121,7 @@ function to store the parameters in the previous frame. The return address is al
 which make recursive calls possible. Function declarations also work because they do not have
 to emit assembly.
 
-Scope for Improvement
----------------------
+#### Scope for Improvement
 
 I would like to work on multidimensional arrays as they do not fully work. To do
 that I would have to add information such as the initial array in the type so that I can assign
@@ -135,26 +131,3 @@ I would also like to reduce the number of dynamic and static casts by adding mor
 intermediate classes. This would also make the whole AST design more extensible and it would
 be easier to possibly add structures in the future. This would also make classes more specialized
 and maintainable.
-
-
-Functionality
-=============
-
-Which of these features does your compiler support (insert
-an `x` to check a box):
-
-- [x] Local variables
-- [x] Integer arithmetic
-- [x] While
-- [x] IfElse
-- [x] For
-- [x] Function calls
-- [x] Arrays
-- [x] Pointers
-- [x] Strings
-- [ ] Structures
-- [ ] Floating-point
-
-Note that all features will be tested, regardless of what
-appears here. This is documentation of what you expect to work,
-versus what doesn't work.
