@@ -7,7 +7,6 @@
 
 build/
 bin/
-ref/
 out/
 
 # ignore all files with these extensions

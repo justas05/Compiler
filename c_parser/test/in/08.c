@@ -1,10 +1,10 @@
 int func(int a, int b) {
     int c = 0;
     if(a == b) {
-	int d;
+        int d;
     } else if(a == d) {
-	int e;
-	return d;
+        int e;
+        return d;
     }
     return c;
 }

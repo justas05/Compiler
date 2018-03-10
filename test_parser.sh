@@ -20,6 +20,8 @@ echo " Testing parser"
 PASSED=0
 CHECKED=0
 
+mkdir -p c_parser/test/out
+
 for i in c_parser/test/in/*.c; do
 	echo "==========================="
     echo ""
