@@ -58,7 +58,7 @@ These can then be tested using the following shell scripts.
 # Running tests for the compiler
 ./run_test_deliverable.sh 1
 
-# Running tests agains the gcc reference implementation of the compiler
+# Running tests against the gcc reference implementation of the compiler
 ./run_test_deliverable.sh 2
 
 # Running smaller testbench on compiler
