@@ -3,6 +3,8 @@
 
 ## Functionality
 
+Implemented compiler functionality following the C89 Spec.
+
 - [x] Local variables
 - [x] Integer arithmetic
 - [x] While
@@ -10,6 +12,7 @@
 - [x] For
 - [x] Function calls
 - [x] Arrays
+- [x] Multi Dimensional Arrays
 - [x] Pointers
 - [x] Strings
 - [ ] Structures
@@ -38,9 +41,10 @@ of having a separate [`StatementList`](/c_compiler/include/statement.hpp) class.
 I did not have to write an extra List
 class and made it easier to inherit from the right classes. I used the grammar to separated the
 classes properly, as an [`Expression`](/c_compiler/include/expression.hpp) is completely different 
-to a Type or a Statement or a Function.
+to a [`Type`](/c_compiler/include/type.hpp), a [`Statement`](/c_compiler/include/statement.hpp) 
+or a [`Function`](/c_compiler/include/function.hpp).
 This meant that I could separate the member functions and not have to declare all of them in the
-Node class, as that would lead to a lot of empty definitions. These classes were mostly abstract too
+[`Node`](/c_compiler/include/node.hpp) class, as that would lead to a lot of empty definitions. These classes were mostly abstract too
 but contained a few function definitions that would throw exceptions so that I did not have to
 define these functions when I did not need them. I also had a few specific member functions
 (eg. for [`UnaryExpression`](/c_compiler/include/expression.hpp)) for which I had to use dynamic 
@@ -59,7 +63,7 @@ specific in the member variables of those classes so that they only contain the 
 
 #### Limitations 
 
-The Type class is not very useful as it does not capture arrays correctly and store
+The [`Type`](/c_compiler/include/type.hpp) class is not very useful as it does not capture arrays correctly and store
 all their information when using a multidimensional array for example. It also does not
 enable me to extract this information correctly as it will only give me the primitive type of
 the array.
@@ -89,8 +93,8 @@ variable shadowing.
 #### Strengths
 
 The Bindings class stores the type of the identifier so that I can look
-it up and perform the right operation in the Expression class. Storing the type, however, also
-means that I do not have to store the type of an Expression, but can just deduce it.
+it up and perform the right operation in the [`Expression`](/c_compiler/include/expression.hpp) class. Storing the type, however, also
+means that I do not have to store the type of an [`Expression`](/c_compiler/include/expression.hpp), but can just deduce it.
 
 By only using two registers for operations, I do not have to worry about having no more
 registers available, and which registers will not be overwritten after a function call.
@@ -111,7 +115,7 @@ call. This means that the frame is always much larger than it needs to be.
 
 #### Strengths
 
-The Type class was not structured well for handling arrays, however, it does work well
+The [`Type`](/c_compiler/include/type.hpp) class was not structured well for handling arrays, however, it does work well
 with the other types and makes it easy to store and load variables using the
 right operations. It also made it easy to identify pointers for pointer arithmatic and store
 values in arrays without padding.
