@@ -44,7 +44,7 @@ for DRIVER in test_deliverable/testcases/*_driver.c ; do
     # Link driver object and assembly into executable
     mips-linux-gnu-gcc -static working/${NAME}.s working/${NAME}_driver.o -o working/${NAME}.elf 2> working/${NAME}.link.stderr
     if [[ $? -ne 0 ]]; then
-	printf "\e[1;31mError\e[0m : Linker returned error message.\n"
+	    printf "\e[1;31mError\e[0m : Linker returned error message.\n"
         continue
     fi
     
@@ -53,7 +53,7 @@ for DRIVER in test_deliverable/testcases/*_driver.c ; do
     RESULT=$?
     if [[ "$RESULT" -ne 0 ]]; then
         printf "\e[1;31mError\e[0m : Testcase returned $RESULT, but expected 0.\n"
-	continue
+	    continue
     fi
 
     printf "\e[1;32mPass\e[0m\n"

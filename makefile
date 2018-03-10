@@ -15,7 +15,7 @@ COMPINC := -Ic_compiler/include
 COMPBUILDDIR := c_compiler/build
 COMPSRCDIR := c_compiler/src
 
-all : bin/c_lexer bin/c_parser
+all : bin/c_lexer bin/c_parser bin/c_compiler
 
 # Make the c_lexer
 bin/c_lexer : $(LEXBUILDDIR)/main.o $(LEXBUILDDIR)/c_lexer.o $(LEXBUILDDIR)/c_lexer.yy.o

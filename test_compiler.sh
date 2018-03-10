@@ -10,7 +10,7 @@ echo " Force building lexer"
 make -B bin/c_compiler
 
 if [[ "$?" -ne 0 ]]; then
-    	echo "Build failed.";
+    echo "Build failed.";
 fi
 
 echo ""
@@ -26,15 +26,15 @@ mkdir -p c_compiler/test/ref
 
 for i in c_compiler/test/in/*.c; do
 	echo "==========================="
-    	echo ""
-    	echo "Input file : ${i}"
+    echo ""
+    echo "Input file : ${i}"
 	BASENAME=$(basename $i .c);
-    	cat $i | ./bin/c_compiler > c_compiler/test/out/$BASENAME.s  2> c_compiler/test/out/$BASENAME.stderr.txt
+    cat $i | ./bin/c_compiler > c_compiler/test/out/$BASENAME.s  2> c_compiler/test/out/$BASENAME.stderr.txt
 
 	mips-linux-gnu-gcc -O0 -S -c c_compiler/test/in/$BASENAME.c -o c_compiler/test/ref/$BASENAME.s
 	mips-linux-gnu-gcc -O0 -static c_compiler/test/ref/$BASENAME.s -o c_compiler/test/ref/$BASENAME
 	
-        mips-linux-gnu-gcc -O0 -static c_compiler/test/out/$BASENAME.s -o c_compiler/test/out/$BASENAME
+    mips-linux-gnu-gcc -O0 -static c_compiler/test/out/$BASENAME.s -o c_compiler/test/out/$BASENAME
 
 	qemu-mips c_compiler/test/ref/$BASENAME
 	REFOUTPUT=$?

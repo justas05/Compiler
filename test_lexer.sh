@@ -17,4 +17,4 @@ echo " Testing lexer"
 
 cpp c_lexer/test/test_lex.c c_lexer/test/pre_processed_test_lex.c
 cat c_lexer/test/pre_processed_test_lex.c | bin/c_lexer | tee c_lexer/test/output.json
-#cat test/test_lex.c | ./bin/c_lexer | tee test/output.json
+# cat test/test_lex.c | ./bin/c_lexer | tee test/output.json

@@ -1,6 +1,48 @@
 # Compiler
 
 
+## Structure
+
+The project is structured in three directories.
+
+- `c_compiler` contains the main compiler, together with the final parser and lexer.
+- `c_parser` contains the first parser that was written and covered a very simple c-like syntax.
+- `c_lexer` contains the first lexer for the C syntax.
+
+
+## Usage
+
+To use the compiler and test it out, together with the lexer and parser, the [`makefile`](/makefile) can
+be used. The main compiler can be built using the following commands.
+
+``` shell
+# build all the targets
+make
+
+# Building the main compiler
+make bin/c_compiler
+
+# Building the parser
+make bin/c_parser
+
+# Building the lexer
+make bin/c_lexer
+```
+
+These can then be tested using the following shell scripts.
+
+``` shell
+# Running tests for the compiler
+./run_test_deliverable.sh
+
+# Running tests for the parser
+./test_parser.sh
+
+# Running tests for the lexer
+./test_lexer.sh
+```
+
+
 ## Functionality
 
 Implemented compiler functionality following the C89 Spec.
