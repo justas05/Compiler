@@ -14,8 +14,7 @@ AST
 Overview Diagram
 ----------------
 
-_Add a diagram of your AST, which is designed to *usefully* communicate
-the *important* properties of the AST._
+Overview of the ast that is built by the compiler.
 
 ![my-ast.png](my-ast.png)
 
@@ -23,8 +22,7 @@ the *important* properties of the AST._
 Description
 -----------
 
-_Describe the structure and organisation of your AST in 200 words
-or fewer_.
+### Description of the structure
 
 I used a pure abstract Node class as an entry point to the AST.
 I then had a TranslationUnit class which contained the external declarations and function
@@ -44,16 +42,10 @@ them.
 Strengths
 ---------
 
-_Give two strengths or capabilities of your AST, using 50 words or less for each one_.
-
-### Strength 1
-
 The class hierarchy and structure is very logical as it closely matches the grammar.
 This also that it was easy to know what member variables a class needed and the
 inheritance was very logical too. All the member functions are well separated
 and only appear where they are actually used.
-
-### Strength 2
 
 All the general base classes, that are mostly abstract as well, are in the bison union,
 which means that I can use and assign all of those classes directly, and be more
@@ -62,16 +54,10 @@ specific in the member variables of those classes so that they only contain the 
 Limitations 
 -----------
 
-_Give two limitations of your AST, using 50 words or less for each one_.
-
-### Limitation 1
-
 The Type class is not very useful as it does not capture arrays correctly and store
 all their information when using a multidimensional array for example. It also does not
 enable me to extract this information correctly as it will only give me the primitive type of
 the array.
-
-### Limitation 2
 
 As I did not want all the classes to contain functions that they do not need, classes like
 UnaryOperator have member functions. To access these I have to use dynamic casts and with my
@@ -83,10 +69,6 @@ Variable binding
 
 General approach
 ----------------
-
-_Describe your overall approach to mapping variable, parameters, etc.
-into registers or memory locations at execution time, using 200 words
-or less_.
 
 I did not use many registers because they are a limited resource, and instead I decided
 only to use registers $2 and $3 for performing operations and rarely use registers $t0 and $t1
@@ -105,15 +87,9 @@ variable shadowing.
 Strengths
 ---------
 
-_Give two strengths or capabilities of your binding approach, using 50 words or less for each one_.
-
-### Strength 1
-
 The Bindings class stores the type of the identifier so that I can look
 it up and perform the right operation in the Expression class. Storing the type, however, also
 means that I do not have to store the type of an Expression, but can just deduce it.
-
-### Strength 2
 
 By only using two registers for operations, I do not have to worry about having no more
 registers available, and which registers will not be overwritten after a function call.
@@ -123,15 +99,9 @@ a function call.
 Limitations
 -----------
 
-_Give two limitations of your binding approach, using 50 words or less for each one_.
-
-### Limitation 1
-
 As I am only using two registers to perform operations, I have to include loads and
 stores to access the temporary results of the operations. I also store results of an operation
 when I do not need the result anymore. This means that the code will run much slower.
-
-### Limitation 2
 
 When counting the variables that are being assigned in the current function, I assume that
 they are all integers. I also always store the return value $31 even when there is no function
@@ -144,17 +114,10 @@ Reflection
 Strengths
 ---------
 
-_What two aspects of your compiler do you think work well (beyond
-those identified in the AST and binding parts)?_
-
-### Strength 1
-
 The Type class was not structured well for handling arrays, however, it does work well
 with the other types and makes it easy to store and load variables using the
 right operations. It also made it easy to identify pointers for pointer arithmatic and store
 values in arrays without padding.
-
-### Strength 2
 
 Function calls work well as they follow the MIPS ABI, and leave enough space for the called
 function to store the parameters in the previous frame. The return address is also always stored,
@@ -164,15 +127,9 @@ to emit assembly.
 Scope for Improvement
 ---------------------
 
-_What parts of your compiler do you think could be improved?_
-
-### Improvement 1
-
 I would like to work on multidimensional arrays as they do not fully work. To do
 that I would have to add information such as the initial array in the type so that I can assign
 arrays inside the array to a pointer and perform the right pointer arithmetic.
-
-### Improvement 2
 
 I would also like to reduce the number of dynamic and static casts by adding more
 intermediate classes. This would also make the whole AST design more extensible and it would
@@ -180,42 +137,24 @@ be easier to possibly add structures in the future. This would also make classes
 and maintainable.
 
 
-Functionality (not assessed)
-============================
+Functionality
+=============
 
 Which of these features does your compiler support (insert
 an `x` to check a box):
 
-1 - [x] Local variables
-2 - [x] Integer arithmetic
-3 - [x] While
-4 - [x] IfElse
-5 - [x] For
-6 - [x] Function calls
-7 - [x] Arrays
-8 - [x] Pointers
-9 - [x] Strings
-10 - [ ] Structures
-11 - [ ] Floating-point
+- [x] Local variables
+- [x] Integer arithmetic
+- [x] While
+- [x] IfElse
+- [x] For
+- [x] Function calls
+- [x] Arrays
+- [x] Pointers
+- [x] Strings
+- [ ] Structures
+- [ ] Floating-point
 
 Note that all features will be tested, regardless of what
 appears here. This is documentation of what you expect to work,
 versus what doesn't work.
-
-
-Feedback (not assessed)
-=======================
-
-_What aspects of your compiler would you like feedback on.
-Be specific, as "what could I have done differently" is
-too general to answer._
-
-### Feedback 1
-
-I would like to know if the Type class could have been improved for dealing with arrays and
-pointers of pointers.
-
-### Feedback 2
-
-Is using static and dynamic casts to figure out the type of an object a viable method or is
-there a better way?
