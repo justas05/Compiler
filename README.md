@@ -16,7 +16,7 @@ Overview Diagram
 
 Overview of the ast that is built by the compiler.
 
-![my-ast.png](my-ast.png)
+![my-ast.png](/res/my-ast.png)
 
 
 Description
